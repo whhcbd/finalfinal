@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Punnett Square Test</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Punnett Square 组件测试</h1>
+
+    <div class="test-case">
+      <div class="test-title">测试 1: 显性 × 隐性 (Aa × aa)</div>
+      <punnett-square
+        parent1Genotype="Aa"
+        parent2Genotype="aa"
+        trait="豌豆花色"
+        showPhenotype="true">
+      </punnett-square>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 2: 杂合 × 杂合 (Bb × Bb)</div>
+      <punnett-square
+        parent1Genotype="Bb"
+        parent2Genotype="Bb"
+        trait="种子形状"
+        showPhenotype="true">
+      </punnett-square>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 3: 纯显性 × 纯隐性 (CC × cc)</div>
+      <punnett-square
+        parent1Genotype="CC"
+        parent2Genotype="cc"
+        trait="茎高"
+        showPhenotype="true">
+      </punnett-square>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 4: 不显示表型</div>
+      <punnett-square
+        parent1Genotype="Dd"
+        parent2Genotype="Dd"
+        trait="豆荚颜色"
+        showPhenotype="false">
+      </punnett-square>
+    </div>
+  </div>
+
+  <script type="module" src="./components/genetics/punnett-square.ts"></script>
+</body>
+</html>

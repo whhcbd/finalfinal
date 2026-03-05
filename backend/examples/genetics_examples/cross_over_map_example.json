@@ -1,0 +1,35 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "cross_over_map"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "cross_over_map",
+          "component": {
+            "CrossOverMap": {
+              "chromosome1": [
+                { "position": 20, "gene": "GeneA", "allele": "A" },
+                { "position": 60, "gene": "GeneB", "allele": "B" }
+              ],
+              "chromosome2": [
+                { "position": 20, "gene": "GeneA", "allele": "a" },
+                { "position": 60, "gene": "GeneB", "allele": "b" }
+              ],
+              "crossOverPoints": [
+                { "position": 40, "frequency": 0.2 }
+              ],
+              "labelChromosomes": true,
+              "showRecombinationFreq": true
+            }
+          }
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,27 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "phenotype_distribution"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "phenotype_distribution",
+          "component": {
+            "PhenotypeDistribution": {
+              "trait": "花色",
+              "data": [
+                {"phenotype": "紫色花", "count": 750, "percentage": 75},
+                {"phenotype": "白色花", "count": 250, "percentage": 25}
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+]

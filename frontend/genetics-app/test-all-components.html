@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>遗传学组件测试 - 所有组件</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .component-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .component-section h2 {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 遗传学组件注册测试</h1>
+
+        <div class="component-section">
+            <h2>1. PunnettSquare (孟德尔方格图) <span id="status-punnett" class="status">检测中...</span></h2>
+            <div id="container-punnett"></div>
+        </div>
+
+        <div class="component-section">
+            <h2>2. DNAStructure (DNA双螺旋结构) <span id="status-dna" class="status">检测中...</span></h2>
+            <div id="container-dna"></div>
+        </div>
+
+        <div class="component-section">
+            <h2>3. PhenotypeDistribution (表型分布柱状图) <span id="status-phenotype" class="status">检测中...</span></h2>
+            <div id="container-phenotype"></div>
+        </div>
+
+        <div class="component-section">
+            <h2>4. GeneExpression (基因表达水平) <span id="status-expression" class="status">检测中...</span></h2>
+            <div id="container-expression"></div>
+        </div>
+
+        <div class="component-section">
+            <h2>5. PedigreeChart (家系图) <span id="status-pedigree" class="status">检测中...</span></h2>
+            <div id="container-pedigree"></div>
+        </div>
+
+        <div class="component-section">
+            <h2>6. CrossOverMap (交叉互换图谱) <span id="status-crossover" class="status">检测中...</span></h2>
+            <div id="container-crossover"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import './src/index.js';
+
+        function testComponent(tagName, containerId, statusId, initialProps) {
+            const container = document.getElementById(containerId);
+            const statusEl = document.getElementById(statusId);
+
+            try {
+                if (customElements.get(tagName)) {
+                    statusEl.textContent = '✅ 已注册';
+                    statusEl.className = 'status success';
+
+                    const element = document.createElement(tagName);
+                    Object.keys(initialProps).forEach(key => {
+                        element[key] = initialProps[key];
+                    });
+                    container.appendChild(element);
+                } else {
+                    throw new Error('组件未注册');
+                }
+            } catch (error) {
+                statusEl.textContent = '❌ 注册失败: ' + error.message;
+                statusEl.className = 'status error';
+                console.error(`${tagName} 错误:`, error);
+            }
+        }
+
+        testComponent('punnett-square', 'container-punnett', 'status-punnett', {
+            parent1Genotype: 'Aa',
+            parent2Genotype: 'Aa',
+            trait: '豌豆花色',
+            showPhenotype: true
+        });
+
+        testComponent('dna-structure', 'container-dna', 'status-dna', {
+            sequence: 'ATGCGATCGTACGATCG',
+            showLabels: true,
+            highlightRegions: [{start: 5, end: 10, label: '编码区'}]
+        });
+
+        testComponent('phenotype-distribution', 'container-phenotype', 'status-phenotype', {
+            trait: '豌豆花色',
+            data: [
+                {name: '紫色', count: 30, color: '#9b59b6'},
+                {name: '白色', count: 10, color: '#ecf0f1'}
+            ]
+        });
+
+        testComponent('gene-expression', 'container-expression', 'status-expression', {
+            genes: [
+                {name: 'GENE1', expression: [85, 92, 78, 95, 88]},
+                {name: 'GENE2', expression: [45, 52, 48, 55, 50]},
+                {name: 'GENE3', expression: [70, 75, 72, 80, 76]}
+            ],
+            conditions: [
+                {name: '正常', color: '#3498db'},
+                {name: '胁迫1', color: '#e74c3c'},
+                {name: '胁迫2', color: '#f39c12'},
+                {name: '胁迫3', color: '#2ecc71'},
+                {name: '胁迫4', color: '#9b59b6'}
+            ],
+            chartType: 'bar'
+        });
+
+        testComponent('pedigree-chart', 'container-pedigree', 'status-pedigree', {
+            trait: '血友病',
+            generations: [
+                [
+                    {id: 1, gender: 'male', phenotype: 'normal'},
+                    {id: 2, gender: 'female', phenotype: 'carrier'}
+                ],
+                [
+                    {id: 3, gender: 'female', phenotype: 'carrier', fatherId: 1, motherId: 2},
+                    {id: 4, gender: 'male', phenotype: 'normal', fatherId: 1, motherId: 2},
+                    {id: 5, gender: 'male', phenotype: 'affected', fatherId: 1, motherId: 2}
+                ]
+            ]
+        });
+
+        testComponent('crossover-map', 'container-crossover', 'status-crossover', {
+            chromosomeLength: 100,
+            genes: [
+                {name: 'GENE1', position: 10, color: '#3498db'},
+                {name: 'GENE2', position: 35, color: '#e74c3c'},
+                {name: 'GENE3', position: 60, color: '#2ecc71'},
+                {name: 'GENE4', position: 85, color: '#f39c12'}
+            ],
+            crossoverPoints: [
+                {position: 45, probability: 0.2},
+                {position: 70, probability: 0.3}
+            ]
+        });
+    </script>
+</body>
+</html>

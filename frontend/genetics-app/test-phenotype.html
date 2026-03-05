@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phenotype Distribution Test</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    .test-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Phenotype Distribution 组件测试</h1>
+
+    <div class="test-case">
+      <div class="test-title">测试 1: 孟德尔豌豆花色分布 (3:1 比例)</div>
+      <phenotype-distribution
+        trait="豌豆花色"
+        data='[
+          {"phenotype": "紫色", "count": 3, "percentage": 75},
+          {"phenotype": "白色", "count": 1, "percentage": 25}
+        ]'>
+      </phenotype-distribution>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 2: 孟德尔种子形状分布 (3:1 比例)</div>
+      <phenotype-distribution
+        trait="种子形状"
+        data='[
+          {"phenotype": "圆粒", "count": 6, "percentage": 75},
+          {"phenotype": "皱粒", "count": 2, "percentage": 25}
+        ]'>
+      </phenotype-distribution>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 3: 多种表型分布</div>
+      <phenotype-distribution
+        trait="茎高分布"
+        data='[
+          {"phenotype": "高茎", "count": 15, "percentage": 37.5},
+          {"phenotype": "中茎", "count": 10, "percentage": 25.0},
+          {"phenotype": "矮茎", "count": 15, "percentage": 37.5}
+        ]'>
+      </phenotype-distribution>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 4: ABO 血型分布</div>
+      <phenotype-distribution
+        trait="ABO 血型"
+        data='[
+          {"phenotype": "A型", "count": 45, "percentage": 45.0},
+          {"phenotype": "B型", "count": 20, "percentage": 20.0},
+          {"phenotype": "AB型", "count": 5, "percentage": 5.0},
+          {"phenotype": "O型", "count": 30, "percentage": 30.0}
+        ]'>
+      </phenotype-distribution>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 5: 空数据</div>
+      <phenotype-distribution
+        trait="空测试"
+        data='[]'>
+      </phenotype-distribution>
+    </div>
+  </div>
+
+  <script type="module" src="/src/components/genetics/phenotype-distribution.ts"></script>
+</body>
+</html>

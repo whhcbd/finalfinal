@@ -1,0 +1,582 @@
+{
+  "catalogId": "https://my-genetics-platform.com/catalogs/genetics-v1.0",
+  "components": {
+    "PunnettSquare": {
+      "type": "object",
+      "description": "孟德尔方格图组件，用于展示基因杂交后代的基因型和表型比例",
+      "additionalProperties": false,
+      "properties": {
+        "parent1Genotype": {
+          "type": "object",
+          "description": "亲本1的基因型（如 'Aa', 'BB'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "parent2Genotype": {
+          "type": "object",
+          "description": "亲本2的基因型（如 'aa', 'Bb'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "trait": {
+          "type": "object",
+          "description": "控制的性状名称（如 '豌豆颜色', '花朵形状'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "showPhenotype": {
+          "type": "object",
+          "description": "是否显示表型比例",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "dominantAllele": {
+          "type": "object",
+          "description": "显性等位基因（如 'A', 'B'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "recessiveAllele": {
+          "type": "object",
+          "description": "隐性等位基因（如 'a', 'b'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "parent1Genotype",
+        "parent2Genotype"
+      ]
+    },
+    "DNAStructure": {
+      "type": "object",
+      "description": "DNA双螺旋结构组件，用于展示DNA序列和碱基配对",
+      "additionalProperties": false,
+      "properties": {
+        "sequence": {
+          "type": "object",
+          "description": "DNA序列字符串（如 'ATCGGCTA'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "showLabels": {
+          "type": "object",
+          "description": "是否显示碱基标签",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "highlightRegions": {
+          "type": "object",
+          "description": "高亮的基因区域数组（如 [{'start': 0, 'end': 3, 'label': '启动子'}]）",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "start": {
+                    "type": "integer",
+                    "description": "起始位置"
+                  },
+                  "end": {
+                    "type": "integer",
+                    "description": "结束位置"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "区域标签"
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "高亮颜色（如 '#FF6B6B'）"
+                  }
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "showComplementary": {
+          "type": "object",
+          "description": "是否显示互补链",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "sequence"
+      ]
+    },
+    "PhenotypeDistribution": {
+      "type": "object",
+      "description": "表型分布柱状图组件，用于展示群体中不同表型的分布情况",
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "type": "object",
+          "description": "表型数据数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "phenotype": {
+                    "type": "string",
+                    "description": "表型名称"
+                  },
+                  "count": {
+                    "type": "number",
+                    "description": "个体数量"
+                  },
+                  "percentage": {
+                    "type": "number",
+                    "description": "百分比"
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "柱状图颜色"
+                  }
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "trait": {
+          "type": "object",
+          "description": "性状名称",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "totalCount": {
+          "type": "object",
+          "description": "总个体数",
+          "additionalProperties": false,
+          "properties": {
+            "literalNumber": {
+              "type": "number"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "showPercentage": {
+          "type": "object",
+          "description": "是否显示百分比标签",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "data",
+        "trait"
+      ]
+    },
+    "GeneExpression": {
+      "type": "object",
+      "description": "基因表达水平组件，用于展示不同条件下的基因表达量数据",
+      "additionalProperties": false,
+      "properties": {
+        "genes": {
+          "type": "object",
+          "description": "基因数据数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gene": {
+                    "type": "string",
+                    "description": "基因名称"
+                  },
+                  "expressionLevels": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "description": "表达水平数组"
+                  }
+                },
+                "required": ["gene", "expressionLevels"]
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "expressionLevels": {
+          "type": "object",
+          "description": "表达水平二维数组（已弃用，保留以兼容旧代码）",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "conditions": {
+          "type": "object",
+          "description": "实验条件数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "条件名称"
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "条件颜色"
+                  }
+                },
+                "required": ["name"]
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "genes",
+        "conditions"
+      ]
+    },
+    "PedigreeChart": {
+      "type": "object",
+      "description": "家系图组件，用于展示遗传疾病在家族中的传递情况",
+      "additionalProperties": false,
+      "properties": {
+        "generations": {
+          "type": "object",
+          "description": "世代数据数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "individuals": {
+                    "type": "array",
+                    "description": "该世代的个体数组",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "description": "个体ID"
+                        },
+                        "gender": {
+                          "type": "string",
+                          "enum": [
+                            "male",
+                            "female",
+                            "unknown"
+                          ],
+                          "description": "性别"
+                        },
+                        "affected": {
+                          "type": "boolean",
+                          "description": "是否患病"
+                        },
+                        "carrier": {
+                          "type": "boolean",
+                          "description": "是否为携带者"
+                        },
+                        "parents": {
+                          "type": "array",
+                          "description": "父母ID数组",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "spouse": {
+                          "type": "string",
+                          "description": "配偶ID"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "diseaseName": {
+          "type": "object",
+          "description": "疾病名称",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "inheritancePattern": {
+          "type": "object",
+          "description": "遗传模式（如 '常染色体显性', 'X连锁隐性'）",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": {
+              "type": "string"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "showLegend": {
+          "type": "object",
+          "description": "是否显示图例",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "generations",
+        "diseaseName"
+      ]
+    },
+    "CrossOverMap": {
+      "type": "object",
+      "description": "交叉互换图谱组件，用于展示减数分裂中同源染色体之间的交叉互换事件",
+      "additionalProperties": false,
+      "properties": {
+        "chromosomeLength": {
+          "type": "object",
+          "description": "染色体长度（单位：cM）",
+          "additionalProperties": false,
+          "properties": {
+            "literalNumber": {
+              "type": "number"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "genes": {
+          "type": "object",
+          "description": "基因标记数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "基因名称"
+                  },
+                  "position": {
+                    "type": "number",
+                    "description": "在染色体上的位置（单位：cM）"
+                  },
+                  "color": {
+                    "type": "string",
+                    "description": "基因颜色（可选）"
+                  }
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "crossoverPoints": {
+          "type": "object",
+          "description": "交叉点位置数组",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "position": {
+                    "type": "number",
+                    "description": "交叉点位置（单位：cM）"
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "交叉点标签（可选）"
+                  }
+                }
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "required": [
+        "genes"
+      ]
+    },
+    "Flashcard": {
+      "type": "object",
+      "description": "翻牌卡片组件，用于展示问题和答案，点击翻转",
+      "additionalProperties": false,
+      "properties": {
+        "front": {
+          "type": "string",
+          "description": "卡片正面的问题文本"
+        },
+        "back": {
+          "type": "string",
+          "description": "卡片背面的答案文本"
+        },
+        "category": {
+          "type": "string",
+          "description": "卡片分类标签（可选）"
+        }
+      },
+      "required": [
+        "front",
+        "back"
+      ]
+    }
+  },
+  "styles": {
+    "geneticsTheme": {
+      "type": "object",
+      "description": "遗传学主题样式",
+      "properties": {
+        "primaryColor": {
+          "type": "string",
+          "description": "主色调",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "secondaryColor": {
+          "type": "string",
+          "description": "次要色调",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "backgroundColor": {
+          "type": "string",
+          "description": "背景颜色",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    }
+  }
+}

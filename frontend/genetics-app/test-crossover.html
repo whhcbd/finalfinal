@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CrossOver Map Test</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>CrossOver Map 组件测试</h1>
+
+    <div class="test-case">
+      <div class="test-title">测试 1: 基础基因定位</div>
+      <crossover-map
+        chromosomeLength="100"
+        genes='[
+          {"name": "GeneA", "position": 20, "color": "#1a73e8"},
+          {"name": "GeneB", "position": 40, "color": "#188038"},
+          {"name": "GeneC", "position": 60, "color": "#f9ab00"},
+          {"name": "GeneD", "position": 80, "color": "#d93025"}
+        ]'
+        crossoverPoints='[
+          {"position": 50, "label": "重组点1"}
+        ]'>
+      </crossover-map>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 2: 多个交叉互换点</div>
+      <crossover-map
+        chromosomeLength="150"
+        genes='[
+          {"name": "MYC", "position": 10},
+          {"name": "P53", "position": 30},
+          {"name": "BCL2", "position": 50},
+          {"name": "TP53", "position": 70},
+          {"name": "RB1", "position": 90},
+          {"name": "EGFR", "position": 110},
+          {"name": "KRAS", "position": 130}
+        ]'
+        crossoverPoints='[
+          {"position": 25, "label": "重组点A"},
+          {"position": 60, "label": "重组点B"},
+          {"position": 100, "label": "重组点C"}
+        ]'>
+      </crossover-map>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 3: 密集基因分布</div>
+      <crossover-map
+        chromosomeLength="80"
+        genes='[
+          {"name": "Gene1", "position": 5, "color": "#7c3aed"},
+          {"name": "Gene2", "position": 10},
+          {"name": "Gene3", "position": 15},
+          {"name": "Gene4", "position": 20},
+          {"name": "Gene5", "position": 25},
+          {"name": "Gene6", "position": 30},
+          {"name": "Gene7", "position": 35},
+          {"name": "Gene8", "position": 40},
+          {"name": "Gene9", "position": 45},
+          {"name": "Gene10", "position": 50}
+        ]'
+        crossoverPoints='[
+          {"position": 30, "label": "热点区域"}
+        ]'>
+      </crossover-map>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 4: 无交叉点</div>
+      <crossover-map
+        chromosomeLength="120"
+        genes='[
+          {"name": "BRCA1", "position": 17, "color": "#e53935"},
+          {"name": "BRCA2", "position": 38},
+          {"name": "TP53", "position": 59},
+          {"name": "ATM", "position": 81},
+          {"name": "CHEK2", "position": 102}
+        ]'
+        crossoverPoints='[]'>
+      </crossover-map>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 5: 空数据</div>
+      <crossover-map
+        chromosomeLength="100"
+        genes='[]'
+        crossoverPoints='[]'>
+      </crossover-map>
+    </div>
+  </div>
+
+  <script type="module" src="/src/components/genetics/crossover-map.ts"></script>
+</body>
+</html>

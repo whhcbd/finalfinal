@@ -1,0 +1,26 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "punnett_square"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "punnett_square",
+          "component": {
+            "PunnettSquare": {
+              "parent1Genotype": "Aa",
+              "parent2Genotype": "aa",
+              "trait": "眼睛颜色",
+              "showPhenotype": true
+            }
+          }
+        }
+      ]
+    }
+  }
+]

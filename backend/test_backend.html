@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backend API Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5f;
+        }
+        .container {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .test-button {
+            background-color: #6366f1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background-color: #475569;
+        }
+        .response {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .success {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .loading {
+            color: #6c757d;
+            font-style: italic;
+        }
+        .intent-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .intent-punnett_square { background-color: #e3f2fd; color: white; }
+        .intent-dna_structure { background-color: #6610f2; color: white; }
+        .intent-phenotype_distribution { background-color: #0d6efd; color: white; }
+        .intent-gene_expression { background-color: #f59e0b; color: white; }
+        .intent-pedigree_chart { background-color: #dc3545; color: white; }
+        .intent-cross_over_map { background-color: #6610f2; color: white; }
+        .intent-quiz { background-color: #198754; color: white; }
+        .intent-video { background-color: #0dcaf0; color: white; }
+        .intent-general { background-color: #6c757d; color: white; }
+        .intent-greeting { background-color: #adb5bd; color: white; }
+    </style>
+</head>
+<body>
+    <h1>后端API测试 - 意图识别与A2UI组件</h1>
+    
+    <div class="container">
+        <h2>测试用例</h2>
+        <div id="buttons"></div>
+        <div id="response" class="response"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        
+        const testCases = [
+            { input: "孟德尔杂交后代比例是多少？", expected: "punnett_square", description: "孟德尔方格图" },
+            { input: "DNA的双螺旋结构是怎样的？", expected: "dna_structure", description: "DNA结构" },
+            { input: "群体的表型分布情况如何？", expected: "phenotype_distribution", description: "表型分布" },
+            { input: "基因表达水平是怎么变化的？", expected: "gene_expression", description: "基因表达" },
+            { input: "这个遗传病的家系图怎么画？", expected: "pedigree_chart", description: "家系图" },
+            { input: "减数分裂中的交叉互换现象是什么？", expected: "cross_over_map", description: "交叉互换图谱" },
+            { input: "给我出一些遗传学的测验题目", expected: "quiz", description: "测验" },
+            { input: "我想看视频学习DNA结构", expected: "video", description: "视频" },
+            { input: "基因型和表型的区别是什么？", expected: "general", description: "一般性问题" },
+            { input: "你好", expected: "greeting", description: "问候语" }
+        ];
+        
+        const componentNames = {
+            "punnett_square": "PunnettSquare (孟德尔方格图)",
+            "dna_structure": "DNAStructure (DNA双螺旋结构)",
+            "phenotype_distribution": "PhenotypeDistribution (表型分布柱状图)",
+            "gene_expression": "GeneExpression (基因表达水平)",
+            "pedigree_chart": "PedigreeChart (家系图)",
+            "cross_over_map": "CrossOverMap (交叉互换图谱)",
+            "quiz": "Quiz (测验)",
+            "video": "Video (视频)",
+            "general": "Flashcard (闪卡)",
+            "greeting": "无组件（纯文本）"
+        };
+        
+        function renderButtons() {
+            const buttonsDiv = document.getElementById('buttons');
+            buttonsDiv.innerHTML = testCases.map((tc, index) => 
+                `<button class="test-button" onclick="runTest(${index})">
+                    ${index + 1}. ${tc.description}
+                </button>`
+            ).join('');
+        }
+        
+        async function runTest(index) {
+            const testCase = testCases[index];
+            const responseDiv = document.getElementById('response');
+            
+            responseDiv.innerHTML = `<div class="loading">正在测试: ${testCase.description}</div>`;
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/chat`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        message: testCase.input,
+                        use_ui: true,
+                        session_id: 'test_session'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    responseDiv.innerHTML = `<div class="error">请求失败 (${response.status}): ${errorText}</div>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                const actualIntent = data.intent || '';
+                const keywords = data.keywords || '';
+                const hasA2UI = !!data.a2ui;
+                const isCorrect = actualIntent === testCase.expected;
+                
+                const intentClass = `intent-${actualIntent}`;
+                const statusClass = isCorrect ? 'success' : 'error';
+                
+                let html = `
+                    <div><strong>测试 ${index + 1}: ${testCase.description}</strong></div>
+                    <div>输入: ${testCase.input}</div>
+                    <div>预期意图: <span class="intent-badge ${testCase.expected}">${testCase.expected}</span> - ${componentNames[testCase.expected]}</div>
+                    <div>实际意图: <span class="intent-badge ${actualIntent}">${actualIntent}</span> - ${componentNames[actualIntent]}</div>
+                    <div>关键词: ${keywords}</div>
+                    <div>包含A2UI: ${hasA2UI ? '是' : '否'}</div>
+                    <div class="${statusClass}">匹配状态: ${isCorrect ? '✅ 正确' : '❌ 错误'}</div>
+                `;
+                
+                if (hasA2UI && data.a2ui) {
+                    html += `<div>A2UI内容: <pre style="background:#f0f0f0;padding:10px;border-radius:4px;overflow-x:auto;">${JSON.stringify(data.a2ui, null, 2)}</pre></div>`;
+                }
+                
+                responseDiv.innerHTML = html;
+                
+            } catch (error) {
+                responseDiv.innerHTML = `<div class="error">请求异常: ${error.message}</div>`;
+            }
+        }
+        
+        renderButtons();
+    </script>
+</body>
+</html>

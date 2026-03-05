@@ -1,0 +1,49 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "pedigree_chart"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "pedigree_chart",
+          "component": {
+            "PedigreeChart": {
+              "generations": [
+                {
+                  "individuals": [
+                    { "id": "1", "gender": "male", "affected": false },
+                    { "id": "2", "gender": "female", "affected": false }
+                  ]
+                },
+                {
+                  "individuals": [
+                    {
+                      "id": "3",
+                      "gender": "male",
+                      "affected": true,
+                      "parents": ["1", "2"]
+                    },
+                    {
+                      "id": "4",
+                      "gender": "female",
+                      "affected": false,
+                      "parents": ["1", "2"]
+                    }
+                  ]
+                }
+              ],
+              "diseaseName": "遗传病",
+              "inheritancePattern": "常染色体隐性",
+              "showLegend": true
+            }
+          }
+        }
+      ]
+    }
+  }
+]

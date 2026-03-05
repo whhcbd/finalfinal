@@ -1,0 +1,25 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "gene_expression"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "gene_expression",
+          "component": {
+            "GeneExpression": {
+              "genes": ["基因A"],
+              "expressionLevels": [[100], [150], [80]],
+              "conditions": ["正常条件", "高温", "低温"]
+            }
+          }
+        }
+      ]
+    }
+  }
+]

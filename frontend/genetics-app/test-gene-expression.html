@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gene Expression Test</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Gene Expression 组件测试</h1>
+
+    <div class="test-case">
+      <div class="test-title">测试 1: 基础基因表达数据</div>
+      <gene-expression
+        genes='[
+          {"gene": "GeneA", "expressionLevels": [10, 25, 30, 20, 15]},
+          {"gene": "GeneB", "expressionLevels": [5, 15, 20, 18, 12]},
+          {"gene": "GeneC", "expressionLevels": [8, 12, 25, 22, 10]}
+        ]'
+        conditions='[
+          {"name": "对照", "color": "#1a73e8"},
+          {"name": "处理1", "color": "#188038"},
+          {"name": "处理2", "color": "#f9ab00"},
+          {"name": "处理3", "color": "#d93025"},
+          {"name": "处理4", "color": "#7c3aed"}
+        ]'>
+      </gene-expression>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 2: 不同条件下的表达</div>
+      <gene-expression
+        genes='[
+          {"gene": "胰岛素基因", "expressionLevels": [100, 80, 60, 40, 20]},
+          {"gene": "胰高血糖素基因", "expressionLevels": [20, 40, 60, 80, 100]}
+        ]'
+        conditions='[
+          {"name": "空腹"},
+          {"name": "餐后1h"},
+          {"name": "餐后2h"},
+          {"name": "餐后3h"},
+          {"name": "餐后4h"}
+        ]'>
+      </gene-expression>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 3: 时间序列表达</div>
+      <gene-expression
+        genes='[
+          {"gene": "MYC", "expressionLevels": [50, 60, 55, 70, 65, 80, 75]},
+          {"gene": "P53", "expressionLevels": [30, 35, 40, 38, 42, 45, 40]},
+          {"gene": "BCL2", "expressionLevels": [20, 25, 22, 28, 30, 32, 28]}
+        ]'
+        conditions='[
+          {"name": "0h"},
+          {"name": "6h"},
+          {"name": "12h"},
+          {"name": "18h"},
+          {"name": "24h"},
+          {"name": "36h"},
+          {"name": "48h"}
+        ]'>
+      </gene-expression>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 4: 空数据</div>
+      <gene-expression
+        genes='[]'
+        conditions='[]'>
+      </gene-expression>
+    </div>
+  </div>
+
+  <script type="module" src="/src/components/genetics/gene-expression.ts"></script>
+</body>
+</html>

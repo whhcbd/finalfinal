@@ -1,0 +1,40 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "general_component"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "general_component",
+          "component": {
+            "Container": {
+              "children": [
+                {
+                  "id": "general_header",
+                  "component": {
+                    "Header": {
+                      "text": "💡 遗传学概念解析"
+                    }
+                  }
+                },
+                {
+                  "id": "general_text",
+                  "component": {
+                    "Text": {
+                      "text": "这是一个通用的遗传学概念解释模板。当用户询问定义、基本概念或需要详细解释时使用此模板。\n\n模板特点：\n- 使用 Container 作为根组件\n- 包含 Header 组件显示主题\n- 使用 Text 组件提供详细解释\n- 结构清晰，易于阅读\n\n适用于以下类型的问题：\n- 基因定义和功能\n- 显性和隐性性状的解释\n- 孟德尔遗传定律概述\n- 基本遗传学术语解释"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+]

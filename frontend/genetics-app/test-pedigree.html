@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedigree Chart Test</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+      margin: 0;
+    }
+    .test-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .test-case {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .test-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: #202124;
+    }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>Pedigree Chart 组件测试</h1>
+
+    <div class="test-case">
+      <div class="test-title">测试 1: 常染色体显性遗传（血友病）</div>
+      <pedigree-chart
+        trait="血友病"
+        generations='[
+          {
+            "individuals": [
+              {
+                "id": "I-1",
+                "gender": "male",
+                "phenotype": "normal",
+                "generation": 0
+              },
+              {
+                "id": "I-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 0
+              }
+            ]
+          },
+          {
+            "individuals": [
+              {
+                "id": "II-1",
+                "gender": "female",
+                "phenotype": "normal",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-3",
+                "gender": "female",
+                "phenotype": "normal",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-4",
+                "gender": "male",
+                "phenotype": "affected",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              }
+            ]
+          },
+          {
+            "individuals": [
+              {
+                "id": "III-1",
+                "gender": "male",
+                "phenotype": "normal",
+                "generation": 2,
+                "parents": {"father": "II-4", "mother": "II-1"}
+              },
+              {
+                "id": "III-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 2,
+                "parents": {"father": "II-4", "mother": "II-1"}
+              }
+            ]
+          }
+        ]'>
+      </pedigree-chart>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 2: 常染色体隐性遗传（白化病）</div>
+      <pedigree-chart
+        trait="白化病"
+        generations='[
+          {
+            "individuals": [
+              {
+                "id": "I-1",
+                "gender": "male",
+                "phenotype": "normal",
+                "generation": 0
+              },
+              {
+                "id": "I-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 0
+              }
+            ]
+          },
+          {
+            "individuals": [
+              {
+                "id": "II-1",
+                "gender": "male",
+                "phenotype": "affected",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-2",
+                "gender": "female",
+                "phenotype": "normal",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              }
+            ]
+          }
+        ]'>
+      </pedigree-chart>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 3: X连锁隐性遗传（色盲）</div>
+      <pedigree-chart
+        trait="色盲"
+        generations='[
+          {
+            "individuals": [
+              {
+                "id": "I-1",
+                "gender": "male",
+                "phenotype": "affected",
+                "generation": 0
+              },
+              {
+                "id": "I-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 0
+              }
+            ]
+          },
+          {
+            "individuals": [
+              {
+                "id": "II-1",
+                "gender": "male",
+                "phenotype": "affected",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              },
+              {
+                "id": "II-3",
+                "gender": "male",
+                "phenotype": "normal",
+                "generation": 1,
+                "parents": {"father": "I-1", "mother": "I-2"}
+              }
+            ]
+          },
+          {
+            "individuals": [
+              {
+                "id": "III-1",
+                "gender": "male",
+                "phenotype": "affected",
+                "generation": 2,
+                "parents": {"father": "II-1", "mother": "II-2"}
+              },
+              {
+                "id": "III-2",
+                "gender": "female",
+                "phenotype": "carrier",
+                "generation": 2,
+                "parents": {"father": "II-1", "mother": "II-2"}
+              },
+              {
+                "id": "III-3",
+                "gender": "female",
+                "phenotype": "normal",
+                "generation": 2,
+                "parents": {"father": "II-3", "mother": "II-2"}
+              }
+            ]
+          }
+        ]'>
+      </pedigree-chart>
+    </div>
+
+    <div class="test-case">
+      <div class="test-title">测试 4: 空数据</div>
+      <pedigree-chart
+        trait="空测试"
+        generations='[]'>
+      </pedigree-chart>
+    </div>
+  </div>
+
+  <script type="module" src="/src/components/genetics/pedigree-chart.ts"></script>
+</body>
+</html>

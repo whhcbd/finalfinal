@@ -1,0 +1,25 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "dna_structure"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "dna_structure",
+          "component": {
+            "DNAStructure": {
+              "sequence": "ATGCGATCG",
+              "showLabels": true,
+              "highlightRegions": []
+            }
+          }
+        }
+      ]
+    }
+  }
+]
