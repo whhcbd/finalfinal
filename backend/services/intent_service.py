@@ -25,9 +25,10 @@ class IntentService:
 ## INTENT CLASSIFICATION（严格按照以下规则分类）
 
 **punnett_square**：当用户提到以下词汇时
-- 杂交、后代、基因型比例、表型比例、孟德尔、F1、F2
-- Aa、aa、AA、测交、自交
-- "后代是什么"、"杂交结果"、"遗传比例"、"棋盘"
+- 杂交、后代基因型、测交、自交、配子
+- Aa、aa、AA、AaBb、aabb等具体基因型
+- "杂交会产生"、"后代基因型"、"配子组合"、"棋盘"
+- 注意：如果问的是"比例"、"分布"、"F2代表型"，应该是phenotype_distribution
 
 **dna_structure**：当用户提到以下词汇时
 - DNA、双螺旋、碱基、核苷酸、碱基配对、磷酸
@@ -37,6 +38,8 @@ class IntentService:
 **phenotype_distribution**：当用户提到以下词汇时
 - 表型、表现型、分布、比例、统计、群体
 - "显性和隐性的比例"、"表型分布"、"群体中"
+- F2代、F1代、后代比例、紫色花、白色花、3:1、9:3:3:1
+- "比例是多少"、"分布情况"、"表型统计"
 
 **gene_expression**：当用户提到以下词汇时
 - 基因表达、转录、翻译、RNA、蛋白质、调控、启动子
@@ -48,8 +51,11 @@ class IntentService:
 - 系谱图、家系图、遗传模式、常染色体、X连锁
 
 **cross_over_map**：当用户提到以下词汇时
-- 交叉互换、连锁、重组、交换、减数分裂
-- 基因连锁、交叉图谱、重组频率
+- 交叉互换、连锁、重组、交换、减数分裂、交叉点
+- 基因连锁、交叉图谱、重组频率、染色体交换
+- "交叉互换位置"、"基因位置"、"染色体位置"、"交叉发生"
+- "基因A和基因B"、"两个基因"、"基因间"
+- 注意：只要提到"交叉"+"基因"或"交叉"+"染色体"，就应该是 cross_over_map
 
 **quiz**：当用户提到以下词汇时
 - 测验、考试、测试、考题、题目
@@ -93,6 +99,9 @@ class IntentService:
 用户: "群体中显性和隐性的比例"
 输出: {"intent": "phenotype_distribution", "keywords": "phenotype, distribution, ratio, population"}
 
+用户: "F2代中紫色花和白色花的比例是多少"
+输出: {"intent": "phenotype_distribution", "keywords": "F2, phenotype, ratio, purple flower, white flower, distribution"}
+
 用户: "什么是转录和翻译"
 输出: {"intent": "gene_expression", "keywords": "transcription, translation, RNA, protein, expression"}
 
@@ -101,6 +110,9 @@ class IntentService:
 
 用户: "交叉互换发生在什么时期"
 输出: {"intent": "cross_over_map", "keywords": "crossover, linkage, meiosis, recombination"}
+
+用户: "基因A和基因B的交叉互换位置在哪里"
+输出: {"intent": "cross_over_map", "keywords": "gene, crossover, linkage, chromosome, position"}
 
 用户: "测试我对孟德尔遗传定律的理解"
 输出: {"intent": "quiz", "keywords": "Mendel, genetics, inheritance, dominant, recessive"}
@@ -146,7 +158,7 @@ class IntentService:
             'nucleotide': r'(?:(?:核苷酸)|nucleotide)',
             'pedigree': r'(?:(?:家系)|pedigree)',
             'linkage': r'(?:(?:连锁)|linkage)',
-            'crossover': r'(?:(?:交叉)|(?:互换)|crossover)',
+            'crossover': r'(?:(?:交叉互换)|(?:交叉)|(?:互换)|(?:交换)|(?:交叉点)|(?:重组)|crossover|recombination)',
             'mitosis': r'(?:(?:有丝分裂)|mitosis)',
             'meiosis': r'(?:(?:减数分裂)|meiosis)',
             'gamete': r'(?:(?:配子)|gamete)',
@@ -192,18 +204,33 @@ class IntentService:
             {"role": "user", "content": user_message}
         ]
 
+        response_text = ""
         try:
             response_text = await self.glm_service.call_llm(
                 messages=messages,
-                temperature=0.3,
-                max_tokens=500
+                temperature=0.1,  # 降低温度，让输出更确定
+                max_tokens=1000  # 增加 token 限制，确保完整输出
             )
 
-            result = json.loads(response_text)
+            logger.info(f"Intent recognition raw response: {response_text[:200]}")
+
+            # 清理 markdown 代码块
+            cleaned_text = response_text.strip()
+            if cleaned_text.startswith("```json"):
+                cleaned_text = cleaned_text[7:]  # 移除 ```json
+            if cleaned_text.startswith("```"):
+                cleaned_text = cleaned_text[3:]  # 移除 ```
+            if cleaned_text.endswith("```"):
+                cleaned_text = cleaned_text[:-3]  # 移除结尾的 ```
+            cleaned_text = cleaned_text.strip()
+
+            result = json.loads(cleaned_text)
 
             intent = result.get("intent", "general")
             keywords = result.get("keywords", "").strip()
-            
+
+            logger.info(f"Identified intent: {intent}, keywords: {keywords}")
+
             if not keywords:
                 logger.warning(f"LLM returned empty keywords, using fallback extraction")
                 keywords = self._extract_keywords_fallback(user_message)
@@ -216,5 +243,5 @@ class IntentService:
             logger.error(f"Failed to parse intent JSON: {e}, response: {response_text}")
             return IntentResult(intent="general", keywords=self._extract_keywords_fallback(user_message))
         except Exception as e:
-            logger.error(f"Error identifying intent: {e}")
+            logger.error(f"Error identifying intent: {e}, response: {response_text}")
             return IntentResult(intent="general", keywords=self._extract_keywords_fallback(user_message))
