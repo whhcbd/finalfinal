@@ -3,7 +3,8 @@
  DNA双螺旋结构组件 - 用于展示DNA序列和碱基配对
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -14,12 +15,64 @@ export interface BasePair {
 }
 
 @customElement('dna-structure')
-export class DNAStructure extends LitElement {
-  @property({ type: String }) sequence: string = '';
-  @property({ type: Boolean }) showLabels: boolean = true;
-  @property({ type: Array }) highlightRegions: Array<{ start: number; end: number; label: string }> = [];
+export class DNAStructure extends Root {
+  private _sequence: string = '';
+  private _showLabels: boolean = true;
+  private _highlightRegions: Array<{ start: number; end: number; label: string }> = [];
 
-  static styles = css`
+  @property({ type: String })
+  get sequence(): string {
+    return this._sequence;
+  }
+  set sequence(value: any) {
+    const oldValue = this._sequence;
+    this._sequence = this.unwrapValue(value, 'string');
+    this.requestUpdate('sequence', oldValue);
+  }
+
+  @property({ type: Boolean })
+  get showLabels(): boolean {
+    return this._showLabels;
+  }
+  set showLabels(value: any) {
+    const oldValue = this._showLabels;
+    this._showLabels = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('showLabels', oldValue);
+  }
+
+  @property({ type: Array })
+  get highlightRegions(): Array<{ start: number; end: number; label: string }> {
+    return this._highlightRegions;
+  }
+  set highlightRegions(value: any) {
+    const oldValue = this._highlightRegions;
+    this._highlightRegions = this.unwrapValue(value, 'array');
+    this.requestUpdate('highlightRegions', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'number' ? 0 :
+             type === 'array' ? [] : null;
+    }
+
+    // Handle A2UI Proxy-wrapped values
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if ('literalString' in value) return value.literalString;
+      if ('literalBoolean' in value) return value.literalBoolean;
+      if ('literalNumber' in value) return value.literalNumber;
+      if ('literalArray' in value) return value.literalArray;
+    }
+
+    return value;
+  }
+
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -264,7 +317,7 @@ export class DNAStructure extends LitElement {
       color: #5f6368;
       font-style: italic;
     }
-  `;
+  `];
 
   private getBasePairs(): BasePair[] {
     if (!this.sequence) return [];
@@ -272,10 +325,11 @@ export class DNAStructure extends LitElement {
     const bases: BasePair[] = [];
     const upperSequence = this.sequence.toUpperCase();
 
-    for (let i = 0; i < upperSequence.length; i += 2) {
-      const base1 = upperSequence[i] || '';
-      const base2 = upperSequence[i + 1] || '';
-      
+    // 为每个碱基生成其互补碱基
+    for (let i = 0; i < upperSequence.length; i++) {
+      const base1 = upperSequence[i];
+      const base2 = this.getComplementaryBase(base1);
+
       bases.push({
         base1,
         base2,
@@ -287,7 +341,7 @@ export class DNAStructure extends LitElement {
   }
 
   private isHighlighted(index: number): boolean {
-    return this.highlightRegions.some(region => 
+    return this.highlightRegions.some(region =>
       index >= region.start && index < region.end
     );
   }
@@ -309,14 +363,14 @@ export class DNAStructure extends LitElement {
   private validateSequence(): boolean {
     if (!this.sequence) return true;
     const upperSequence = this.sequence.toUpperCase();
-    
+
     for (const char of upperSequence) {
       if (!this.isValidBase(char)) {
         return false;
       }
     }
-    
-    return upperSequence.length % 2 === 0;
+
+    return true; // 移除长度必须是偶数的限制
   }
 
   private getSequenceStats(): { baseCounts: Record<string, number>; length: number; gcContent: number } {
@@ -325,9 +379,8 @@ export class DNAStructure extends LitElement {
 
     for (const base of upperSequence) {
       if (baseCounts[base] !== undefined) {
-        baseCounts[base] = 0;
+        baseCounts[base]++;
       }
-      baseCounts[base]++;
     }
 
     const length = upperSequence.length;
@@ -343,8 +396,8 @@ export class DNAStructure extends LitElement {
     if (!isValid || this.sequence.length === 0) {
       return html`
         <div class="empty">
-          ${this.sequence.length === 0 
-            ? '请输入DNA序列（例如：ATCGATCG）' 
+          ${this.sequence.length === 0
+            ? '请输入DNA序列（例如：ATCGATCG）'
             : 'DNA序列包含无效的碱基。请只使用 A、T、C、G。'}
         </div>
       `;
@@ -365,7 +418,7 @@ export class DNAStructure extends LitElement {
                 <div
                   class="base ${pair.base1} ${this.isHighlighted(index) ? 'highlight' : ''}"
                   @click=${() => this.handleBaseClick(pair.base1, index)}
-                  aria-label="${pair.base1} - 腺嘧啶"
+                  aria-label="${pair.base1}"
                 >
                   ${pair.base1}
                 </div>
@@ -375,25 +428,28 @@ export class DNAStructure extends LitElement {
           </div>
 
           <div class="strand right">
-            ${map(basePairs, (pair, index) => html`
+            ${map([...basePairs].reverse(), (pair, index) => {
+              const originalIndex = basePairs.length - 1 - index;
+              return html`
               <div class="base-pair">
-                ${this.showLabels ? html`<div class="label">${index + 1}</div>` : ''}
+                ${this.showLabels ? html`<div class="label">${originalIndex + 1}</div>` : ''}
                 <div
-                  class="base ${pair.base2} ${this.isHighlighted(index) ? 'highlight' : ''}"
-                  @click=${() => this.handleBaseClick(pair.base2, index)}
-                  aria-label="${pair.base2} - 嘌呤或胞嘧啶"
+                  class="base ${pair.base2} ${this.isHighlighted(originalIndex) ? 'highlight' : ''}"
+                  @click=${() => this.handleBaseClick(pair.base2, originalIndex)}
+                  aria-label="${pair.base2}"
                 >
                   ${pair.base2}
                 </div>
                 <div class="bond bottom"></div>
               </div>
-            `)}
+            `})}
           </div>
         </div>
 
         <div class="sequence-info">
           <div class="sequence-text">
-            <strong>序列：</strong> ${this.sequence.toUpperCase()}
+            <strong>原始链 (5'→3')：</strong> ${this.sequence.toUpperCase()}<br>
+            <strong>互补链 (3'→5')：</strong> ${basePairs.map(p => p.base2).reverse().join('')}
           </div>
         </div>
 
@@ -404,7 +460,7 @@ export class DNAStructure extends LitElement {
           </div>
           <div class="stat-item">
             <div class="stat-label">碱基对</div>
-            <div class="stat-value">${stats.length / 2}</div>
+            <div class="stat-value">${stats.length}</div>
           </div>
           <div class="stat-item">
             <div class="stat-label">GC 含量</div>
@@ -417,8 +473,8 @@ export class DNAStructure extends LitElement {
             <div class="legend-title">碱基配对规则</div>
             <div class="legend-grid">
               ${map([
-                { base: 'A', label: '腺嘌啶', pair: 'T', pairLabel: '胸腺嘧啶' },
-                { base: 'T', label: '胸腺嘧啶', pair: 'A', pairLabel: '腺嘌啶' },
+                { base: 'A', label: '腺嘌呤', pair: 'T', pairLabel: '胸腺嘧啶' },
+                { base: 'T', label: '胸腺嘧啶', pair: 'A', pairLabel: '腺嘌呤' },
                 { base: 'C', label: '胞嘧啶', pair: 'G', pairLabel: '鸟嘌呤' },
                 { base: 'G', label: '鸟嘌呤', pair: 'C', pairLabel: '胞嘧啶' }
               ], (item) => html`

@@ -3,7 +3,8 @@
  交叉互换图谱组件 - 用于展示减数分裂中的交叉互换现象
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -19,10 +20,60 @@ export interface CrossoverPoint {
 }
 
 @customElement('crossover-map')
-export class CrossOverMap extends LitElement {
-  @property({ type: Number }) chromosomeLength: number = 100;
-  @property({ type: Array }) genes: Gene[] = [];
-  @property({ type: Array }) crossoverPoints: CrossoverPoint[] = [];
+export class CrossOverMap extends Root {
+  private _chromosomeLength: number = 100;
+  private _genes: Gene[] = [];
+  private _crossoverPoints: CrossoverPoint[] = [];
+
+  @property({ type: Number })
+  get chromosomeLength(): number {
+    return this._chromosomeLength;
+  }
+  set chromosomeLength(value: any) {
+    const oldValue = this._chromosomeLength;
+    this._chromosomeLength = this.unwrapValue(value, 'number');
+    this.requestUpdate('chromosomeLength', oldValue);
+  }
+
+  @property({ type: Array })
+  get genes(): Gene[] {
+    return this._genes;
+  }
+  set genes(value: any) {
+    const oldValue = this._genes;
+    this._genes = this.unwrapValue(value, 'array');
+    this.requestUpdate('genes', oldValue);
+  }
+
+  @property({ type: Array })
+  get crossoverPoints(): CrossoverPoint[] {
+    return this._crossoverPoints;
+  }
+  set crossoverPoints(value: any) {
+    const oldValue = this._crossoverPoints;
+    this._crossoverPoints = this.unwrapValue(value, 'array');
+    this.requestUpdate('crossoverPoints', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'number' ? 0 :
+             type === 'array' ? [] : null;
+    }
+
+    // Handle A2UI Proxy-wrapped values
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if ('literalString' in value) return value.literalString;
+      if ('literalBoolean' in value) return value.literalBoolean;
+      if ('literalNumber' in value) return value.literalNumber;
+      if ('literalArray' in value) return value.literalArray;
+    }
+
+    return value;
+  }
 
   private static readonly DEFAULT_COLORS = [
     '#1a73e8',
@@ -51,7 +102,9 @@ export class CrossOverMap extends LitElement {
     return this.crossoverPoints.some(cp => cp.position === position);
   }
 
-  static styles = css`
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -190,10 +243,10 @@ export class CrossOverMap extends LitElement {
 
     @keyframes pulse {
       0%, 100% {
-        transform: translate(-50%, -50%) scale(1);
+        transform: scale(1);
       }
       50% {
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: scale(1.1);
       }
     }
 
@@ -317,7 +370,7 @@ export class CrossOverMap extends LitElement {
       color: #5f6368;
       font-style: italic;
     }
-  `;
+  `];
 
   override render() {
     if (this.genes.length === 0) {

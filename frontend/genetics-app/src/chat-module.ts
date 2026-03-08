@@ -4,6 +4,8 @@ import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import * as marked from 'marked';
 import * as katex from 'katex';
+import { ChatOrchestrator } from './chat-orchestrator';
+import { A2UIRenderer } from './a2ui-renderer';
 
 type MessageRole = 'user' | 'assistant' | 'system';
 
@@ -52,6 +54,7 @@ export class ChatModule extends LitElement {
   #eventSource: EventSource | null = null;
   private isProcessingNewMessage = false;
   private typewriterSpeed = 30;
+  private orchestrator: ChatOrchestrator | null = null;
 
   static styles = css`
     :host {
@@ -632,6 +635,10 @@ export class ChatModule extends LitElement {
     super.connectedCallback();
     this.loadConversations();
     this.createNewConversation();
+
+    // 初始化 ChatOrchestrator
+    const renderer = new A2UIRenderer();
+    this.orchestrator = new ChatOrchestrator(renderer);
   }
 
   disconnectedCallback() {
@@ -750,39 +757,37 @@ export class ChatModule extends LitElement {
     conv.messages.push(assistantMessage);
     this.requestUpdate();
 
+    // 等待 DOM 更新
+    await this.updateComplete;
+
     try {
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          message: userMessage,
-          session_id: this.currentConversationId,
-          use_ui: true,
-          history: this.getConversationHistory()
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-
-      const data = await response.json();
-
       this.setTypingIndicator(assistantMessage, false);
 
-      if (data.error) {
-        console.error('Server error:', data.error);
-        this.showError(assistantMessage, '服务器错误，请稍后重试');
-      } else {
-        if (data.text) {
-          await this.typeWriterEffect(assistantMessage, data.text);
-        }
+      // 使用 ChatOrchestrator 处理消息
+      if (this.orchestrator) {
+        // 调用 orchestrator 获取响应数据
+        const response = await this.orchestrator.processMessage(
+          userMessage,
+          this.currentConversationId || ''
+        );
 
-        if (data.a2ui && data.a2ui.length > 0) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          this.renderA2UI(assistantMessage, data.a2ui);
+        // 更新消息内容（通过 Lit 的响应式系统）
+        assistantMessage.content = response.text;
+        this.requestUpdate();
+
+        // 等待 DOM 更新后再渲染 A2UI
+        await this.updateComplete;
+
+        // 如果有 A2UI 数据，渲染它
+        if (response.a2ui && response.a2ui.length > 0) {
+          const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${assistantMessage.id}"]`);
+          if (messageElement) {
+            const a2uiContainer = messageElement.querySelector('.a2ui-container');
+            if (a2uiContainer) {
+              this.orchestrator.renderA2UI(a2uiContainer as HTMLElement, response.a2ui);
+              assistantMessage.a2uiData = response.a2ui; // 保存 A2UI 数据
+            }
+          }
         }
       }
 
@@ -888,52 +893,15 @@ export class ChatModule extends LitElement {
   }
 
   private renderA2UI(message: ChatMessage, a2uiData: any[]): void {
-    if (!message.a2uiLoading) {
-      message.a2uiLoading = true;
-      this.requestUpdate();
-    }
-
-    setTimeout(() => {
-      message.a2uiData = a2uiData;
-      message.a2uiLoading = false;
-      
-      const a2uiContainer = this.shadowRoot?.querySelector(`.message[data-id="${message.id}"] .a2ui-container`);
-      const managerComponent = a2uiContainer?.querySelector('a2ui-manager-component') as any;
-      const isFallback = managerComponent?.manager?.getDataModelValue('_fallback') === true;
-      message.isFallback = isFallback;
-      
-      this.requestUpdate();
-
-      setTimeout(() => {
-        this.initializeA2UIComponents(message, a2uiData);
-        
-        if (isFallback) {
-          this.showFallbackNotice(message);
-        }
-      }, 100);
-    }, 500);
+    // 这个方法现在已经被 ChatOrchestrator 替代
+    // 保留空实现以避免破坏现有代码
+    console.warn('[ChatModule] renderA2UI is deprecated, use ChatOrchestrator instead');
   }
 
   private initializeA2UIComponents(message: ChatMessage, a2uiData: any[]): void {
-    const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${message.id}"]`);
-    if (!messageElement) return;
-
-    const a2uiContainer = messageElement.querySelector('.a2ui-container');
-    if (!a2uiContainer) return;
-
-    const managerComponent = a2uiContainer.querySelector('a2ui-manager-component') as any;
-
-    if (managerComponent && managerComponent.manager) {
-      const manager = managerComponent.manager;
-
-      for (const a2uiMessage of a2uiData) {
-        manager.handleMessage(a2uiMessage);
-      }
-
-      setTimeout(() => {
-        managerComponent.requestUpdate();
-      }, 50);
-    }
+    // 这个方法现在已经被 ChatOrchestrator 替代
+    // 保留空实现以避免破坏现有代码
+    console.warn('[ChatModule] initializeA2UIComponents is deprecated, use ChatOrchestrator instead');
   }
 
   private async copyMessage(message: ChatMessage) {
@@ -1018,10 +986,8 @@ export class ChatModule extends LitElement {
                       <span>正在生成学习内容...</span>
                     </div>
                   ` : ''}
-                  ${msg.a2uiData && msg.a2uiData.length > 0 && !msg.a2uiLoading ? html`
-                    <div class="a2ui-container">
-                      <a2ui-manager-component></a2ui-manager-component>
-                    </div>
+                  ${msg.role === 'assistant' ? html`
+                    <div class="a2ui-container"></div>
                   ` : nothing}
                   <div class="message-actions">
                     <button class="copy-btn" @click=${() => this.copyMessage(msg)}>📋 复制</button>

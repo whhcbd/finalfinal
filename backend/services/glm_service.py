@@ -88,6 +88,7 @@ class GLMService:
         temperature: float = 0.7,
         max_tokens: int = 2000,
         top_p: float = 0.9,
+        response_format: Optional[str] = None,
     ) -> str:
         headers = {
             "Content-Type": "application/json",
@@ -102,6 +103,10 @@ class GLMService:
             "top_p": top_p,
             "stream": False,
         }
+
+        # 如果指定了 response_format，添加到请求中
+        if response_format == "json":
+            data["response_format"] = {"type": "json_object"}
 
         try:
             async with httpx.AsyncClient(timeout=60.0) as client:

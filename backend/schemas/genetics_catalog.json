@@ -373,34 +373,43 @@
                           "type": "string",
                           "enum": [
                             "male",
-                            "female",
-                            "unknown"
+                            "female"
                           ],
                           "description": "性别"
                         },
-                        "affected": {
-                          "type": "boolean",
-                          "description": "是否患病"
+                        "phenotype": {
+                          "type": "string",
+                          "enum": [
+                            "normal",
+                            "carrier",
+                            "affected"
+                          ],
+                          "description": "表型状态"
                         },
-                        "carrier": {
-                          "type": "boolean",
-                          "description": "是否为携带者"
+                        "generation": {
+                          "type": "number",
+                          "description": "世代编号（0表示第一代）"
                         },
                         "parents": {
-                          "type": "array",
-                          "description": "父母ID数组",
-                          "items": {
-                            "type": "string"
+                          "type": "object",
+                          "description": "父母信息",
+                          "properties": {
+                            "father": {
+                              "type": "string",
+                              "description": "父亲ID"
+                            },
+                            "mother": {
+                              "type": "string",
+                              "description": "母亲ID"
+                            }
                           }
-                        },
-                        "spouse": {
-                          "type": "string",
-                          "description": "配偶ID"
                         }
-                      }
+                      },
+                      "required": ["id", "gender", "phenotype", "generation"]
                     }
                   }
-                }
+                },
+                "required": ["individuals"]
               }
             },
             "path": {
@@ -408,39 +417,13 @@
             }
           }
         },
-        "diseaseName": {
+        "trait": {
           "type": "object",
-          "description": "疾病名称",
+          "description": "遗传性状或疾病名称",
           "additionalProperties": false,
           "properties": {
             "literalString": {
               "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
-          }
-        },
-        "inheritancePattern": {
-          "type": "object",
-          "description": "遗传模式（如 '常染色体显性', 'X连锁隐性'）",
-          "additionalProperties": false,
-          "properties": {
-            "literalString": {
-              "type": "string"
-            },
-            "path": {
-              "type": "string"
-            }
-          }
-        },
-        "showLegend": {
-          "type": "object",
-          "description": "是否显示图例",
-          "additionalProperties": false,
-          "properties": {
-            "literalBoolean": {
-              "type": "boolean"
             },
             "path": {
               "type": "string"
@@ -449,8 +432,7 @@
         }
       },
       "required": [
-        "generations",
-        "diseaseName"
+        "generations"
       ]
     },
     "CrossOverMap": {

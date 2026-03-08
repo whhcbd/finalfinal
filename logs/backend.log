@@ -1,0 +1,487 @@
+2026-03-08 09:47:44,893 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-08 09:47:44,907 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+INFO:     Started server process [13752]
+INFO:     Waiting for application startup.
+2026-03-08 09:47:45,174 - __main__ - INFO - Starting up Genetics A2UI Backend...
+2026-03-08 09:47:45,175 - __main__ - INFO - GLM Service initialized
+2026-03-08 09:47:45,175 - services.rag_service - WARNING - KNOWLEDGE_BASE_PATH not set, RAG service will be disabled
+2026-03-08 09:47:45,175 - __main__ - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-08 09:47:45,179 - __main__ - INFO - Intent Service initialized
+2026-03-08 09:47:45,179 - __main__ - INFO - Context Service initialized
+2026-03-08 09:47:45,179 - __main__ - INFO - Core services initialized successfully
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+2026-03-08 09:47:49,645 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=»­Ò»¸ö³£È¾É«ÌåÒşĞÔÒÅ´«²¡µÄÈı´ú¼ÒÏµÍ¼..., session_id=None, use_ui=True
+2026-03-08 09:48:10,608 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 09:48:10,609 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "pedigree_chart",
+  "keywords": "pedigree, autosomal, recessive, genetic disease, generations"
+}
+```
+2026-03-08 09:48:10,609 - services.intent_service - INFO - Identified intent: pedigree_chart, keywords: pedigree, autosomal, recessive, genetic disease, generations
+2026-03-08 09:48:10,609 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=pedigree_chart, keywords=pedigree, autosomal, recessive, genetic disease, generations
+2026-03-08 09:48:59,759 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 09:48:59,761 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÏëÏóÒ»¸ö³£È¾É«ÌåÒşĞÔÒÅ´«²¡µÄÈı´ú¼ÒÏµÍ¼¡£ÔÚµÚÒ»´úÖĞ£¬×æ¸¸ºÍ×æÄ¸µÄ±íĞÍ¶¼ÊÇÕı³£µÄ£¬ÕâÒâÎ¶×ÅËûÃÇÎ´±íÏÖ³ö¼²²¡Ö¢×´£¬µ«ËûÃÇ±ØĞëÊÇÖÂ²¡»ùÒòµÄĞ¯´øÕß£¨ÔÓºÏ×Ó£©¡£¼ÙÉèËûÃÇÉúÓıÁËËÄ¸ö×ÓÅ®£¬ÆäÖĞÒ»¸öÊÇ»¼Õß£¨´¿ºÏ×Ó£©£¬ÁíÍâÈı¸ö±íĞÍÕı³££¬µ«ÕâÈı¸öÕı³£µÄĞÖµÜ½ãÃÃÖĞ£¬²¿·ÖÈË¿ÉÄÜÒ²ÊÇĞ¯´øÕß¡£ÕâÖÖ¡°¸¸Ä¸Õı³£È´Éú³ö»¼²¡º¢×Ó¡±µÄÏÖÏóÊÇ³£È¾É«ÌåÒşĞÔÒÅ´«×îÏÔÖøµÄÌØÕ÷¡£
+
+µ½ÁËµÚ¶ş´ú£¬ÎÒÃÇÖØµã¹Ø×¢ÄÇ¸ö»¼²¡¸öÌå£¨aa£©¡£¼ÙÉèÕâ¸ö»¼²¡¸öÌå...
+2026-03-08 09:48:59,761 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 09:49:29,558 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 09:49:29,559 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering": {"surfaceId": "genetics_ui", "root": "main_component"}}, {"surfaceUpdate": {"surfaceId": "genetics_ui", "components": [{"id": "main_component", "component": {"PedigreeChart": {"trait": "³£È¾É«ÌåÒşĞÔÒÅ´«²¡", "generations": [{"individuals": [{"id": "1", "gender": "male", "phenotype": "carrier", "generation": 0}, {"id": "2", "gender": "female", "phenotype": "carrier", "generation": 0}]}, {"individuals": [{"id": "3", "gender": "male", "phenotype": "affected", "generation": 1, "parents": {...
+2026-03-08 09:49:29,559 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 09:49:29,559 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 09:49:29,559 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:59896 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:32:50,976 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=Õ¹Ê¾È¾É«Ìå½»²æ»¥»»Í¼..., session_id=None, use_ui=True
+2026-03-08 10:32:55,081 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:32:55,081 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "cross_over_map",
+  "keywords": "chromosome, crossover, recombination, map"
+}
+```
+2026-03-08 10:32:55,081 - services.intent_service - INFO - Identified intent: cross_over_map, keywords: chromosome, crossover, recombination, map
+2026-03-08 10:32:55,081 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=cross_over_map, keywords=chromosome, crossover, recombination, map
+2026-03-08 10:33:01,336 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:33:01,337 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÔÚ¼õÊı·ÖÁÑµÄÇ°ÆÚI£¬Í¬Ô´È¾É«ÌåÁ½Á½Åä¶ÔĞÎ³ÉÁª»á¸´ºÏÌå£¬´ËÊ±ËÄÌõÈ¾É«µ¥Ìå½ôÃÜÅÅÁĞÔÚÒ»Æğ£¬ÕâÖÖÏÖÏó±»³ÆÎªËÄ·ÖÌå¡£ÔÚÕâ¸ö¹ı³ÌÖĞ£¬·Ç½ãÃÃÈ¾É«µ¥ÌåÖ®¼ä¿ÉÄÜ»á·¢Éú²øÈÆ£¬²¢ÔÚÌØ¶¨µÄÎ»ÖÃ·¢Éú¶ÏÁÑ¡£Ëæºó£¬¶ÏÁÑµÄÈ¾É«µ¥ÌåÆ¬¶Î»áÏà»¥½»»»²¢ÖØĞÂÁ¬½Ó£¬Õâ¸öÎïÀí½»»»µÄ¾ßÌåÎ»ÖÃÔÚÏÔÎ¢¾µÏÂ¹Û²ìÊ±³ÊÏÖÎª½»²æµÄĞÎ×´£¬¼´ÎÒÃÇËùËµµÄ½»²æ¡£
+
+ÕâÖÖ½»²æ»¥»»ÊÇ»ùÒòÖØ×éµÄÖØÒªÎïÀí»ù´¡¡£Í¨¹ı½»»»Æ¬¶Î£¬Ô­±¾Î»ÓÚÍ¬Ò»ÌõÈ¾É«ÌåÉÏµÄ·ÇµÈÎ»»ùÒò±»ÖØĞÂ×éºÏ...
+2026-03-08 10:33:01,337 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:33:09,689 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:33:09,690 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"CrossOverMap":{"chromosomeLength":100,"genes":[{"name":"GeneA","position":20,"color":"#1a73e8"},{"name":"GeneB","position":70,"color":"#188038"}],"crossoverPoints":[{"position":45,"label":"½»²æ»¥»»µã"}]}}}]}}]...
+2026-03-08 10:33:09,690 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:33:09,690 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:33:09,690 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:58655 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:34:09,306 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=GeneAÔÚ²»Í¬×éÖ¯ÖĞµÄ±í´ïË®Æ½..., session_id=None, use_ui=True
+2026-03-08 10:34:15,070 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:34:15,071 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "gene_expression",
+  "keywords": "GeneA, expression level, tissue, gene expression"
+}
+```
+2026-03-08 10:34:15,071 - services.intent_service - INFO - Identified intent: gene_expression, keywords: GeneA, expression level, tissue, gene expression
+2026-03-08 10:34:15,071 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=gene_expression, keywords=GeneA, expression level, tissue, gene expression
+2026-03-08 10:34:22,034 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:34:22,034 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: GeneAÔÚ²»Í¬×éÖ¯ÖĞµÄ±í´ïË®Æ½²îÒìÊÇ»ùÒò±í´ïµ÷¿ØµÄºËĞÄÌåÏÖ£¬·´Ó³ÁËÉúÎïÌåÏ¸°û·Ö»¯ºÍ¹¦ÄÜÌØ»¯µÄ¸´ÔÓĞÔ¡£ÔÚÉúÎïÌåÄÚ£¬²¢·ÇËùÓĞ»ùÒò¶¼ÔÚËùÓĞÏ¸°ûÖĞÊ¼ÖÕ´¦ÓÚ»îÔ¾×´Ì¬£¬GeneA¿ÉÄÜ½öÔÚÌØ¶¨µÄ×éÖ¯»òÏ¸°ûÀàĞÍÖĞ¸ß±í´ï£¬¶øÔÚÆäËû×éÖ¯ÖĞ±£³ÖµÍË®Æ½ÉõÖÁÍêÈ«²»±í´ï¡£ÕâÖÖÊ±¿ÕÌØÒìĞÔ±í´ïÊ¹µÃ¾ßÓĞÏàÍ¬»ùÒò×éµÄÏ¸°ûÄÜ¹»·¢Óı³ÉĞÎÌ¬ºÍ¹¦ÄÜ¸÷ÒìµÄ×éÖ¯£¬ÀıÈçÒÈµºËØ»ùÒòÖ÷ÒªÔÚÒÈÏÙµÄ¦ÂÏ¸°ûÖĞ±í´ï£¬¶øÑªºìµ°°×»ùÒòÔòÖ÷ÒªÔÚºìÏ¸°ûÇ°ÌåÏ¸°ûÖĞ±í...
+2026-03-08 10:34:22,034 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:34:31,045 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:34:31,046 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"GeneExpression":{"genes":[{"gene":"GeneA","expressionLevels":[120,85,200,45,150]}],"conditions":[{"name":"¸ÎÔà","color":"#1a73e8"},{"name":"ĞÄÔà","color":"#d93025"},{"name":"´óÄÔ","color":"#188038"},{"name":"ÉöÔà","color":"#f9ab00"},{"name":"·Î","color":"#9334e6"}]}}}]}}]...
+2026-03-08 10:34:31,046 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:34:31,046 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:34:31,046 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:49671 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:38:10,782 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=F2´úÖĞ×ÏÉ«»¨ºÍ°×É«»¨µÄ±ÈÀı..., session_id=None, use_ui=True
+2026-03-08 10:38:15,512 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:38:15,513 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "phenotype_distribution",
+  "keywords": "F2, phenotype, ratio, purple flower, white flower, distribution"
+}
+```
+2026-03-08 10:38:15,513 - services.intent_service - INFO - Identified intent: phenotype_distribution, keywords: F2, phenotype, ratio, purple flower, white flower, distribution
+2026-03-08 10:38:15,513 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=phenotype_distribution, keywords=F2, phenotype, ratio, purple flower, white flower, distribution
+2026-03-08 10:38:23,897 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:38:23,898 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÔÚÃÏµÂ¶ûÒÅ´«¶¨ÂÉµÄµäĞÍÊµÑéÖĞ£¬Èç¹û¼ÙÉè×ÏÉ«»¨¶Ô°×É«»¨±íÏÖÎªÍêÈ«ÏÔĞÔ£¬ÇÒF1´ú¾ùÎªÔÓºÏ×Ó£¬ÄÇÃ´ÔÚF2´úÖĞ£¬×ÏÉ«»¨ºÍ°×É«»¨µÄ±íĞÍ±ÈÀıÍ¨³£Îª3±È1¡£ÕâÒâÎ¶×ÅÔÚF2´úµÄÈºÌåÖĞ£¬´óÔ¼ËÄ·ÖÖ®ÈıµÄÖ²Öê»á¿ª×ÏÉ«»¨£¬¶øÊ£ÏÂµÄËÄ·ÖÖ®Ò»»á¿ª°×É«»¨¡£ÕâÊÇ»ùÓÚÒ»¶ÔÍ¬Ô´È¾É«ÌåÉÏµÈÎ»»ùÒòµÄ·ÖÀëºÍ×ÔÓÉ×éºÏµÃ³öµÄ½á¹û¡£
+
+¾ßÌåÀ´Ëµ£¬´Ó»ùÒòĞÍ½Ç¶ÈÀ´¿´£¬F2´ú»áÒÔ1±È2±È1µÄ±ÈÀı³öÏÖ´¿ºÏÏÔĞÔ¡¢ÔÓºÏ×ÓºÍ´¿ºÏÒşĞÔÈıÖÖ×éºÏ¡£ÓÉÓÚÏÔĞÔ»ùÒòµÄ´æ...
+2026-03-08 10:38:23,898 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:38:28,414 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:38:28,415 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PhenotypeDistribution":{"trait":"»¨É«","data":[{"phenotype":"×ÏÉ«»¨","count":750,"percentage":75},{"phenotype":"°×É«»¨","count":250,"percentage":25}]}}}]}}]...
+2026-03-08 10:38:28,415 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:38:28,415 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:38:28,415 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:62232 - "POST /api/chat HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58292 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58293 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58294 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58295 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58296 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58297 - "POST /api/chat HTTP/1.1" 400 Bad Request
+INFO:     127.0.0.1:58298 - "POST /api/chat HTTP/1.1" 400 Bad Request
+2026-03-08 10:42:01,488 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=AaºÍaaÔÓ½»»á²úÉúÊ²Ã´ºó´ú..., session_id=None, use_ui=True
+2026-03-08 10:42:12,323 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:42:12,324 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "punnett_square",
+  "keywords": "genotype, cross, offspring, inheritance, Mendel"
+}
+```
+2026-03-08 10:42:12,324 - services.intent_service - INFO - Identified intent: punnett_square, keywords: genotype, cross, offspring, inheritance, Mendel
+2026-03-08 10:42:12,324 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=punnett_square, keywords=genotype, cross, offspring, inheritance, Mendel
+2026-03-08 10:42:22,508 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:42:22,509 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: µ±»ùÒòĞÍÎª Aa µÄ¸öÌåÓë»ùÒòĞÍÎª aa µÄ¸öÌå½øĞĞÔÓ½»Ê±£¬Æäºó´ú½«»á³öÏÖÁ½ÖÖ»ùÒòĞÍ£¬·Ö±ğÊÇ Aa ºÍ aa£¬Á½ÕßµÄ±ÈÀı¸÷Õ¼ 50%£¬Ò²¾ÍÊÇ 1:1 µÄ±ÈÀı¡£ÕâÖÖÔÓ½»·½Ê½ÔÚÒÅ´«Ñ§ÉÏ±»³ÆÎª²â½»£¬³£ÓÃÀ´¼ì²âÏÔĞÔ¸öÌåÊÇ´¿ºÏ×Ó»¹ÊÇÔÓºÏ×Ó¡£
+
+´ÓÅä×ÓĞÎ³ÉµÄ¹ı³ÌÀ´¿´£¬Ç×±¾ Aa ÊÇÔÓºÏ×Ó£¬Ëü»á²úÉúÁ½ÖÖÀàĞÍµÄÅä×Ó£¬ÆäÖĞÒ»°ëº¬ÓĞÏÔĞÔ»ùÒò A£¬ÁíÒ»°ëº¬ÓĞÒşĞÔ»ùÒò a¡£¶øÇ×±¾ aa ÊÇÒşĞÔ´¿ºÏ×Ó£¬ËüÖ»ÄÜ²úÉúÒ»ÖÖº¬ÓĞÒş...
+2026-03-08 10:42:22,509 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:42:29,174 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:42:29,175 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PunnettSquare":{"parent1Genotype":{"literalString":"Aa"},"parent2Genotype":{"literalString":"aa"},"trait":{"literalString":"ĞÔ×´"},"showPhenotype":{"literalBoolean":true}}}}]}}]...
+2026-03-08 10:42:29,175 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:42:29,175 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:62848 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:42:55,289 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=AaBbºÍaabbÔÓ½»µÄºó´ú»ùÒòĞÍ..., session_id=None, use_ui=True
+2026-03-08 10:43:15,230 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:43:15,231 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "punnett_square",
+  "keywords": "genotype, cross, inheritance, offspring, AaBb, aabb"
+}
+```
+2026-03-08 10:43:15,231 - services.intent_service - INFO - Identified intent: punnett_square, keywords: genotype, cross, inheritance, offspring, AaBb, aabb
+2026-03-08 10:43:15,231 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=punnett_square, keywords=genotype, cross, inheritance, offspring, AaBb, aabb
+2026-03-08 10:43:28,745 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:43:28,746 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: µ±»ùÒòĞÍÎª AaBb µÄ¸öÌåÓë aabb µÄ¸öÌå½øĞĞÔÓ½»Ê±£¬ÕâÊôÓÚµäĞÍµÄ²â½»ÊµÑé¡£Ê×ÏÈ£¬ÎÒÃÇĞèÒª·ÖÎöÇ×±¾²úÉúµÄÅä×ÓÀàĞÍ¡£AaBb ¸öÌåÔÚ¼õÊı·ÖÁÑÊ±£¬µÈÎ»»ùÒò·ÖÀë£¬·ÇÍ¬Ô´È¾É«ÌåÉÏµÄ·ÇµÈÎ»»ùÒò×ÔÓÉ×éºÏ£¬Òò´Ë¿ÉÒÔ²úÉúËÄÖÖ±ÈÀıÏàµÈµÄÅä×Ó£ºAB¡¢Ab¡¢aB ºÍ ab¡£¶ø aabb ¸öÌåÊÇË«ÒşĞÔ´¿ºÏ×Ó£¬ËüÖ»ÄÜ²úÉúÒ»ÖÖÅä×Ó£¬¼´ ab¡£
+
+½ÓÏÂÀ´£¬ÎÒÃÇ½«ÕâĞ©Åä×Ó½øĞĞËæ»ú½áºÏ¡£AaBb ²úÉúµÄËÄÖÖÅä×Ó·Ö±ğÓë aab...
+2026-03-08 10:43:28,746 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:43:35,574 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:43:35,575 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PunnettSquare":{"parent1Genotype":{"literalString":"AaBb"},"parent2Genotype":{"literalString":"aabb"}}}}]}}]...
+2026-03-08 10:43:35,575 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:43:35,575 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:52806 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:44:37,359 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=AABBºÍaabbÔÓ½»..., session_id=None, use_ui=True
+2026-03-08 10:45:28,042 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:45:28,043 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "punnett_square",
+  "keywords": "genotype, cross, AABB, aabb, inheritance, Mendel"
+}
+```
+2026-03-08 10:45:28,043 - services.intent_service - INFO - Identified intent: punnett_square, keywords: genotype, cross, AABB, aabb, inheritance, Mendel
+2026-03-08 10:45:28,043 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=punnett_square, keywords=genotype, cross, AABB, aabb, inheritance, Mendel
+2026-03-08 10:45:36,012 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:45:36,013 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: µ±»ùÒòĞÍÎª AABB µÄÇ×±¾Óë»ùÒòĞÍÎª aabb µÄÇ×±¾½øĞĞÔÓ½»Ê±£¬ÕâÊÇÒ»¸öµäĞÍµÄË«»ùÒòÔÓ½»ÊµÑé¡£AABB ¸öÌå±íÏÖÎªË«ÏÔĞÔĞÔ×´£¬ÇÒÄÜ²úÉúÒ»ÖÖÀàĞÍµÄÅä×Ó AB£»¶ø aabb ¸öÌå±íÏÖÎªË«ÒşĞÔĞÔ×´£¬Í¬ÑùÖ»ÄÜ²úÉúÒ»ÖÖÀàĞÍµÄÅä×Ó ab¡£ÓÉÓÚÕâÁ½¸öÇ×±¾¶¼ÊÇ´¿ºÏ×Ó£¬ËüÃÇµÄºó´ú»ùÒòĞÍ½«·Ç³£Í³Ò»¡£
+
+ÔÓ½»ºó²úÉúµÄ×ÓÒ»´ú£¨F1£©µÄ»ùÒòĞÍÈ«²¿Îª AaBb¡£ÒòÎª A ºÍ B ¶Ô a ºÍ b ¾ùÎªÏÔĞÔ£¬ËùÒÔ F1 ´úµÄ...
+2026-03-08 10:45:36,013 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:45:43,162 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:45:43,162 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PunnettSquare":{"parent1Genotype":{"literalString":"AABB"},"parent2Genotype":{"literalString":"aabb"},"trait":{"literalString":"Ë«ĞÔ×´ÔÓ½»"},"showPhenotype":{"literalBoolean":true}}}}]}}]...
+2026-03-08 10:45:43,163 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:45:43,163 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:54047 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:46:03,086 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=ATCGATCGÕâ¶ÎDNAĞòÁĞµÄ¼î»ùÅä¶Ô..., session_id=None, use_ui=True
+2026-03-08 10:46:13,171 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:46:13,178 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "dna_structure",
+  "keywords": "DNA, sequence, base pairing, ATCG"
+}
+```
+2026-03-08 10:46:13,178 - services.intent_service - INFO - Identified intent: dna_structure, keywords: DNA, sequence, base pairing, ATCG
+2026-03-08 10:46:13,178 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=dna_structure, keywords=DNA, sequence, base pairing, ATCG
+2026-03-08 10:46:36,581 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:46:36,581 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÔÚDNAË«ÂİĞı½á¹¹ÖĞ£¬¼î»ùÅä¶Ô×ñÑ­ÌØ¶¨µÄÔ­Ôò£¬¼´ÏÙàÑßÊ£¨A£©×ÜÊÇÓëĞØÏÙà×à¤£¨T£©Åä¶Ô£¬ÄñàÑßÊ£¨G£©×ÜÊÇÓë°ûà×à¤£¨C£©Åä¶Ô¡£ÕâÖÖÅä¶Ô·½Ê½Í¨¹ıÇâ¼üÁ¬½Ó£¬È·±£ÁËÒÅ´«ĞÅÏ¢µÄÎÈ¶¨¸´ÖÆºÍ´«µİ¡£Òò´Ë£¬µ±ÎÒÃÇ¿´µ½Ò»¶Îµ¥Á´DNAĞòÁĞÊ±£¬¿ÉÒÔ¸ù¾İÕâÒ»¹æÔòÍÆµ¼³öÓëÖ®»¥²¹µÄÁíÒ»ÌõÁ´¡£
+
+Õë¶ÔÄúÌá¹©µÄĞòÁĞATCGATCG£¬ÎÒÃÇ¿ÉÒÔÖğ¸ö¼î»ù½øĞĞÅä¶Ô¡£µÚÒ»¸ö¼î»ùA¶ÔÓ¦T£¬µÚ¶ş¸ö¼î»ùT¶ÔÓ¦A£¬µÚÈı¸ö¼î»ùC¶ÔÓ¦G£¬µÚËÄ¸ö¼î»ùG¶ÔÓ¦...
+2026-03-08 10:46:36,581 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:46:40,633 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:46:40,639 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"DNAStructure":{"sequence":"ATCGATCG","showLabels":true,"highlightRegions":[]}}}]}}]...
+2026-03-08 10:46:40,639 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:46:40,640 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:46:40,640 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:61041 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:47:06,610 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=Õ¹Ê¾GCTAGCTAµÄDNAË«ÂİĞı½á¹¹..., session_id=None, use_ui=True
+2026-03-08 10:47:36,957 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:47:36,958 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "dna_structure",
+  "keywords": "DNA, double helix, structure, base sequence, GCTAGCTA"
+}
+```
+2026-03-08 10:47:36,958 - services.intent_service - INFO - Identified intent: dna_structure, keywords: DNA, double helix, structure, base sequence, GCTAGCTA
+2026-03-08 10:47:36,958 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=dna_structure, keywords=DNA, double helix, structure, base sequence, GCTAGCTA
+2026-03-08 10:47:58,637 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:47:58,638 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: DNAµÄË«ÂİĞı½á¹¹ÓÉÁ½Ìõ·´ÏòÆ½ĞĞµÄ¶àºËÜÕËáÁ´ÅÌĞı¶ø³É£¬ÕâÁ½ÌõÁ´×ñÑ­ÑÏ¸ñµÄ¼î»ù»¥²¹Åä¶ÔÔ­Ôò¡£¶ÔÓÚÄãÌá¹©µÄµ¥Á´ĞòÁĞGCTAGCTA£¬ÎÒÃÇĞèÒªÕÒµ½ËüµÄ»¥²¹Á´À´¹¹½¨ÍêÕûµÄË«Á´½á¹¹¡£ÔÚÕâ¸ö¹ı³ÌÖĞ£¬ÄñàÑßÊ£¨G£©×ÜÊÇÍ¨¹ıÈı¸öÇâ¼üÓë°ûà×à¤£¨C£©Åä¶Ô£¬¶øÏÙàÑßÊ£¨A£©×ÜÊÇÍ¨¹ıÁ½¸öÇâ¼üÓëĞØÏÙà×à¤£¨T£©Åä¶Ô¡£
+
+»ùÓÚÉÏÊö¹æÔò£¬Èç¹ûÎÒÃÇ½«Ô­Ê¼Á´Éè¶¨Îª´Ó5'¶Ëµ½3'¶Ë·½Ïò£¬ĞòÁĞÎª5'-G C T A G C T A-3'£¬ÄÇ...
+2026-03-08 10:47:58,638 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:48:15,248 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:48:15,248 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"DNAStructure":{"sequence":"GCTAGCTA","showLabels":true,"highlightRegions":[]}}}]}}]...
+2026-03-08 10:48:15,248 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:48:15,249 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:48:15,249 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:65049 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:48:25,688 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=GeneAÔÚ¸ÎÔàºÍ´óÄÔÖĞµÄ±í´ïË®Æ½..., session_id=None, use_ui=True
+2026-03-08 10:49:25,995 - services.glm_service - ERROR - GLM API request error: 
+2026-03-08 10:49:25,995 - services.intent_service - ERROR - Error identifying intent: , response: 
+2026-03-08 10:49:25,996 - services.intent_service - INFO - Rule-based keyword extraction: expression, gene
+2026-03-08 10:49:25,997 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=general, keywords=expression, gene
+2026-03-08 10:49:37,514 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:49:37,519 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: GeneAÔÚ¸ÎÔàºÍ´óÄÔÖĞµÄ±í´ïË®Æ½È¡¾öÓÚ¸Ã»ùÒòµÄ¾ßÌå¹¦ÄÜ¼°Æäµ÷¿Ø»úÖÆ£¬ÕâÔÚÒÅ´«Ñ§ÖĞ±»³ÆÎª»ùÒòµÄ×éÖ¯ÌØÒìĞÔ±í´ï¡£Í¨³£Çé¿öÏÂ£¬»ùÒò²»»áÔÚËùÓĞ×éÖ¯ÖĞÒÔÏàÍ¬µÄË®Æ½»îÔ¾¡£Èç¹ûGeneAÊÇÒ»¸ö¹Ü¼Ò»ùÒò£¬Ëü¸ºÔğÎ¬³ÖÏ¸°ûµÄ»ù±¾Éú´æ¹¦ÄÜ£¬ÄÇÃ´ËüÔÚ¸ÎÔàºÍ´óÄÔÖĞ¶¼»á±£³ÖÏà¶ÔÎÈ¶¨ÇÒ½ÏµÍµÄ»ù´¡±í´ïË®Æ½¡£È»¶ø£¬Èç¹ûGeneA¾ßÓĞÌØ¶¨µÄ×éÖ¯¹¦ÄÜ£¬ÀıÈç²ÎÓë¸ÎÔàµÄ½â¶¾´úĞ»»ò´óÄÔµÄÉñ¾­ĞÅºÅ´«µİ£¬ÄÇÃ´ËüÔÚÏàÓ¦µÄ×éÖ¯ÖĞ»á±íÏÖ³ö¼«¸ßµÄ±í´ï...
+2026-03-08 10:49:37,519 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:49:56,770 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:49:56,771 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"GeneExpression":{"genes":[{"name":"GeneA"}],"conditions":[{"name":"¸ÎÔà"},{"name":"´óÄÔ"}]}}}]}}]...
+2026-03-08 10:49:56,771 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:49:56,771 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:49:56,771 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:50200 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:50:39,925 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=GeneBÔÚĞÄÔà¡¢·ÎºÍÉöÔàÈıÖÖ×éÖ¯µÄ±í´ïÇé¿ö..., session_id=None, use_ui=True
+2026-03-08 10:51:05,728 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:51:05,729 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "gene_expression",
+  "keywords": "GeneB, expression, tissue, heart, lung, kidney"
+}
+```
+2026-03-08 10:51:05,729 - services.intent_service - INFO - Identified intent: gene_expression, keywords: GeneB, expression, tissue, heart, lung, kidney
+2026-03-08 10:51:05,729 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=gene_expression, keywords=GeneB, expression, tissue, heart, lung, kidney
+2026-03-08 10:51:15,234 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:51:15,235 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: GeneBÔÚĞÄÔà¡¢·ÎºÍÉöÔàÈıÖÖ×éÖ¯ÖĞµÄ±í´ïË®Æ½Í¨³£´æÔÚÏÔÖø²îÒì£¬Õâ·´Ó³ÁË»ùÒò±í´ïµÄ×éÖ¯ÌØÒìĞÔÌØÕ÷¡£ÔÚĞÄÔà×éÖ¯ÖĞ£¬GeneB¿ÉÄÜ±àÂëÓëĞÄ¼¡Ï¸°ûÊÕËõ¡¢µçĞÅºÅ´«µ¼»òÄÜÁ¿´úĞ»Ïà¹ØµÄ¹Ø¼üµ°°×£¬Òò´ËÍùÍù±íÏÖ³ö½Ï¸ßµÄ±í´ï·á¶È£¬ÒÔÖ§³ÖĞÄÔà³ÖĞø²»¶ÏµÄ±ÃÑª¹¦ÄÜ¡£Ïà±ÈÖ®ÏÂ£¬Èç¹ûGeneBµÄ¹¦ÄÜÓë·Î²¿µÄÆøÌå½»»»»òÆøµÀ½á¹¹Î¬³Ö¹ØÏµ²»´ó£¬ÆäÔÚ·Î×éÖ¯ÖĞµÄ×ªÂ¼»îĞÔ¿ÉÄÜ»áÊÜµ½ÒÖÖÆ£¬µ¼ÖÂ±í´ïË®Æ½Ïà¶Ô½ÏµÍ»ò´¦ÓÚ»ù´¡×´Ì¬¡£
+
+ÖÁÓÚÉöÔà×é...
+2026-03-08 10:51:15,235 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:51:24,698 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:51:24,699 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"GeneExpression":{"genes":[{"gene":"GeneB","expressionLevels":[120,85,95]}],"conditions":[{"name":"ĞÄÔà","color":"#e57373"},{"name":"·Î","color":"#64b5f6"},{"name":"ÉöÔà","color":"#81c784"}]}}}]}}]...
+2026-03-08 10:51:24,699 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:51:24,699 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:51:24,699 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:49381 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:54:23,028 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=F2´ú×ÏÉ«»¨ºÍ°×É«»¨µÄ±ÈÀıÊÇ3:1..., session_id=None, use_ui=True
+2026-03-08 10:54:30,284 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:54:30,285 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "phenotype_distribution",
+  "keywords": "F2, phenotype, ratio, purple flower, white flower, 3:1, Mendel, dominant, recessive"
+}
+```
+2026-03-08 10:54:30,285 - services.intent_service - INFO - Identified intent: phenotype_distribution, keywords: F2, phenotype, ratio, purple flower, white flower, 3:1, Mendel, dominant, recessive
+2026-03-08 10:54:30,285 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=phenotype_distribution, keywords=F2, phenotype, ratio, purple flower, white flower, 3:1, Mendel, dominant, recessive
+2026-03-08 10:54:40,115 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:54:40,116 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÕâÒ»ÏÖÏóÊÇÃÏµÂ¶ûÒÅ´«¶¨ÂÉÖĞ·ÖÀë¶¨ÂÉµÄµäĞÍ±íÏÖ¡£¼ÙÉè×ÏÉ«»¨ÓÉÏÔĞÔ»ùÒò£¨A£©¿ØÖÆ£¬°×É«»¨ÓÉÒşĞÔ»ùÒò¿ØÖÆ¡£µ±´¿ºÏµÄ×ÏÉ«Ç×±¾£¨AA£©Óë´¿ºÏµÄ°×É«Ç×±¾ÔÓ½»²úÉúF1´úÊ±£¬ËùÓĞºó´ú¶¼ÊÇÔÓºÏ×Ó£¬ÇÒÓÉÓÚÏÔĞÔĞ§Ó¦£¬ËüÃÇÈ«²¿±íÏÖÎª×ÏÉ«»¨¡£
+
+ÔÚF1´ú×Ô½»²úÉúF2´úµÄ¹ı³ÌÖĞ£¬³É¶ÔµÄÒÅ´«Òò×ÓÔÚĞÎ³ÉÅä×ÓÊ±»á±Ë´Ë·ÖÀë¡£ÔÓºÏ×Ó£¨Aa£©»á²úÉúº¬ÓĞA»òaµÄÁ½ÖÖÅä×Ó£¬ÇÒ¸ÅÂÊÏàµÈ¡£µ±ÕâĞ©Åä×ÓËæ»ú½áºÏÊ±£¬¾Í»á³öÏÖ1·İAA¡¢2·İAaºÍ1·İa...
+2026-03-08 10:54:40,116 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:54:45,644 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:54:45,645 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PhenotypeDistribution":{"trait":"»¨É«","data":[{"phenotype":"×ÏÉ«»¨","count":3,"percentage":75},{"phenotype":"°×É«»¨","count":1,"percentage":25}],"totalCount":4,"showPercentage":true}}}]}}]...
+2026-03-08 10:54:45,645 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 10:54:45,645 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 4 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 10:54:45,645 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:60449 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 10:55:25,205 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=Íã¶¹ÖÖ×ÓÔ²Á£ºÍÖåÁ£µÄ±íĞÍ·Ö²¼£¬Ô²Á£5474¸ö£¬ÖåÁ£1850¸ö..., session_id=None, use_ui=True
+2026-03-08 10:55:45,159 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:55:45,160 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "phenotype_distribution",
+  "keywords": "phenotype, distribution, round, wrinkled, pea, ratio"
+}
+```
+2026-03-08 10:55:45,160 - services.intent_service - INFO - Identified intent: phenotype_distribution, keywords: phenotype, distribution, round, wrinkled, pea, ratio
+2026-03-08 10:55:45,160 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=phenotype_distribution, keywords=phenotype, distribution, round, wrinkled, pea, ratio
+2026-03-08 10:55:53,947 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:55:53,947 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: Õâ¸öÊı¾İ¼¯Õ¹Ê¾ÁËÃÏµÂ¶û¾­µäµÄÍã¶¹ÔÓ½»ÊµÑé½á¹û¡£Ô²Á£ÖÖ×ÓÊıÁ¿Îª5474¸ö£¬ÖåÁ£ÖÖ×ÓÎª1850¸ö£¬Á½ÕßÏà¼Ó×ÜÊıÎª7324¸ö¡£¼ÆËãÁ½ÕßµÄ±ÈÀı£¬Ô²Á£´óÔ¼Õ¼×ÜÊıµÄ74.7%£¬ÖåÁ£Ô¼Õ¼25.3%£¬¼´Ô²Á£ÓëÖåÁ£µÄÊµ¼Ê±ÈÀıÔ¼Îª2.96±È1¡£
+
+ÕâÒ»¹Û²ì½á¹û·Ç³£½Ó½üÀíÂÛÉÏµÄ3±È1·ÖÀë±È£¬ÓĞÁ¦µØÑéÖ¤ÁËÃÏµÂ¶ûµÄ·ÖÀë¶¨ÂÉ¡£ÔÚ¸ÃÊµÑéÖĞ£¬Ô²Á£ÊÇÏÔĞÔĞÔ×´£¬ÖåÁ£ÊÇÒşĞÔĞÔ×´¡£µ±ÔÓºÏ×Ó×Ô½»Ê±£¬ÒÅ´«Òò×ÓÔÚĞÎ³ÉÅä×ÓÊ±·ÖÀë£¬µ¼ÖÂºó´úÖĞÏÔĞÔ...
+2026-03-08 10:55:53,947 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 10:56:11,269 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 10:56:11,270 - __main__ - INFO - LLM A2UI ÏìÓ¦: ...
+2026-03-08 10:56:11,270 - __main__ - ERROR - JSON ½âÎöÊ§°Ü: Expecting value: line 1 column 1 (char 0)
+2026-03-08 10:56:11,270 - __main__ - WARNING - A2UI Éú³ÉÊ§°Ü»òÑéÖ¤Î´Í¨¹ı£¬Ê¹ÓÃ±¾µØ½µ¼¶²ßÂÔ
+2026-03-08 10:56:11,270 - __main__ - INFO - ½µ¼¶²ÎÊı - ÒâÍ¼: phenotype_distribution, ¹Ø¼ü´Ê: 'phenotype, distribution, round, wrinkled, pea, ratio', ÎÄ±¾³¤¶È: 236
+2026-03-08 10:56:11,270 - __main__ - INFO - Ê¹ÓÃ±¾µØ½µ¼¶Éú³É A2UI: intent=phenotype_distribution, keywords=phenotype, distribution, round, wrinkled, pea, ratio
+2026-03-08 10:56:11,270 - __main__ - INFO - ³É¹¦Éú³É±¾µØ½µ¼¶ A2UI£¬°üº¬ 3 ¸öÏûÏ¢
+INFO:     127.0.0.1:56311 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:02:18,054 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=Íã¶¹µÄ¸ß¾¥£¨T£©¶Ô°«¾¥£¨t£©ÎªÏÔĞÔ¡£Á½ÖêÔÓºÏ¸ß¾¥Íã¶¹£¨Tt ¡Á Tt£©ÔÓ½»£¬F1´úÖĞ¸ß¾¥ºÍ°«¾¥µÄ±ÈÀıÊÇ£º
+
+A. 1:1
+B. 2:1
+C. 3:1
+D. È«²¿¸ß¾¥..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:02:48,242 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:02:48,243 - services.intent_service - INFO - Intent recognition raw response: 
+2026-03-08 11:02:48,243 - services.intent_service - ERROR - Failed to parse intent JSON: Expecting value: line 1 column 1 (char 0), response: 
+2026-03-08 11:02:48,243 - services.intent_service - INFO - Rule-based keyword extraction: dominant, f1, heterozygous, inheritance
+2026-03-08 11:02:48,243 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=general, keywords=dominant, f1, heterozygous, inheritance
+2026-03-08 11:03:03,434 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:03:03,445 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÕâµÀÌâ¿¼²ìµÄÊÇÃÏµÂ¶û·ÖÀë¶¨ÂÉµÄÓ¦ÓÃ¡£Ê×ÏÈ£¬ÎÒÃÇÒÑÖª¸ß¾¥£¨T£©¶Ô°«¾¥£¨t£©ÊÇÏÔĞÔ£¬ÕâÒâÎ¶×ÅÖ»Òª»ùÒòĞÍÖĞº¬ÓĞÒ»¸ö T£¨Èç TT »ò Tt£©£¬Íã¶¹¾Í»á±íÏÖÎª¸ß¾¥£»Ö»ÓĞ»ùÒòĞÍÎª tt Ê±£¬²Å»á±íÏÖÎª°«¾¥¡£ÌâÄ¿ÖĞ¸ø³öµÄÇ×±¾¶¼ÊÇÔÓºÏ¸ß¾¥Íã¶¹£¬»ùÒòĞÍ¾ùÎª Tt¡£
+
+µ±ÕâÁ½ÖêÔÓºÏÍã¶¹£¨Tt ¡Á Tt£©½øĞĞÔÓ½»Ê±£¬ËüÃÇ¸÷×Ô²úÉúµÄÅä×Ó¿ÉÄÜÊÇ T »ò t£¬ÇÒ¸ÅÂÊ¸÷Õ¼Ò»°ë¡£¸ù¾İÒÅ´«¹æÂÉ£¬ºó´úµÄ»ùÒòĞÍ×éºÏ»á³öÏÖ TT¡¢Tt...
+2026-03-08 11:03:03,445 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:03:20,608 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:03:20,609 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PunnettSquare":{"parent1Genotype":{"literalString":"Tt"},"parent2Genotype":{"literalString":"Tt"},"trait":{"literalString":"¾¥¸ß"},"showPhenotype":{"literalBoolean":true}}}}]}}]...
+2026-03-08 11:03:20,609 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:03:20,609 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:55484 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:04:57,327 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=ÇëÕ¹Ê¾DNAĞòÁĞ"ATCGATCG"µÄË«ÂİĞı½á¹¹£¬²¢±ê×¢¼î»ùÅä¶Ô¹ØÏµºÍGCº¬Á¿¡£..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:05:06,447 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:05:06,462 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "dna_structure",
+  "keywords": "DNA, sequence, double helix, base pairing, ATCG, GC content"
+}
+```
+2026-03-08 11:05:06,462 - services.intent_service - INFO - Identified intent: dna_structure, keywords: DNA, sequence, double helix, base pairing, ATCG, GC content
+2026-03-08 11:05:06,462 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=dna_structure, keywords=DNA, sequence, double helix, base pairing, ATCG, GC content
+2026-03-08 11:05:20,438 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:05:20,439 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: DNAË«ÂİĞı½á¹¹ÓÉÁ½Ìõ·´ÏòÆ½ĞĞµÄ¶àºËÜÕËáÁ´ÅÌĞı¶ø³É¡£¶ÔÓÚ¸ø¶¨µÄÒ»ÌõÁ´ĞòÁĞ5'-ATCGATCG-3'£¬¸ù¾İ¼î»ù»¥²¹Åä¶ÔÔ­Ôò£¬Æä¶ÔÓ¦µÄ»¥²¹Á´ĞòÁĞÓ¦Îª3'-TAGCTAGC-5'¡£ÔÚÕâ¸ö½á¹¹ÖĞ£¬ÏÙàÑßÊ£¨A£©Ê¼ÖÕÓëĞØÏÙà×à¤£¨T£©Í¨¹ıÁ½¸öÇâ¼üÏàÁ¬£¬¶ø°ûà×à¤£¨C£©ÔòÓëÄñàÑßÊ£¨G£©Í¨¹ıÈı¸öÇâ¼ü½ôÃÜÁ¬½Ó¡£ÎÒÃÇ¿ÉÒÔ½«ÕâÖÖÅä¶Ô¹ØÏµÖ±¹ÛµØÀí½âÎªÌİ×ÓµÄºáµµ£¬ÉÏÏÂÁ½ĞĞµÄ¼î»ùÒ»Ò»¶ÔÓ¦£¬È·±£ÁËÒÅ´«½á¹¹µÄÎÈ¶¨ĞÔ¡£
+
+½ÓÏÂÀ´ÎÒÃÇ...
+2026-03-08 11:05:20,439 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:05:28,846 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:05:28,847 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"DNAStructure":{"sequence":"ATCGATCG","showLabels":true,"highlightRegions":[]}}}]}}]...
+2026-03-08 11:05:28,847 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:05:28,848 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 11:05:28,848 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:55528 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:05:59,586 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=Ä³¼Ò×åÈı´úÈËÖĞ£¬µÚÒ»´ú·ò¸¾±íĞÍÕı³££¬µÚ¶ş´úÓĞÒ»¸öÅ®¶ù»¼²¡£¬µÚÈı´ú¸ÃÅ®¶ùµÄÁ½¸ö¶ù×Ó¶¼»¼²¡¡£Çë»æÖÆ¼ÒÏµÍ¼²¢·ÖÎöÒÅ´«·½Ê½¡£..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:06:47,004 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:06:47,005 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "pedigree_chart",
+  "keywords": "pedigree, family, inheritance pattern, generations, affected, phenotype"
+}
+```
+2026-03-08 11:06:47,005 - services.intent_service - INFO - Identified intent: pedigree_chart, keywords: pedigree, family, inheritance pattern, generations, affected, phenotype
+2026-03-08 11:06:47,005 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=pedigree_chart, keywords=pedigree, family, inheritance pattern, generations, affected, phenotype
+2026-03-08 11:07:07,860 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:07:07,861 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ...
+2026-03-08 11:07:07,861 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:07:28,236 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:07:28,237 - __main__ - INFO - LLM A2UI ÏìÓ¦: ...
+2026-03-08 11:07:28,237 - __main__ - ERROR - JSON ½âÎöÊ§°Ü: Expecting value: line 1 column 1 (char 0)
+2026-03-08 11:07:28,237 - __main__ - WARNING - A2UI Éú³ÉÊ§°Ü»òÑéÖ¤Î´Í¨¹ı£¬Ê¹ÓÃ±¾µØ½µ¼¶²ßÂÔ
+2026-03-08 11:07:28,237 - __main__ - INFO - ½µ¼¶²ÎÊı - ÒâÍ¼: pedigree_chart, ¹Ø¼ü´Ê: 'pedigree, family, inheritance pattern, generations, affected, phenotype', ÎÄ±¾³¤¶È: 0
+2026-03-08 11:07:28,237 - __main__ - INFO - Ê¹ÓÃ±¾µØ½µ¼¶Éú³É A2UI: intent=pedigree_chart, keywords=pedigree, family, inheritance pattern, generations, affected, phenotype
+2026-03-08 11:07:28,237 - __main__ - INFO - ³É¹¦Éú³É±¾µØ½µ¼¶ A2UI£¬°üº¬ 3 ¸öÏûÏ¢
+INFO:     127.0.0.1:62706 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:08:26,993 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=AaBb ¡Á AaBbÔÓ½»£¨Á½¶Ô»ùÒò¶ÀÁ¢ÒÅ´«£©£¬ÇëÕ¹Ê¾F1´úµÄ±íĞÍ·Ö²¼±ÈÀıÍ¼¡£..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:08:55,486 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:08:55,487 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "phenotype_distribution",
+  "keywords": "genotype, cross, independent assortment, phenotype, distribution, ratio, F1"
+}
+```
+2026-03-08 11:08:55,487 - services.intent_service - INFO - Identified intent: phenotype_distribution, keywords: genotype, cross, independent assortment, phenotype, distribution, ratio, F1
+2026-03-08 11:08:55,487 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=phenotype_distribution, keywords=genotype, cross, independent assortment, phenotype, distribution, ratio, F1
+2026-03-08 11:09:05,648 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:09:05,649 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÔÚAaBbÓëAaBbµÄÔÓ½»ÊµÑéÖĞ£¬ÓÉÓÚÁ½¶Ô»ùÒò¶ÀÁ¢ÒÅ´«£¬ÎÒÃÇ¿ÉÒÔ½«ËüÃÇ·Ö±ğ¿´×÷Á½¸ö¶ÀÁ¢µÄµ¥»ùÒòÔÓ½»¡£¶ÔÓÚ»ùÒòA£¬AaÓëAaÔÓ½»»á²úÉú3·İÏÔĞÔĞÔ×´ºÍ1·İÒşĞÔĞÔ×´£»Í¬Àí£¬¶ÔÓÚ»ùÒòB£¬BbÓëBbÔÓ½»Ò²»á²úÉú3·İÏÔĞÔĞÔ×´ºÍ1·İÒşĞÔĞÔ×´¡£ÕâÖÖ·ÖÀë×éºÏµ¼ÖÂÁËF1´ú±íĞÍµÄ¶àÑùĞÔ¡£
+
+µ±ÎÒÃÇ½«ÕâÁ½¶ÔĞÔ×´×éºÏÔÚÒ»ÆğÊ±£¬¸ù¾İ¸ÅÂÊ³Ë·¨¶¨Àí£¬Í¬Ê±±íÏÖ³öÁ½ÖÖÏÔĞÔĞÔ×´£¨A_B_£©µÄ¸ÅÂÊÊÇ3/4³ËÒÔ3/4£¬¼´9/16¡£±íÏÖ³öÒ»...
+2026-03-08 11:09:05,649 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:09:11,452 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:09:11,453 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PhenotypeDistribution":{"trait":"Íã¶¹ĞÔ×´£¨Á£ĞÎºÍÑÕÉ«£©","data":[{"phenotype":"Ô²Á£»ÆÉ« (A_B_)","count":9,"percentage":56.25},{"phenotype":"Ô²Á£ÂÌÉ« (A_bb)","count":3,"percentage":18.75},{"phenotype":"ÖåÁ£»ÆÉ« (aaB_)","count":3,"percentage":18.75},{"phenotype":"ÖåÁ£ÂÌÉ« (aabb)","count":1,"percentage":6.25}],"totalCount":16,"showPercentage":true}}}]}}]...
+2026-03-08 11:09:11,453 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:09:11,453 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 4 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 11:09:11,453 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:62990 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:10:15,748 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=ÇëÕ¹Ê¾»ùÒòBRCA1¡¢TP53¡¢MYCÔÚÕı³£Ï¸°û¡¢°©Ï¸°û¡¢ÖÎÁÆºóÈıÖÖÌõ¼şÏÂµÄ±í´ïË®Æ½¶Ô±ÈÍ¼¡£..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:10:21,918 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:10:21,920 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "gene_expression",
+  "keywords": "gene expression, expression level, BRCA1, TP53, MYC, normal cell, cancer cell, treatment"
+}
+```
+2026-03-08 11:10:21,920 - services.intent_service - INFO - Identified intent: gene_expression, keywords: gene expression, expression level, BRCA1, TP53, MYC, normal cell, cancer cell, treatment
+2026-03-08 11:10:21,920 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=gene_expression, keywords=gene expression, expression level, BRCA1, TP53, MYC, normal cell, cancer cell, treatment
+2026-03-08 11:10:51,506 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:10:51,507 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÔÚÒÅ´«Ñ§ÖĞ£¬ÎÒÃÇÍ¨³£Í¨¹ı¶Ô±ÈÖ×ÁöÒÖÖÆ»ùÒòºÍÔ­°©»ùÒòµÄ±í´ïÄ£Ê½À´Àí½â°©Ö¢µÄ·¢Éú»úÖÆ¡£¶ÔÓÚÔ­°©»ùÒòMYC£¬ËüÔÚÕı³£Ï¸°ûÖĞÎ¬³Ö½ÏµÍµÄ»ù´¡±í´ïË®Æ½ÒÔµ÷¿ØÏ¸°ûÉú³¤£¬µ«ÔÚ°©Ï¸°ûÖĞÍùÍù±íÏÖÎªÏÔÖøµÄ¸ß±í´ï£¬´Ó¶øÇı¶¯Ï¸°ûÎŞÏŞÔöÖ³£»¾­¹ıÓĞĞ§ÖÎÁÆºó£¬MYCµÄ±í´ïË®Æ½Í¨³£»á±»ÒÖÖÆ²¢»ØÂäÖÁ½Ó½üÕı³£·¶Î§¡£
+
+Ïà·´£¬BRCA1ºÍTP53×÷ÎªÖ×ÁöÒÖÖÆ»ùÒò£¬ÔÚÕı³£Ï¸°ûÖĞ±£³ÖÎÈ¶¨µÄ¹¦ÄÜĞÔ±í´ï£¬¸ºÔğĞŞ¸´DNAËğÉË»òÎ¬³Ö»ùÒò×éÎÈ¶¨¡£ÔÚ°©...
+2026-03-08 11:10:51,507 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:10:59,801 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:10:59,801 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"GeneExpression":{"genes":[{"gene":"BRCA1","expressionLevels":[100,25,75]},{"gene":"TP53","expressionLevels":[100,20,85]},{"gene":"MYC","expressionLevels":[50,250,60]}],"conditions":[{"name":"Õı³£Ï¸°û","color":"#1a73e8"},{"name":"°©Ï¸°û","color":"#d93025"},{"name":"ÖÎÁÆºó","color":"#188038"}]}}}]}}]...
+2026-03-08 11:10:59,801 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:10:59,801 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 2 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 11:10:59,801 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:60091 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:12:14,637 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=¹ûÓ¬XÈ¾É«ÌåÉÏÓĞÈı¸ö»ùÒò£º°×ÑÛ»ùÒò£¨Î»ÖÃ10cM£©¡¢»ÆÉí»ùÒò£¨Î»ÖÃ30cM£©¡¢½Ø³á»ùÒò£¨Î»ÖÃ50cM£©£¬ÔÚÎ»ÖÃ20cMºÍ40cM´¦·¢Éú½»²æ»¥»»¡£ÇëÕ¹Ê¾½»²æ»¥»»Í¼Æ×¡£..., session_id=76693d6d-bb23-47e5-91cd-2d178a683513, use_ui=True
+2026-03-08 11:12:21,933 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:12:21,934 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "cross_over_map",
+  "keywords": "crossover, map, gene, chromosome, position, recombination, linkage"
+}
+```
+2026-03-08 11:12:21,934 - services.intent_service - INFO - Identified intent: cross_over_map, keywords: crossover, map, gene, chromosome, position, recombination, linkage
+2026-03-08 11:12:21,934 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=cross_over_map, keywords=crossover, map, gene, chromosome, position, recombination, linkage
+2026-03-08 11:12:31,383 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:12:31,384 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: Ê×ÏÈ£¬ÈÃÎÒÃÇÔÚÄÔº£ÖĞ¹¹½¨ÕâÌõXÈ¾É«ÌåµÄÏßĞÔÍ¼Æ×¡£»ùÒò°´ÕÕ´Ó×óµ½ÓÒµÄË³ĞòÅÅÁĞÎª£º°×ÑÛ»ùÒòÎ»ÓÚ10cM´¦£¬»ÆÉí»ùÒòÎ»ÓÚ30cM´¦£¬½Ø³á»ùÒòÎ»ÓÚ50cM´¦¡£ÎªÁËÀí½â½»²æ»¥»»£¬ÎÒÃÇĞèÒªÏëÏóÁ½ÌõÍ¬Ô´È¾É«ÌåÆ½ĞĞÅÅÁĞ£¬ÆäÖĞÒ»ÌõÈ¾É«ÌåĞ¯´øÒ°ÉúĞÍµÈÎ»»ùÒò£¬ÁíÒ»ÌõĞ¯´øÍ»±äĞÍµÈÎ»»ùÒò¡£
+
+½Ó×Å£¬ÎÒÃÇ·ÖÎö·¢ÉúµÄÁ½´Î½»²æÊÂ¼ş¡£µÚÒ»´Î½»²æ·¢ÉúÔÚ20cM´¦£¬ÕıºÃÎ»ÓÚ°×ÑÛ»ùÒòºÍ»ÆÉí»ùÒòÖ®¼ä£»µÚ¶ş´Î½»²æ·¢ÉúÔÚ40cM´¦£¬Î»ÓÚ»ÆÉí»ù...
+2026-03-08 11:12:31,384 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:12:39,336 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:12:39,337 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"CrossOverMap":{"chromosomeLength":60,"genes":[{"name":"°×ÑÛ»ùÒò","position":10,"color":"#e53935"},{"name":"»ÆÉí»ùÒò","position":30,"color":"#fdd835"},{"name":"½Ø³á»ùÒò","position":50,"color":"#1e88e5"}],"crossoverPoints":[{"position":20,"label":"½»²æµã1"},{"position":40,"label":"½»²æµã2"}]}}}]}}]...
+2026-03-08 11:12:39,337 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:12:39,337 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 11:12:39,337 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:55471 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:17:51,687 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=¹ûÓ¬XÈ¾É«ÌåÉÏÓĞÈı¸ö»ùÒò£º°×ÑÛ»ùÒò£¨Î»ÖÃ10cM£©¡¢»ÆÉí»ùÒò£¨Î»ÖÃ30cM£©¡¢½Ø³á»ùÒò£¨Î»ÖÃ50cM£©£¬ÔÚÎ»ÖÃ20cMºÍ40cM´¦·¢Éú½»²æ»¥»»¡£ÇëÕ¹Ê¾½»²æ»¥»»Í¼Æ×¡£..., session_id=d559b0c6-1b51-49fc-8fe9-001f8621158e, use_ui=True
+2026-03-08 11:17:58,109 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:17:58,110 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "cross_over_map",
+  "keywords": "Drosophila, X chromosome, gene, crossover, map, linkage, position, recombination"
+}
+```
+2026-03-08 11:17:58,110 - services.intent_service - INFO - Identified intent: cross_over_map, keywords: Drosophila, X chromosome, gene, crossover, map, linkage, position, recombination
+2026-03-08 11:17:58,110 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=cross_over_map, keywords=Drosophila, X chromosome, gene, crossover, map, linkage, position, recombination
+2026-03-08 11:18:14,398 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:18:14,399 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ...
+2026-03-08 11:18:14,399 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:18:20,235 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:18:20,235 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"CrossOverMap":{"chromosomeLength":60,"genes":[{"name":"°×ÑÛ»ùÒò","position":10,"color":"#e53935"},{"name":"»ÆÉí»ùÒò","position":30,"color":"#fdd835"},{"name":"½Ø³á»ùÒò","position":50,"color":"#1e88e5"}],"crossoverPoints":[{"position":20,"label":"½»²æµã1"},{"position":40,"label":"½»²æµã2"}]}}}]}}]...
+2026-03-08 11:18:20,236 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:18:20,236 - __main__ - INFO - \u2705 ×Ô¶¯ĞŞ¸´ÁË 3 ¸öÈ±Ê§µÄÀàĞÍ°ü×°Æ÷
+2026-03-08 11:18:20,236 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:49166 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:19:01,472 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=ÄãºÃ..., session_id=d559b0c6-1b51-49fc-8fe9-001f8621158e, use_ui=True
+2026-03-08 11:19:06,112 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:19:06,113 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "greeting",
+  "keywords": ""
+}
+```
+2026-03-08 11:19:06,113 - services.intent_service - INFO - Identified intent: greeting, keywords: 
+2026-03-08 11:19:06,113 - services.intent_service - WARNING - LLM returned empty keywords, using fallback extraction
+2026-03-08 11:19:06,113 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: ÄãºÃ
+2026-03-08 11:19:06,113 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=greeting, keywords=
+2026-03-08 11:19:31,157 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:19:31,158 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÄãºÃ£¡ºÜ¸ßĞË¼ûµ½Äã£¬ÎÒÊÇÄãµÄÒÅ´«Ñ§½ÌÑ§ÖúÊÖ¡£ÎÒµÄÖ÷ÒªÈÎÎñÊÇ°ïÖúÄãÉîÈëÀí½âÒÅ´«Ñ§µÄºËĞÄ¸ÅÄî£¬´Ó»ù´¡µÄÃÏµÂ¶ûÒÅ´«¶¨ÂÉµ½¸´ÔÓµÄ·Ö×ÓÉúÎïÑ§»úÖÆ£¬ÎÒ¶¼ÄÜÎªÄãÌá¹©ÇåÎú¡¢×¼È·µÄ½â´ğ¡£
+
+ÒÅ´«Ñ§ÊÇÒ»ÃÅÌ½Ë÷ÉúÃü°ÂÃØµÄÑ§¿Æ£¬ËüÑĞ¾¿»ùÒòÈçºÎ´«µİ¡¢±í´ïÒÔ¼°ÈçºÎÓ°ÏìÉúÎïµÄĞÔ×´¡£ÎŞÂÛÄãÊÇÔÚÑ§Ï°DNAµÄ½á¹¹Óë¹¦ÄÜ£¬»¹ÊÇ¶Ô»ùÒòÍ»±ä¡¢È¾É«Ìå±äÒì¸Ğµ½À§»ó£¬ÎÒ¶¼¿ÉÒÔÍ¨¹ıÏêÏ¸µÄ½âÊÍºÍÉú¶¯µÄÀı×ÓÀ´°ïÖúÄãÕÆÎÕÕâĞ©ÖªÊ¶µã¡£
+
+ÇëËæÊ±¸æËßÎÒÄãÏë...
+2026-03-08 11:19:31,158 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:19:36,320 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:19:36,321 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"DNAStructure":{"sequence":{"literalString":"ATCGATCG"},"showLabels":{"literalBoolean":true}}}}]}}]...
+2026-03-08 11:19:36,321 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:19:36,321 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:50350 - "POST /api/chat HTTP/1.1" 200 OK
+2026-03-08 11:23:59,852 - __main__ - INFO - ÊÕµ½ÁÄÌìÇëÇó: message=ÄãºÃ..., session_id=d559b0c6-1b51-49fc-8fe9-001f8621158e, use_ui=True
+2026-03-08 11:24:03,628 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:24:03,629 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "greeting",
+  "keywords": ""
+}
+```
+2026-03-08 11:24:03,629 - services.intent_service - INFO - Identified intent: greeting, keywords: 
+2026-03-08 11:24:03,629 - services.intent_service - WARNING - LLM returned empty keywords, using fallback extraction
+2026-03-08 11:24:03,629 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: ÄãºÃ
+2026-03-08 11:24:03,629 - __main__ - INFO - ÒâÍ¼Ê¶±ğ½á¹û: intent=greeting, keywords=
+2026-03-08 11:24:15,880 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:24:15,880 - __main__ - INFO - LLM ÎÄ±¾ÏìÓ¦£¨Ô­Ê¼£©: ÄãºÃ£¡ÎÒÊÇÄãµÄÒÅ´«Ñ§½ÌÑ§ÖúÊÖ£¬ºÜ¸ßĞËÎªÄã·şÎñ¡£ÎÒ×¨ÃÅÖÂÁ¦ÓÚÌá¹©ÇåÎú¡¢×¼È·µÄÒÅ´«Ñ§ÖªÊ¶½âÊÍ£¬°ïÖúÄãÀí½â´ÓDNA½á¹¹µ½ÒÅ´«¹æÂÉµÈ¸´ÔÓµÄ¸ÅÄî¡£
+
+ÎŞÂÛÄãÊÇ¶ÔÃÏµÂ¶ûÒÅ´«¶¨ÂÉ¸ĞĞËÈ¤£¬»¹ÊÇÏëÁË½â»ùÒòÍ»±ä¡¢·Ö×ÓÉúÎïÑ§¼¼Êõ»òÈºÌåÒÅ´«Ñ§£¬ÎÒ¶¼¿ÉÒÔÎªÄãÌá¹©ÏêÏ¸µÄ½â´ğ¡£ÎÒ»áÓÃÍ¨Ë×Ò×¶®µÄÓïÑÔ£¬½«»ŞÉ¬ÄÑ¶®µÄ×¨ÒµÊõÓï×ª»¯ÎªÒ×ÓÚÀí½âµÄÄÚÈİ¡£
+
+ÇëËæÊ±¸æËßÎÒÄãÏëÁË½âµÄ¾ßÌåÖ÷Ìâ»òÎÊÌâ£¬ÈÃÎÒÃÇÒ»ÆğÌ½Ë÷ÒÅ´«Ñ§µÄ°ÂÃØ°É£¡...
+2026-03-08 11:24:15,881 - __main__ - INFO - ¿ªÊ¼ A2UI ×é¼şÉú³É...
+2026-03-08 11:24:31,649 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:24:31,650 - __main__ - INFO - LLM A2UI ÏìÓ¦: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"PunnettSquare":{"parent1Genotype":{"literalString":"Aa"},"parent2Genotype":{"literalString":"Aa"},"trait":{"literalString":"Ê¾ÀıĞÔ×´"},"showPhenotype":{"literalBoolean":true}}}}]}}]...
+2026-03-08 11:24:31,650 - __main__ - INFO - ³É¹¦½âÎö A2UI JSON£¬°üº¬ 2 ¸öÏûÏ¢
+2026-03-08 11:24:31,650 - __main__ - INFO - \u2705 A2UI JSON °ü×°Æ÷¼ì²éÍê³É
+INFO:     127.0.0.1:49671 - "POST /api/chat HTTP/1.1" 200 OK
+ompletions "HTTP/1.1 200 OK"
+2026-03-08 11:19:31,158 - __main__ - INFO - LLM æ–‡æœ¬å“åº”ï¼ˆåŸå§‹ï¼‰: ä½ å¥½ï¼å¾ˆé«˜å…´è§åˆ°ä½ ï¼Œæˆ‘æ˜¯ä½ çš„é—ä¼ å­¦æ•™å­¦åŠ©æ‰‹ã€‚æˆ‘çš„ä¸»è¦ä»»åŠ¡æ˜¯å¸®åŠ©ä½ æ·±å…¥ç†è§£é—ä¼ å­¦çš„æ ¸å¿ƒæ¦‚å¿µï¼Œä»åŸºç¡€çš„å­Ÿå¾·å°”é—ä¼ å®šå¾‹åˆ°å¤æ‚çš„åˆ†å­ç”Ÿç‰©å­¦æœºåˆ¶ï¼Œæˆ‘éƒ½èƒ½ä¸ºä½ æä¾›æ¸…æ™°ã€å‡†ç¡®çš„è§£ç­”ã€‚
+
+é—ä¼ å­¦æ˜¯ä¸€é—¨æ¢ç´¢ç”Ÿå‘½å¥¥ç§˜çš„å­¦ç§‘ï¼Œå®ƒç ”ç©¶åŸºå› å¦‚ä½•ä¼ é€’ã€è¡¨è¾¾ä»¥åŠå¦‚ä½•å½±å“ç”Ÿç‰©çš„æ€§çŠ¶ã€‚æ— è®ºä½ æ˜¯åœ¨å­¦ä¹ DNAçš„ç»“æ„ä¸åŠŸèƒ½ï¼Œè¿˜æ˜¯å¯¹åŸºå› çªå˜ã€æŸ“è‰²ä½“å˜å¼‚æ„Ÿåˆ°å›°æƒ‘ï¼Œæˆ‘éƒ½å¯ä»¥é€šè¿‡è¯¦ç»†çš„è§£é‡Šå’Œç”ŸåŠ¨çš„ä¾‹å­æ¥å¸®åŠ©ä½ æŒæ¡è¿™äº›çŸ¥è¯†ç‚¹ã€‚
+
+è¯·éšæ—¶å‘Šè¯‰æˆ‘ä½ æƒ³...
+2026-03-08 11:19:31,158 - __main__ - INFO - å¼€å§‹ A2UI ç»„ä»¶ç”Ÿæˆ...
+2026-03-08 11:19:36,320 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-08 11:19:36,321 - __main__ - INFO - LLM A2UI å“åº”: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"DNAStructure":{"sequence":{"literalString":"ATCGATCG"},"showLabels":{"literalBoolean":true}}}}]}}]...
+2026-03-08 11:19:36,321 - __main__ - INFO - æˆåŠŸè§£æ A2UI JSONï¼ŒåŒ…å« 2 ä¸ªæ¶ˆæ¯
+2026-03-08 11:19:36,321 - __main__ - INFO - âœ… A2UI JSON åŒ…è£…å™¨æ£€æŸ¥å®Œæˆ

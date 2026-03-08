@@ -3,7 +3,8 @@
  基因表达水平组件 - 用于展示不同条件下基因的表达数据
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -18,10 +19,60 @@ export interface Condition {
 }
 
 @customElement('gene-expression')
-export class GeneExpression extends LitElement {
-  @property({ type: Array }) genes: GeneData[] = [];
-  @property({ type: Array }) expressionLevels: number[][] = [];
-  @property({ type: Array }) conditions: Condition[] = [];
+export class GeneExpression extends Root {
+  private _genes: GeneData[] = [];
+  private _expressionLevels: number[][] = [];
+  private _conditions: Condition[] = [];
+
+  @property({ type: Array })
+  get genes(): GeneData[] {
+    return this._genes;
+  }
+  set genes(value: any) {
+    const oldValue = this._genes;
+    this._genes = this.unwrapValue(value, 'array');
+    this.requestUpdate('genes', oldValue);
+  }
+
+  @property({ type: Array })
+  get expressionLevels(): number[][] {
+    return this._expressionLevels;
+  }
+  set expressionLevels(value: any) {
+    const oldValue = this._expressionLevels;
+    this._expressionLevels = this.unwrapValue(value, 'array');
+    this.requestUpdate('expressionLevels', oldValue);
+  }
+
+  @property({ type: Array })
+  get conditions(): Condition[] {
+    return this._conditions;
+  }
+  set conditions(value: any) {
+    const oldValue = this._conditions;
+    this._conditions = this.unwrapValue(value, 'array');
+    this.requestUpdate('conditions', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'number' ? 0 :
+             type === 'array' ? [] : null;
+    }
+
+    // Handle A2UI Proxy-wrapped values
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if ('literalString' in value) return value.literalString;
+      if ('literalBoolean' in value) return value.literalBoolean;
+      if ('literalNumber' in value) return value.literalNumber;
+      if ('literalArray' in value) return value.literalArray;
+    }
+
+    return value;
+  }
 
   private static readonly DEFAULT_COLORS = [
     '#1a73e8',
@@ -65,7 +116,9 @@ export class GeneExpression extends LitElement {
     return (level / max) * 100;
   }
 
-  static styles = css`
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -288,7 +341,7 @@ export class GeneExpression extends LitElement {
       margin-top: 12px;
       text-align: center;
     }
-  `;
+  `];
 
   private chartType: 'bar' | 'line' = 'bar';
 
@@ -398,14 +451,14 @@ export class GeneExpression extends LitElement {
   private setChartType(type: 'bar' | 'line') {
     this.chartType = type;
     this.requestUpdate();
-    
+
     if (type === 'line') {
       setTimeout(() => this.drawLineChart(), 100);
     }
   }
 
   private drawLineChart() {
-    const canvas = this.querySelector('#lineChart') as HTMLCanvasElement;
+    const canvas = this.shadowRoot?.querySelector('#lineChart') as HTMLCanvasElement;
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
@@ -424,31 +477,31 @@ export class GeneExpression extends LitElement {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const xStep = width / (this.conditions.length - 1);
-    
+
     for (const gene of this.genes) {
       const color = this.getConditionColor(this.genes.indexOf(gene));
-      
+
       ctx.beginPath();
       ctx.strokeStyle = color;
       ctx.lineWidth = 2;
-      
+
       gene.expressionLevels.forEach((level, index) => {
         const x = padding + index * xStep;
         const y = padding + height - (level / maxLevel) * height;
-        
+
         if (index === 0) {
           ctx.moveTo(x, y);
         } else {
           ctx.lineTo(x, y);
         }
       });
-      
+
       ctx.stroke();
 
       gene.expressionLevels.forEach((level, index) => {
         const x = padding + index * xStep;
         const y = padding + height - (level / maxLevel) * height;
-        
+
         ctx.beginPath();
         ctx.fillStyle = color;
         ctx.arc(x, y, 4, 0, Math.PI * 2);
@@ -458,7 +511,7 @@ export class GeneExpression extends LitElement {
 
     ctx.fillStyle = '#5f6368';
     ctx.font = '12px Roboto';
-    
+
     this.conditions.forEach((condition, index) => {
       const x = padding + index * xStep;
       ctx.fillText(condition.name, x - 20, rect.height - 10);

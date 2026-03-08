@@ -3,7 +3,8 @@
  表型分布柱状图组件 - 用于展示群体表型分布
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -14,9 +15,49 @@ export interface PhenotypeData {
 }
 
 @customElement('phenotype-distribution')
-export class PhenotypeDistribution extends LitElement {
-  @property({ type: Array }) data: PhenotypeData[] = [];
-  @property({ type: String }) trait: string = '';
+export class PhenotypeDistribution extends Root {
+  private _data: PhenotypeData[] = [];
+  private _trait: string = '';
+
+  @property({ type: Array })
+  get data(): PhenotypeData[] {
+    return this._data;
+  }
+  set data(value: any) {
+    const oldValue = this._data;
+    this._data = this.unwrapValue(value, 'array');
+    this.requestUpdate('data', oldValue);
+  }
+
+  @property({ type: String })
+  get trait(): string {
+    return this._trait;
+  }
+  set trait(value: any) {
+    const oldValue = this._trait;
+    this._trait = this.unwrapValue(value, 'string');
+    this.requestUpdate('trait', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'number' ? 0 :
+             type === 'array' ? [] : null;
+    }
+
+    // Handle A2UI Proxy-wrapped values
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if ('literalString' in value) return value.literalString;
+      if ('literalBoolean' in value) return value.literalBoolean;
+      if ('literalNumber' in value) return value.literalNumber;
+      if ('literalArray' in value) return value.literalArray;
+    }
+
+    return value;
+  }
 
   private static readonly COLORS = [
     '#1a73e8',
@@ -29,7 +70,9 @@ export class PhenotypeDistribution extends LitElement {
     '#e53935'
   ];
 
-  static styles = css`
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -103,7 +146,7 @@ export class PhenotypeDistribution extends LitElement {
       transform-origin: center;
     }
 
-    .bar-label {
+    .bar-text {
       color: #fff;
       font-weight: 600;
       font-size: 0.9rem;
@@ -204,7 +247,7 @@ export class PhenotypeDistribution extends LitElement {
       color: #5f6368;
       flex: 1;
     }
-  `;
+  `];
 
   private getTotalCount(): number {
     return this.data.reduce((sum, item) => sum + item.count, 0);
@@ -249,7 +292,7 @@ export class PhenotypeDistribution extends LitElement {
                     tabindex="0"
                   >
                     ${this.getBarWidth(item.count) > 15 ? html`
-                      <span class="bar-label">${item.percentage.toFixed(1)}%</span>
+                      <span class="bar-text">${item.percentage.toFixed(1)}%</span>
                     ` : ''}
                   </div>
                 </div>

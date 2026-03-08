@@ -13,9 +13,15 @@
           "id": "gene_expression",
           "component": {
             "GeneExpression": {
-              "genes": ["基因A"],
-              "expressionLevels": [[100], [150], [80]],
-              "conditions": ["正常条件", "高温", "低温"]
+              "genes": [
+                { "gene": "GeneA", "expressionLevels": [100, 150, 80] },
+                { "gene": "GeneB", "expressionLevels": [200, 180, 220] }
+              ],
+              "conditions": [
+                { "name": "正常条件", "color": "#1a73e8" },
+                { "name": "高温", "color": "#d93025" },
+                { "name": "低温", "color": "#188038" }
+              ]
             }
           }
         }

@@ -3,7 +3,8 @@
  家系图组件 - 用于展示家族遗传疾病传递模式
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -25,11 +26,53 @@ export interface Generation {
 }
 
 @customElement('pedigree-chart')
-export class PedigreeChart extends LitElement {
-  @property({ type: Array }) generations: Generation[] = [];
-  @property({ type: String }) trait: string = '';
+export class PedigreeChart extends Root {
+  private _generations: Generation[] = [];
+  private _trait: string = '';
 
-  static styles = css`
+  @property({ type: Array })
+  get generations(): Generation[] {
+    return this._generations;
+  }
+  set generations(value: any) {
+    const oldValue = this._generations;
+    this._generations = this.unwrapValue(value, 'array');
+    this.requestUpdate('generations', oldValue);
+  }
+
+  @property({ type: String })
+  get trait(): string {
+    return this._trait;
+  }
+  set trait(value: any) {
+    const oldValue = this._trait;
+    this._trait = this.unwrapValue(value, 'string');
+    this.requestUpdate('trait', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
+    // Handle null/undefined
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'number' ? 0 :
+             type === 'array' ? [] : null;
+    }
+
+    // Handle A2UI Proxy-wrapped values
+    if (typeof value === 'object' && !Array.isArray(value)) {
+      if ('literalString' in value) return value.literalString;
+      if ('literalBoolean' in value) return value.literalBoolean;
+      if ('literalNumber' in value) return value.literalNumber;
+      if ('literalArray' in value) return value.literalArray;
+    }
+
+    return value;
+  }
+
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -268,12 +311,18 @@ export class PedigreeChart extends LitElement {
       color: #5f6368;
       font-style: italic;
     }
-  `;
+  `];
 
   private getAllIndividuals(): Individual[] {
     const individuals: Individual[] = [];
+    if (!Array.isArray(this.generations)) {
+      console.warn('PedigreeChart: generations is not an array:', this.generations);
+      return individuals;
+    }
     for (const gen of this.generations) {
-      individuals.push(...gen.individuals);
+      if (gen && Array.isArray(gen.individuals)) {
+        individuals.push(...gen.individuals);
+      }
     }
     return individuals;
   }

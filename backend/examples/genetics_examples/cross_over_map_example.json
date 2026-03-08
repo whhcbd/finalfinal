@@ -13,19 +13,14 @@
           "id": "cross_over_map",
           "component": {
             "CrossOverMap": {
-              "chromosome1": [
-                { "position": 20, "gene": "GeneA", "allele": "A" },
-                { "position": 60, "gene": "GeneB", "allele": "B" }
+              "chromosomeLength": 100,
+              "genes": [
+                { "name": "GeneA", "position": 20, "color": "#1a73e8" },
+                { "name": "GeneB", "position": 60, "color": "#188038" }
               ],
-              "chromosome2": [
-                { "position": 20, "gene": "GeneA", "allele": "a" },
-                { "position": 60, "gene": "GeneB", "allele": "b" }
-              ],
-              "crossOverPoints": [
-                { "position": 40, "frequency": 0.2 }
-              ],
-              "labelChromosomes": true,
-              "showRecombinationFreq": true
+              "crossoverPoints": [
+                { "position": 40, "label": "交叉点1" }
+              ]
             }
           }
         }

@@ -3,7 +3,8 @@
  孟德尔方格图组件 - 用于展示基因杂交后代的基因型和表型分布
 */
 
-import { LitElement, html, css } from 'lit';
+import { Root } from '@a2ui/lit/ui';
+import { html, css } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 
@@ -13,13 +14,68 @@ export interface GenotypeData {
 }
 
 @customElement('punnett-square')
-export class PunnettSquare extends LitElement {
-  @property({ type: String }) parent1Genotype: string = '';
-  @property({ type: String }) parent2Genotype: string = '';
-  @property({ type: String }) trait: string = '';
-  @property({ type: Boolean }) showPhenotype: boolean = true;
+export class PunnettSquare extends Root {
+  private _parent1Genotype: string = '';
+  private _parent2Genotype: string = '';
+  private _trait: string = '';
+  private _showPhenotype: boolean = true;
 
-  static styles = css`
+  @property({ type: String })
+  get parent1Genotype(): string {
+    return this._parent1Genotype;
+  }
+  set parent1Genotype(value: any) {
+    const oldValue = this._parent1Genotype;
+    this._parent1Genotype = this.unwrapValue(value, 'string');
+    this.requestUpdate('parent1Genotype', oldValue);
+  }
+
+  @property({ type: String })
+  get parent2Genotype(): string {
+    return this._parent2Genotype;
+  }
+  set parent2Genotype(value: any) {
+    const oldValue = this._parent2Genotype;
+    this._parent2Genotype = this.unwrapValue(value, 'string');
+    this.requestUpdate('parent2Genotype', oldValue);
+  }
+
+  @property({ type: String })
+  get trait(): string {
+    return this._trait;
+  }
+  set trait(value: any) {
+    const oldValue = this._trait;
+    this._trait = this.unwrapValue(value, 'string');
+    this.requestUpdate('trait', oldValue);
+  }
+
+  @property({ type: Boolean })
+  get showPhenotype(): boolean {
+    return this._showPhenotype;
+  }
+  set showPhenotype(value: any) {
+    const oldValue = this._showPhenotype;
+    this._showPhenotype = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('showPhenotype', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean'): any {
+    // Handle A2UI Proxy-wrapped values
+    if (value && typeof value === 'object') {
+      if (type === 'string' && 'literalString' in value) {
+        return value.literalString;
+      }
+      if (type === 'boolean' && 'literalBoolean' in value) {
+        return value.literalBoolean;
+      }
+    }
+    return value;
+  }
+
+  static styles = [
+    ...Root.styles,
+    css`
     :host {
       display: block;
       padding: 16px;
@@ -27,7 +83,7 @@ export class PunnettSquare extends LitElement {
     }
 
     .container {
-      max-width: 600px;
+      max-width: 800px;
       margin: 0 auto;
     }
 
@@ -73,8 +129,6 @@ export class PunnettSquare extends LitElement {
 
     .grid-container {
       display: grid;
-      grid-template-columns: auto auto auto;
-      grid-template-rows: auto auto auto;
       gap: 2px;
       background: #dadce0;
       border: 2px solid #dadce0;
@@ -97,6 +151,7 @@ export class PunnettSquare extends LitElement {
       background: #f8f9fa;
       font-weight: 600;
       color: #5f6368;
+      font-size: 0.9rem;
     }
 
     .grid-cell.empty {
@@ -109,6 +164,7 @@ export class PunnettSquare extends LitElement {
       color: #1a73e8;
       font-family: monospace;
       margin-bottom: 4px;
+      word-break: break-all;
     }
 
     .cell-phenotype {
@@ -216,13 +272,39 @@ export class PunnettSquare extends LitElement {
       font-size: 0.9rem;
       color: #5f6368;
     }
-  `;
+    `
+  ];
 
   private getGametes(genotype: string): string[] {
-    if (!genotype || genotype.length !== 2) return [];
-    const allele1 = genotype[0].toUpperCase();
-    const allele2 = genotype[1].toUpperCase();
-    return [allele1, allele2];
+    if (!genotype || genotype.length === 0 || genotype.length % 2 !== 0) return [];
+
+    // 提取所有基因对：AaBbCc → [[A,a], [B,b], [C,c]]
+    const genePairs: string[][] = [];
+    for (let i = 0; i < genotype.length; i += 2) {
+      genePairs.push([genotype[i], genotype[i + 1]]);
+    }
+
+    // 生成所有可能的配子组合（笛卡尔积）
+    const gametes = this.cartesianProduct(genePairs);
+    return gametes.map(g => g.join(''));
+  }
+
+  // 计算笛卡尔积：[[A,a], [B,b]] → [[A,B], [A,b], [a,B], [a,b]]
+  private cartesianProduct(arrays: string[][]): string[][] {
+    if (arrays.length === 0) return [[]];
+    if (arrays.length === 1) return arrays[0].map(x => [x]);
+
+    const [first, ...rest] = arrays;
+    const restProduct = this.cartesianProduct(rest);
+    const result: string[][] = [];
+
+    for (const item of first) {
+      for (const combo of restProduct) {
+        result.push([item, ...combo]);
+      }
+    }
+
+    return result;
   }
 
   private calculateOffspring(): GenotypeData[] {
@@ -237,7 +319,7 @@ export class PunnettSquare extends LitElement {
 
     for (const g1 of gametes1) {
       for (const g2 of gametes2) {
-        const genotype = [g1, g2].sort().join('');
+        const genotype = this.combineGametes(g1, g2);
         const phenotype = this.determinePhenotype(genotype);
         offspring.push({ genotype, phenotype });
       }
@@ -246,10 +328,28 @@ export class PunnettSquare extends LitElement {
     return offspring;
   }
 
+  private combineGametes(g1: string, g2: string): string {
+    if (g1.length !== g2.length) return g1 + g2;
+
+    // 对每个基因位点进行配对和排序
+    let result = '';
+    for (let i = 0; i < g1.length; i++) {
+      const pair = [g1[i], g2[i]].sort((a, b) => {
+        // 大写字母（显性）排在前面
+        if (a === a.toUpperCase() && b === b.toLowerCase()) return -1;
+        if (a === a.toLowerCase() && b === b.toUpperCase()) return 1;
+        return a.localeCompare(b);
+      });
+      result += pair.join('');
+    }
+    return result;
+  }
+
   private determinePhenotype(genotype: string): string {
     const upperCaseCount = (genotype.match(/[A-Z]/g) || []).length;
+    const totalAlleles = genotype.length;
 
-    if (upperCaseCount === 2) {
+    if (upperCaseCount === totalAlleles) {
       return 'dominant';
     } else if (upperCaseCount === 0) {
       return 'recessive';
@@ -275,8 +375,15 @@ export class PunnettSquare extends LitElement {
     const gametes2 = this.getGametes(this.parent2Genotype);
 
     if (offspring.length === 0) {
-      return html`<div class="empty">请输入有效的基因型（例如：Aa, BB）</div>`;
+      return html`<div class="empty">请输入有效的基因型（例如：Aa, AaBb, AaBbCc）</div>`;
     }
+
+    // 动态计算网格大小
+    const gridSize = gametes1.length;
+    const gridStyle = `
+      grid-template-columns: auto repeat(${gridSize}, 1fr);
+      grid-template-rows: auto repeat(${gridSize}, 1fr);
+    `;
 
     return html`
       <div class="container">
@@ -293,7 +400,7 @@ export class PunnettSquare extends LitElement {
           </div>
         </div>
 
-        <div class="grid-container">
+        <div class="grid-container" style="${gridStyle}">
           <div class="grid-cell empty"></div>
           ${map(gametes1, (g) => html`
             <div class="grid-cell header">${g}</div>
@@ -301,7 +408,7 @@ export class PunnettSquare extends LitElement {
           ${map(gametes2, (g2) => html`
             <div class="grid-cell header">${g2}</div>
             ${map(gametes1, (g1) => {
-              const genotype = [g1, g2].sort().join('');
+              const genotype = this.combineGametes(g1, g2);
               const item = offspring.find(o => o.genotype === genotype);
               if (!item) return '';
 

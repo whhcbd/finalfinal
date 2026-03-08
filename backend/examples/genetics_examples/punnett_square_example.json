@@ -13,10 +13,10 @@
           "id": "punnett_square",
           "component": {
             "PunnettSquare": {
-              "parent1Genotype": "Aa",
-              "parent2Genotype": "aa",
-              "trait": "眼睛颜色",
-              "showPhenotype": true
+              "parent1Genotype": {"literalString": "Aa"},
+              "parent2Genotype": {"literalString": "aa"},
+              "trait": {"literalString": "眼睛颜色"},
+              "showPhenotype": {"literalBoolean": true}
             }
           }
         }

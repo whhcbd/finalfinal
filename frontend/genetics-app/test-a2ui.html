@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A2UI 组件测试</title>
+    <script type="module">
+        // 导入 A2UI 标准组件库
+        import "@a2ui/lit/ui";
+        import { v0_8 } from "@a2ui/lit";
+
+        // 导入自定义组件（使用 .ts 扩展名，Vite 会处理）
+        import './src/components/genetics/punnett-square.ts';
+
+        // 注册组件到 A2UI（需要提供 JSON Schema）
+        import { PunnettSquare } from './src/components/genetics/punnett-square.ts';
+        const registry = v0_8.UI.componentRegistry;
+        registry.register('PunnettSquare', PunnettSquare, 'punnett-square', {
+            type: "object",
+            properties: {
+                parent1Genotype: { type: "string" },
+                parent2Genotype: { type: "string" },
+                trait: { type: "string" },
+                showPhenotype: { type: "boolean" }
+            },
+            required: ["parent1Genotype", "parent2Genotype"]
+        });
+
+        console.log('[Test] A2UI v0_8:', v0_8);
+        console.log('[Test] Component Registry:', v0_8.UI.componentRegistry);
+
+        // 测试创建 A2UI 渲染器
+        const processor = v0_8.Data.createSignalA2uiMessageProcessor();
+        console.log('[Test] Processor created:', processor);
+
+        // 测试 A2UI JSON
+        const testA2uiMessages = [
+            {
+                "beginRendering": {
+                    "surfaceId": "test_surface",
+                    "root": "main_component"
+                }
+            },
+            {
+                "surfaceUpdate": {
+                    "surfaceId": "test_surface",
+                    "components": [
+                        {
+                            "id": "main_component",
+                            "component": {
+                                "PunnettSquare": {
+                                    "parent1Genotype": {
+                                        "literalString": "Aa"
+                                    },
+                                    "parent2Genotype": {
+                                        "literalString": "aa"
+                                    },
+                                    "trait": {
+                                        "literalString": "测试性状"
+                                    },
+                                    "showPhenotype": {
+                                        "literalBoolean": true
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ];
+
+        // 等待 DOM 加载完成后再渲染
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('[Test] DOM loaded, processing messages...');
+            try {
+                processor.processMessages(testA2uiMessages);
+                console.log('[Test] Messages processed successfully');
+
+                const surfaces = processor.getSurfaces();
+                console.log('[Test] Surfaces:', surfaces);
+
+                // 渲染到页面
+                const container = document.getElementById('a2ui-container');
+                console.log('[Test] Container element:', container);
+
+                if (!container) {
+                    throw new Error('Container element not found!');
+                }
+
+                for (const [surfaceId, surface] of surfaces.entries()) {
+                    console.log('[Test] Rendering surface:', surfaceId);
+                    const surfaceElement = document.createElement('a2ui-surface');
+                    surfaceElement.setAttribute('surface-id', surfaceId);
+                    surfaceElement.surface = surface;
+                    surfaceElement.processor = processor;
+                    // 🔑 关键：启用自定义组件！
+                    surfaceElement.enableCustomElements = true;
+                    container.appendChild(surfaceElement);
+                    console.log('[Test] Surface element appended:', surfaceElement);
+                }
+            } catch (error) {
+                console.error('[Test] Error:', error);
+                const errorDiv = document.getElementById('error');
+                if (errorDiv) {
+                    errorDiv.textContent = error.message;
+                }
+            }
+        });
+    </script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        #error {
+            color: red;
+            background: #fee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        #a2ui-container {
+            margin-top: 20px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧬 A2UI 组件测试页面</h1>
+        <p>打开浏览器控制台查看日志信息</p>
+        <div id="error"></div>
+        <div id="a2ui-container"></div>
+    </div>
+</body>
+</html>
