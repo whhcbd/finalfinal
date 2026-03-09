@@ -25,23 +25,17 @@ export class App extends LitElement {
         display: block;
         width: 100%;
         height: 100vh;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        background: #fafafa;
+        position: relative;
       }
 
       * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-      }
-
-      body {
-        font-family: inherit;
-        font-size: 16px;
-        line-height: 1.6;
-        color: #333;
-        background: #f5f5f5;
       }
 
       .app-container {
@@ -51,10 +45,79 @@ export class App extends LitElement {
         flex-direction: column;
       }
 
+      /* 顶部导航栏 - 简洁专业 */
+      .top-navbar {
+        background: #ffffff;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 0 32px;
+        height: 64px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 100;
+      }
+
+      .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .navbar-brand:hover {
+        opacity: 0.7;
+      }
+
+      .brand-icon {
+        font-size: 1.5em;
+      }
+
+      .brand-text {
+        font-size: 1.1em;
+        font-weight: 600;
+        color: #111827;
+        letter-spacing: -0.01em;
+      }
+
+      .navbar-nav {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .nav-item {
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+        font-size: 0.9em;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .nav-item:hover {
+        background: #f3f4f6;
+        color: #111827;
+      }
+
+      .nav-item.active {
+        background: #111827;
+        color: #ffffff;
+      }
+
+      .nav-icon {
+        font-size: 1.1em;
+      }
+
       .route-container {
         flex: 1;
         position: relative;
         overflow: hidden;
+        background: #fafafa;
       }
 
       .route-view {
@@ -63,21 +126,14 @@ export class App extends LitElement {
         left: 0;
         width: 100%;
         height: 100%;
-        transition: opacity 0.3s ease, transform 0.3s ease;
+        transition: opacity 0.3s ease;
         opacity: 0;
-        transform: translateY(20px);
         pointer-events: none;
       }
 
       .route-view.active {
         opacity: 1;
-        transform: translateY(0);
         pointer-events: auto;
-      }
-
-      .route-view.exiting {
-        opacity: 0;
-        transform: translateY(-20px);
       }
 
       .loading-overlay {
@@ -90,10 +146,12 @@ export class App extends LitElement {
         display: flex;
         align-items: center;
         justify-content: center;
+        flex-direction: column;
+        gap: 16px;
         z-index: 9999;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.3s ease;
+        transition: opacity 0.2s;
       }
 
       .loading-overlay.visible {
@@ -102,12 +160,12 @@ export class App extends LitElement {
       }
 
       .spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid #f3f3f3f;
-        border-top: 4px solid #667eea;
+        width: 40px;
+        height: 40px;
+        border: 3px solid #e5e7eb;
+        border-top: 3px solid #111827;
         border-radius: 50%;
-        animation: spin 1s linear infinite;
+        animation: spin 0.8s linear infinite;
       }
 
       @keyframes spin {
@@ -115,63 +173,82 @@ export class App extends LitElement {
         100% { transform: rotate(360deg); }
       }
 
+      .loading-text {
+        font-size: 0.9em;
+        color: #6b7280;
+        font-weight: 500;
+      }
+
       .error-boundary {
-        padding: 40px;
+        padding: 48px;
         text-align: center;
-        background: #fff3f3;
-        border: 2px solid #ff0000;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
         border-radius: 8px;
-        margin: 20px;
+        margin: 40px;
+        max-width: 500px;
+        margin: 40px auto;
       }
 
       .error-boundary h1 {
-        color: #ff0000;
-        margin-bottom: 16px;
+        color: #dc2626;
+        margin-bottom: 12px;
+        font-size: 1.5em;
+        font-weight: 600;
       }
 
       .error-boundary p {
-        color: #666;
-        margin-bottom: 20px;
+        color: #6b7280;
+        margin-bottom: 24px;
+        line-height: 1.6;
       }
 
       .error-boundary button {
-        padding: 12px 24px;
-        background: #667eea;
+        padding: 10px 24px;
+        background: #111827;
         color: white;
         border: none;
         border-radius: 6px;
         cursor: pointer;
-        font-size: 16px;
-        font-weight: 600;
-        transition: background 0.2s ease;
+        font-size: 0.9em;
+        font-weight: 500;
+        transition: background 0.2s;
       }
 
       .error-boundary button:hover {
-        background: #5568d3;
+        background: #1f2937;
       }
 
       @media (max-width: 768px) {
-        :host {
-          font-size: 14px;
+        .top-navbar {
+          padding: 0 16px;
+          height: 56px;
         }
 
-        .route-view {
-          transition: opacity 0.2s ease, transform 0.2s ease;
-        }
-      }
-
-      @media (prefers-color-scheme: dark) {
-        :host {
-          color: #e0e0e0;
+        .brand-text {
+          font-size: 1em;
         }
 
-        body {
-          color: #e0e0e0;
-          background: #1a1a1a;
+        .navbar-nav {
+          gap: 2px;
         }
 
-        .loading-overlay {
-          background: rgba(0, 0, 0, 0.9);
+        .nav-item {
+          padding: 6px 10px;
+          font-size: 0.85em;
+        }
+
+        .nav-item span:not(.nav-icon) {
+          display: none;
+        }
+
+        .nav-icon {
+          font-size: 1.2em;
+        }
+
+        .error-boundary {
+          padding: 32px 24px;
+          margin: 20px;
         }
       }
     `
@@ -266,9 +343,44 @@ export class App extends LitElement {
     router.navigate('/');
   }
 
+  private navigateTo(route: string) {
+    router.navigate(route);
+  }
+
   render() {
     return html`
       <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <nav class="top-navbar">
+          <div class="navbar-brand" @click=${() => this.navigateTo('/')}>
+            <span class="brand-icon">🧬</span>
+            <span class="brand-text">Helix Lab</span>
+          </div>
+
+          <div class="navbar-nav">
+            <div class="nav-item ${this.currentRoute === '/' ? 'active' : ''}"
+                 @click=${() => this.navigateTo('/')}>
+              <span class="nav-icon">🏠</span>
+              <span>首页</span>
+            </div>
+            <div class="nav-item ${this.currentRoute === '/chat' ? 'active' : ''}"
+                 @click=${() => this.navigateTo('/chat')}>
+              <span class="nav-icon">💬</span>
+              <span>AI 助手</span>
+            </div>
+            <div class="nav-item ${this.currentRoute === '/quiz' ? 'active' : ''}"
+                 @click=${() => this.navigateTo('/quiz')}>
+              <span class="nav-icon">📝</span>
+              <span>知识测验</span>
+            </div>
+            <div class="nav-item ${this.currentRoute === '/knowledge' ? 'active' : ''}"
+                 @click=${() => this.navigateTo('/knowledge')}>
+              <span class="nav-icon">🔗</span>
+              <span>知识图谱</span>
+            </div>
+          </div>
+        </nav>
+
         <div class="route-container">
           <div class="route-view ${this.currentRoute === '/' ? 'active' : ''}">
             <home-page @navigate=${this.handleNavigate}></home-page>
@@ -289,6 +401,7 @@ export class App extends LitElement {
 
         <div class="loading-overlay ${this.isTransitioning ? 'visible' : ''}">
           <div class="spinner"></div>
+          <div class="loading-text">Loading...</div>
         </div>
       </div>
     `;

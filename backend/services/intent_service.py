@@ -25,10 +25,12 @@ class IntentService:
 ## INTENT CLASSIFICATION（严格按照以下规则分类）
 
 **punnett_square**：当用户提到以下词汇时
-- 杂交、后代基因型、测交、自交、配子
-- Aa、aa、AA、AaBb、aabb等具体基因型
-- "杂交会产生"、"后代基因型"、"配子组合"、"棋盘"
-- 注意：如果问的是"比例"、"分布"、"F2代表型"，应该是phenotype_distribution
+- 杂交、后代基因型、测交、自交、配子、孟德尔方格图、旁氏图
+- Aa、aa、AA、AaBb、aabb、RrYy等具体基因型
+- "杂交会产生"、"后代基因型"、"配子组合"、"棋盘"、"双因子杂交"、"单因子杂交"
+- "分析...杂交实验"、"用孟德尔方格图"、"用旁氏图"、"展示后代"
+- 注意：如果问的是"比例"、"分布"、"F2代表型"但没有提到具体基因型，应该是phenotype_distribution
+- 注意：如果明确提到"孟德尔方格图"、"旁氏图"、"Punnett Square"，必须是punnett_square
 
 **dna_structure**：当用户提到以下词汇时
 - DNA、双螺旋、碱基、核苷酸、碱基配对、磷酸
@@ -138,6 +140,7 @@ class IntentService:
             'phenotype': r'(?:(?:表型)|phenotype)',
             'inheritance': r'(?:(?:遗传)|(?:杂交)|inheritance|cross)',
             'mendel': r'(?:(?:孟德尔)|Mendel)',
+            'punnett': r'(?:(?:孟德尔方格图)|(?:旁氏图)|(?:Punnett)|(?:方格图))',
             'dominant': r'(?:(?:显性)|dominant)',
             'recessive': r'(?:(?:隐性)|recessive)',
             'dna': r'(?:(?:DNA结构)|(?:DNA)|(?:碱基)|base)',

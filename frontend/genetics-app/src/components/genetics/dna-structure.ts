@@ -76,7 +76,7 @@ export class DNAStructure extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -88,7 +88,7 @@ export class DNAStructure extends Root {
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
@@ -99,8 +99,9 @@ export class DNAStructure extends Root {
       align-items: center;
       gap: 8px;
       padding: 16px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .strand {
@@ -138,55 +139,50 @@ export class DNAStructure extends Root {
       font-weight: 700;
       font-size: 0.9rem;
       font-family: monospace;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       cursor: pointer;
+      border: 2px solid;
     }
 
     .base:hover {
-      transform: scale(1.1);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transform: translateY(-2px);
     }
 
     .base.A {
-      background: linear-gradient(135deg, #e53935 0%, #f44336 100%);
-      color: #fff;
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #f59e0b;
     }
 
     .base.T {
-      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
-      color: #fff;
+      background: #dbeafe;
+      color: #1e40af;
+      border-color: #3b82f6;
     }
 
     .base.C {
-      background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%);
-      color: #fff;
+      background: #d1fae5;
+      color: #065f46;
+      border-color: #10b981;
     }
 
     .base.G {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #fff;
+      background: #fce7f3;
+      color: #9f1239;
+      border-color: #ec4899;
     }
 
     .base.highlight {
-      animation: pulse 1.5s ease-in-out infinite;
-      border: 2px solid #ffd700;
-      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
+      border-color: #111827;
+      border-width: 3px;
+      background: #fafafa;
     }
 
     .bond {
       position: absolute;
       width: 2px;
       height: 8px;
-      background: #dadce0;
+      background: #e5e7eb;
       left: 50%;
       transform: translateX(-50%);
     }
@@ -201,7 +197,7 @@ export class DNAStructure extends Root {
 
     .label {
       font-size: 0.7rem;
-      color: #5f6368;
+      color: #6b7280;
       text-align: center;
       margin-top: 2px;
     }
@@ -209,15 +205,15 @@ export class DNAStructure extends Root {
     .legend {
       margin-top: 16px;
       padding: 12px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 8px;
-      border: 1px solid #dadce0;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-title {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
@@ -233,7 +229,7 @@ export class DNAStructure extends Root {
       gap: 8px;
       padding: 4px;
       border-radius: 4px;
-      background: #f8f9fa;
+      background: #fafafa;
     }
 
     .legend-base {
@@ -246,42 +242,52 @@ export class DNAStructure extends Root {
       font-weight: 700;
       font-size: 0.7rem;
       font-family: monospace;
-      color: #fff;
+      color: #111827;
+      border: 2px solid;
     }
 
     .legend-base.A {
-      background: linear-gradient(135deg, #e53935 0%, #f44336 100%);
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #92400e;
     }
 
     .legend-base.T {
-      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+      background: #dbeafe;
+      border-color: #3b82f6;
+      color: #1e40af;
     }
 
     .legend-base.C {
-      background: linear-gradient(135deg, #0891b2 0%, #3b82f6 100%);
+      background: #d1fae5;
+      border-color: #10b981;
+      color: #065f46;
     }
 
     .legend-base.G {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      background: #fce7f3;
+      border-color: #ec4899;
+      color: #9f1239;
     }
 
     .legend-text {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
     }
 
     .sequence-info {
       margin-top: 12px;
       padding: 12px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 8px;
-      border-left: 4px solid #1a73e8;
+      border-left: 3px solid #111827;
+      border: 1px solid #e5e7eb;
     }
 
     .sequence-text {
       font-family: monospace;
       font-size: 0.95rem;
-      color: #202124;
+      color: #111827;
       word-break: break-all;
       line-height: 1.6;
     }
@@ -291,8 +297,9 @@ export class DNAStructure extends Root {
       justify-content: space-around;
       margin-top: 12px;
       padding: 12px;
-      background: #e8f0fe;
+      background: #fafafa;
       border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .stat-item {
@@ -301,20 +308,20 @@ export class DNAStructure extends Root {
 
     .stat-label {
       font-size: 0.8rem;
-      color: #5f6368;
+      color: #6b7280;
       margin-bottom: 4px;
     }
 
     .stat-value {
       font-size: 1.2rem;
       font-weight: 600;
-      color: #1a73e8;
+      color: #111827;
     }
 
     .empty {
       text-align: center;
       padding: 40px;
-      color: #5f6368;
+      color: #6b7280;
       font-style: italic;
     }
   `];

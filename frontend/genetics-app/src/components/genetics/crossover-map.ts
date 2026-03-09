@@ -76,14 +76,14 @@ export class CrossOverMap extends Root {
   }
 
   private static readonly DEFAULT_COLORS = [
-    '#1a73e8',
-    '#188038',
-    '#f9ab00',
-    '#d93025',
-    '#7c3aed',
-    '#2563eb',
-    '#059669',
-    '#e53935'
+    '#3b82f6',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#06b6d4',
+    '#84cc16'
   ];
 
   private getGeneColor(index: number): string {
@@ -108,7 +108,7 @@ export class CrossOverMap extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -119,16 +119,16 @@ export class CrossOverMap extends Root {
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
 
     .chart-container {
-      background: #fff;
+      background: #ffffff;
       padding: 24px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .chromosome-wrapper {
@@ -139,9 +139,9 @@ export class CrossOverMap extends Root {
     .chromosome {
       position: relative;
       height: 60px;
-      background: linear-gradient(to bottom, #e8f0fe 0%, #d3e3fd 100%);
+      background: #f3f4f6;
       border-radius: 30px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border: 2px solid #e5e7eb;
       margin-bottom: 40px;
     }
 
@@ -153,9 +153,8 @@ export class CrossOverMap extends Root {
       transform: translateY(-50%);
       width: 12px;
       height: 12px;
-      background: #fff;
+      background: #111827;
       border-radius: 50%;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
     }
 
     .chromosome-label {
@@ -165,11 +164,11 @@ export class CrossOverMap extends Root {
       transform: translateX(-50%);
       font-size: 0.85rem;
       font-weight: 600;
-      color: #5f6368;
-      background: #fff;
+      color: #6b7280;
+      background: #ffffff;
       padding: 4px 12px;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .chromosome-length {
@@ -178,7 +177,7 @@ export class CrossOverMap extends Root {
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.9rem;
-      color: #1a73e8;
+      color: #111827;
       font-weight: 600;
     }
 
@@ -190,12 +189,12 @@ export class CrossOverMap extends Root {
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       z-index: 10;
     }
 
     .gene:hover {
-      transform: translate(-50%, -50%) scale(1.2);
+      transform: translate(-50%, -50%) scale(1.15);
       z-index: 20;
     }
 
@@ -208,13 +207,13 @@ export class CrossOverMap extends Root {
       justify-content: center;
       font-size: 0.75rem;
       font-weight: 700;
-      color: #fff;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      transition: all 0.3s ease;
+      color: #ffffff;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s ease;
     }
 
     .gene-marker:hover {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      border-width: 3px;
     }
 
     .crossover-point {
@@ -228,26 +227,21 @@ export class CrossOverMap extends Root {
     .crossover-marker {
       width: 36px;
       height: 36px;
-      border: 4px solid #d93025;
-      background: #ffebee;
+      border: 3px solid #ef4444;
+      background: #fee2e2;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
       font-weight: 700;
-      color: #d93025;
-      box-shadow: 0 4px 12px rgba(217, 48, 37, 0.4);
-      animation: pulse 2s ease-in-out infinite;
+      color: #ef4444;
+      transition: all 0.2s ease;
     }
 
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.1);
-      }
+    .crossover-marker:hover {
+      border-width: 4px;
+      transform: scale(1.1);
     }
 
     .crossover-label {
@@ -257,11 +251,12 @@ export class CrossOverMap extends Root {
       transform: translateX(-50%);
       font-size: 0.8rem;
       font-weight: 600;
-      color: #d93025;
+      color: #ef4444;
       white-space: nowrap;
-      background: #ffebee;
+      background: #fee2e2;
       padding: 2px 8px;
       border-radius: 4px;
+      border: 1px solid #fecaca;
     }
 
     .gene-label {
@@ -270,25 +265,26 @@ export class CrossOverMap extends Root {
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.8rem;
-      color: #5f6368;
+      color: #6b7280;
       white-space: nowrap;
-      background: #fff;
+      background: #ffffff;
       padding: 2px 6px;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .legend {
       margin-top: 16px;
       padding: 12px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-title {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
@@ -304,7 +300,8 @@ export class CrossOverMap extends Root {
       gap: 8px;
       padding: 4px 8px;
       border-radius: 4px;
-      background: #fff;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-marker {
@@ -317,57 +314,61 @@ export class CrossOverMap extends Root {
       justify-content: center;
       font-size: 0.7rem;
       font-weight: 700;
-      color: #fff;
+      color: #ffffff;
     }
 
     .legend-marker.gene {
-      border-color: #1a73e8;
+      border-color: #3b82f6;
+      background: #3b82f6;
     }
 
     .legend-marker.crossover {
-      border-color: #d93025;
-      background: #ffebee;
-      border: 3px solid #d93025;
+      border-color: #ef4444;
+      background: #fee2e2;
+      border-width: 3px;
+      color: #ef4444;
     }
 
     .legend-text {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
     }
 
     .stats {
       margin-top: 16px;
       padding: 12px;
-      background: #e8f0fe;
+      background: #fafafa;
       border-radius: 6px;
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
+      border: 1px solid #e5e7eb;
     }
 
     .stat-item {
       text-align: center;
       padding: 8px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 4px;
+      border: 1px solid #e5e7eb;
     }
 
     .stat-label {
       font-size: 0.8rem;
-      color: #5f6368;
+      color: #6b7280;
       margin-bottom: 4px;
     }
 
     .stat-value {
       font-size: 1rem;
       font-weight: 600;
-      color: #1a73e8;
+      color: #111827;
     }
 
     .empty {
       text-align: center;
       padding: 40px;
-      color: #5f6368;
+      color: #6b7280;
       font-style: italic;
     }
   `];

@@ -60,25 +60,30 @@ export class ChatModule extends LitElement {
     :host {
       display: flex;
       width: 100%;
-      height: 100vh;
-      background: #f5f5f5;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      height: calc(100vh - 64px);
+      background: #fafafa;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      position: relative;
+      overflow: hidden;
     }
 
     .container {
       display: flex;
       width: 100%;
       height: 100%;
+      position: relative;
     }
 
     .sidebar {
-      width: 300px;
-      background: white;
-      border-right: 1px solid #e0e0e0;
+      width: 280px;
+      background: #ffffff;
+      border-right: 1px solid #e5e7eb;
       display: flex;
       flex-direction: column;
       transition: transform 0.3s ease;
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
     }
 
     .sidebar.closed {
@@ -88,26 +93,30 @@ export class ChatModule extends LitElement {
     }
 
     .sidebar-header {
-      padding: 20px;
-      border-bottom: 1px solid #e0e0e0;
+      padding: 24px 20px;
+      border-bottom: 1px solid #e5e7eb;
+      background: #ffffff;
     }
 
     .sidebar-header h2 {
-      margin: 0 0 15px 0;
-      font-size: 1.3em;
-      color: #333;
+      margin: 0 0 16px 0;
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #111827;
+      letter-spacing: -0.01em;
     }
 
     .new-chat-btn {
       width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 12px 16px;
+      background: #111827;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 1em;
+      font-size: 0.9em;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -115,32 +124,63 @@ export class ChatModule extends LitElement {
     }
 
     .new-chat-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      background: #1f2937;
+      transform: translateY(-1px);
+    }
+
+    .new-chat-btn:active {
+      transform: translateY(0);
     }
 
     .conversations-list {
       flex: 1;
       overflow-y: auto;
-      padding: 10px;
+      padding: 12px;
+      scrollbar-width: thin;
+      scrollbar-color: #e5e7eb transparent;
+    }
+
+    .conversations-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .conversations-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .conversations-list::-webkit-scrollbar-thumb {
+      background: #e5e7eb;
+      border-radius: 3px;
+    }
+
+    .conversations-list::-webkit-scrollbar-thumb:hover {
+      background: #d1d5db;
     }
 
     .conversation-item {
-      padding: 12px 16px;
-      border-radius: 8px;
+      padding: 12px;
+      border-radius: 6px;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: all 0.2s;
       margin-bottom: 4px;
       position: relative;
+      background: transparent;
+      border: 1px solid transparent;
     }
 
     .conversation-item:hover {
-      background: #f0f0f0;
+      background: #f3f4f6;
+      border-color: #e5e7eb;
     }
 
     .conversation-item.active {
-      background: #667eea;
-      color: white;
+      background: #f3f4f6;
+      border-color: #111827;
+    }
+
+    .conversation-item.active .conversation-title {
+      color: #111827;
+      font-weight: 600;
     }
 
     .conversation-title {
@@ -149,16 +189,18 @@ export class ChatModule extends LitElement {
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      color: #111827;
+      font-size: 0.9em;
     }
 
     .conversation-time {
-      font-size: 0.8em;
-      opacity: 0.7;
+      font-size: 0.75em;
+      color: #6b7280;
     }
 
     .conversation-actions {
       position: absolute;
-      right: 8px;
+      right: 12px;
       top: 50%;
       transform: translateY(-50%);
       opacity: 0;
@@ -170,51 +212,71 @@ export class ChatModule extends LitElement {
     }
 
     .delete-btn {
-      background: none;
+      background: #f3f4f6;
       border: none;
-      color: #666;
+      color: #6b7280;
       cursor: pointer;
-      padding: 4px;
-      font-size: 1.2em;
+      padding: 4px 6px;
+      font-size: 0.9em;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+
+    .delete-btn:hover {
+      background: #fee2e2;
+      color: #dc2626;
     }
 
     .conversation-item.active .delete-btn {
-      color: white;
+      color: #111827;
+      background: #e5e7eb;
     }
 
     .main-content {
       flex: 1;
       display: flex;
       flex-direction: column;
-      background: white;
+      background: #ffffff;
+      position: relative;
     }
 
     .chat-header {
       padding: 16px 24px;
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid #e5e7eb;
       display: flex;
       align-items: center;
-      gap: 16px;
-      background: white;
+      gap: 12px;
+      background: #ffffff;
     }
 
     .toggle-sidebar-btn {
-      background: none;
+      background: #f3f4f6;
       border: none;
-      font-size: 1.5em;
+      font-size: 1.2em;
       cursor: pointer;
       padding: 8px;
-      border-radius: 4px;
+      border-radius: 6px;
+      color: #111827;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .toggle-sidebar-btn:hover {
-      background: #f0f0f0;
+      background: #e5e7eb;
+    }
+
+    .toggle-sidebar-btn:active {
+      transform: scale(0.95);
     }
 
     .chat-title {
-      font-size: 1.2em;
+      font-size: 1.1em;
       font-weight: 600;
-      color: #333;
+      color: #111827;
+      letter-spacing: -0.01em;
+      flex: 1;
     }
 
     .header-actions {
@@ -225,26 +287,29 @@ export class ChatModule extends LitElement {
 
     .action-btn {
       padding: 8px 16px;
-      border: 1px solid #e0e0e0;
-      background: white;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 0.9em;
-      transition: all 0.2s ease;
+      font-size: 0.85em;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: #111827;
     }
 
     .action-btn:hover {
-      background: #f0f0f0;
+      background: #f3f4f6;
+      border-color: #d1d5db;
     }
 
     .action-btn.stop {
-      background: #ff4444;
+      background: #dc2626;
       color: white;
-      border-color: #ff4444;
+      border-color: transparent;
     }
 
     .action-btn.stop:hover {
-      background: #cc0000;
+      background: #b91c1c;
     }
 
     .messages-container {
@@ -254,17 +319,32 @@ export class ChatModule extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      scrollbar-width: thin;
+      scrollbar-color: #e5e7eb transparent;
+    }
+
+    .messages-container::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .messages-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb {
+      background: #e5e7eb;
+      border-radius: 4px;
     }
 
     .message {
-      max-width: 80%;
-      padding: 12px 16px;
+      max-width: 75%;
+      padding: 16px 20px;
       border-radius: 12px;
       position: relative;
-      animation: messageIn 0.3s ease;
+      animation: messageSlideIn 0.3s ease;
     }
 
-    @keyframes messageIn {
+    @keyframes messageSlideIn {
       from {
         opacity: 0;
         transform: translateY(10px);
@@ -277,22 +357,25 @@ export class ChatModule extends LitElement {
 
     .message.user {
       align-self: flex-end;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #111827;
       color: white;
+      border-bottom-right-radius: 4px;
     }
 
     .message.assistant {
       align-self: flex-start;
-      background: #f0f0f0;
-      color: #333;
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
+      border-bottom-left-radius: 4px;
     }
 
     .message.system {
       align-self: center;
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeeba;
-      max-width: 90%;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+      max-width: 85%;
       font-size: 0.9em;
     }
 
@@ -301,8 +384,9 @@ export class ChatModule extends LitElement {
       align-items: center;
       gap: 8px;
       margin-bottom: 8px;
-      font-size: 0.85em;
-      opacity: 0.8;
+      font-size: 0.8em;
+      opacity: 0.7;
+      font-weight: 500;
     }
 
     .message-content {
@@ -311,25 +395,30 @@ export class ChatModule extends LitElement {
 
     .message-content h1 {
       font-size: 1.5em;
-      margin: 0.67em 0;
-      border-bottom: 1px solid #eee;
+      margin: 0.8em 0 0.5em;
+      font-weight: 600;
+      color: #111827;
+      border-bottom: 1px solid #e5e7eb;
       padding-bottom: 0.3em;
     }
 
     .message-content h2 {
       font-size: 1.3em;
-      margin: 0.83em 0;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 0.3em;
+      margin: 0.7em 0 0.4em;
+      font-weight: 600;
+      color: #111827;
     }
 
     .message-content h3 {
-      font-size: 1.17em;
-      margin: 1em 0;
+      font-size: 1.1em;
+      margin: 0.6em 0 0.3em;
+      font-weight: 600;
+      color: #111827;
     }
 
     .message-content p {
       margin: 1em 0;
+      color: inherit;
     }
 
     .message-content ul, .message-content ol {
@@ -342,35 +431,46 @@ export class ChatModule extends LitElement {
     }
 
     .message-content code {
-      background: #f4f4f4;
+      background: #e5e7eb;
+      color: #111827;
       padding: 2px 6px;
-      border-radius: 3px;
-      font-family: 'Courier New', monospace;
+      border-radius: 4px;
+      font-family: 'Consolas', 'Monaco', monospace;
       font-size: 0.9em;
     }
 
+    .message.user .message-content code {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
     .message-content pre {
-      background: #f4f4f4;
+      background: #f3f4f6;
       padding: 16px;
       border-radius: 8px;
       overflow-x: auto;
       margin: 1em 0;
+      border: 1px solid #e5e7eb;
     }
 
     .message-content pre code {
       background: none;
       padding: 0;
+      border: none;
+      color: #111827;
     }
 
     .message-content blockquote {
-      border-left: 4px solid #ddd;
+      border-left: 3px solid #111827;
       padding-left: 1em;
       margin: 1em 0;
-      color: #666;
+      color: #6b7280;
+      font-style: italic;
     }
 
     .message-content strong {
       font-weight: 600;
+      color: inherit;
     }
 
     .message-content em {
@@ -378,12 +478,17 @@ export class ChatModule extends LitElement {
     }
 
     .message-content a {
-      color: #667eea;
-      text-decoration: none;
+      color: #111827;
+      text-decoration: underline;
+      transition: opacity 0.2s;
     }
 
     .message-content a:hover {
-      text-decoration: underline;
+      opacity: 0.7;
+    }
+
+    .message.user .message-content a {
+      color: white;
     }
 
     .message-content .katex {
@@ -440,7 +545,7 @@ export class ChatModule extends LitElement {
     .a2ui-loading .spinner {
       width: 20px;
       height: 20px;
-      border: 2px solid #667eea;
+      border: 2px solid #111827;
       border-top-color: transparent;
       border-radius: 50%;
       animation: spin 1s linear infinite;
@@ -453,13 +558,13 @@ export class ChatModule extends LitElement {
     }
 
     .a2ui-loading span {
-      color: #667eea;
+      color: #111827;
       font-size: 0.9em;
     }
 
     .a2ui-fallback-notice {
-      background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
-      border: 1px solid #ffc107;
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
       border-radius: 8px;
       padding: 12px 16px;
       margin-bottom: 12px;
@@ -474,7 +579,7 @@ export class ChatModule extends LitElement {
     }
 
     .a2ui-fallback-notice .notice-text {
-      color: #856404;
+      color: #92400e;
       font-size: 0.9em;
       font-weight: 500;
     }
@@ -516,50 +621,64 @@ export class ChatModule extends LitElement {
     }
 
     .input-area {
-      padding: 24px;
-      border-top: 1px solid #e0e0e0;
-      background: white;
+      padding: 16px 24px;
+      border-top: 1px solid #e5e7eb;
+      background: #ffffff;
     }
 
     .input-container {
       display: flex;
       gap: 12px;
       align-items: flex-end;
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
     .message-input {
       flex: 1;
-      padding: 14px 18px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
-      font-size: 1em;
-      font-family: inherit;
+      padding: 10px 14px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.95em;
+      font-family: 'Inter', sans-serif;
       resize: none;
-      min-height: 50px;
-      max-height: 150px;
-      transition: border-color 0.2s ease;
+      min-height: 44px;
+      max-height: 120px;
+      transition: all 0.2s;
+      background: white;
+      color: #111827;
+      line-height: 1.5;
+    }
+
+    .message-input::placeholder {
+      color: #9ca3af;
     }
 
     .message-input:focus {
       outline: none;
-      border-color: #667eea;
+      border-color: #111827;
     }
 
     .send-btn {
-      padding: 14px 24px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 10px 20px;
+      background: #111827;
       color: white;
       border: none;
-      border-radius: 12px;
-      font-size: 1em;
+      border-radius: 8px;
+      font-size: 0.9em;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
       white-space: nowrap;
+      min-width: 70px;
     }
 
     .send-btn:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      background: #1f2937;
+    }
+
+    .send-btn:active:not(:disabled) {
+      transform: scale(0.98);
     }
 
     .send-btn:disabled {
@@ -573,7 +692,7 @@ export class ChatModule extends LitElement {
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: #999;
+      color: #9ca3af;
     }
 
     .empty-state-icon {
@@ -590,7 +709,7 @@ export class ChatModule extends LitElement {
     .typing-indicator span {
       width: 8px;
       height: 8px;
-      background: #667eea;
+      background: #6b7280;
       border-radius: 50%;
       animation: typing 1.4s infinite ease-in-out both;
     }
@@ -634,16 +753,55 @@ export class ChatModule extends LitElement {
   connectedCallback() {
     super.connectedCallback();
     this.loadConversations();
-    this.createNewConversation();
+
+    // 只在没有对话时创建新对话
+    if (this.conversations.length === 0) {
+      this.createNewConversation();
+    } else {
+      // 如果有对话，选择最新的一个
+      this.currentConversationId = this.conversations[0].id;
+    }
 
     // 初始化 ChatOrchestrator
     const renderer = new A2UIRenderer();
     this.orchestrator = new ChatOrchestrator(renderer);
+
+    // 等待 DOM 更新后重新渲染历史消息中的 A2UI 组件
+    this.updateComplete.then(() => {
+      this.reRenderHistoricalA2UI();
+    });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.stopStreaming();
+  }
+
+  private reRenderHistoricalA2UI() {
+    if (!this.orchestrator) return;
+
+    const conv = this.getCurrentConversation();
+    if (!conv) return;
+
+    // 遍历所有消息，重新渲染有 A2UI 数据的消息
+    conv.messages.forEach(msg => {
+      if (msg.role === 'assistant' && msg.a2uiData) {
+        // 等待下一帧，确保 DOM 已经渲染
+        requestAnimationFrame(() => {
+          const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${msg.id}"]`);
+          if (messageElement) {
+            const a2uiContainer = messageElement.querySelector('.a2ui-container');
+            if (a2uiContainer) {
+              // 清空容器
+              a2uiContainer.innerHTML = '';
+              // 重新渲染 A2UI
+              this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, msg.a2uiData);
+              console.log(`[ChatModule] Re-rendered A2UI for message ${msg.id}`);
+            }
+          }
+        });
+      }
+    });
   }
 
   private loadConversations() {
@@ -773,6 +931,11 @@ export class ChatModule extends LitElement {
 
         // 更新消息内容（通过 Lit 的响应式系统）
         assistantMessage.content = response.text;
+
+        // 如果有 A2UI 数据，标记为加载中
+        if (response.a2ui && response.a2ui.length > 0) {
+          assistantMessage.a2uiLoading = true;
+        }
         this.requestUpdate();
 
         // 等待 DOM 更新后再渲染 A2UI
@@ -786,6 +949,7 @@ export class ChatModule extends LitElement {
             if (a2uiContainer) {
               this.orchestrator.renderA2UI(a2uiContainer as HTMLElement, response.a2ui);
               assistantMessage.a2uiData = response.a2ui; // 保存 A2UI 数据
+              assistantMessage.a2uiLoading = false; // 加载完成
             }
           }
         }
@@ -986,7 +1150,7 @@ export class ChatModule extends LitElement {
                       <span>正在生成学习内容...</span>
                     </div>
                   ` : ''}
-                  ${msg.role === 'assistant' ? html`
+                  ${msg.role === 'assistant' && (msg.a2uiData || msg.a2uiLoading) ? html`
                     <div class="a2ui-container"></div>
                   ` : nothing}
                   <div class="message-actions">

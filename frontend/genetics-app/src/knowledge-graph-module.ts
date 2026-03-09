@@ -78,56 +78,63 @@ export class KnowledgeGraphModule extends LitElement {
       flex-direction: column;
       width: 100%;
       height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fafafa;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      position: relative;
+      overflow: hidden;
     }
 
     .container {
       flex: 1;
       display: flex;
       flex-direction: column;
+      position: relative;
     }
 
     .header {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 20px;
-      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
       z-index: 10;
     }
 
     .header h1 {
       margin: 0 0 16px 0;
-      font-size: 1.8em;
-      color: #1a1a1a;
+      font-size: 1.5em;
+      color: #111827;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
     .filters {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 8px;
     }
 
     .filter-chip {
       padding: 8px 16px;
-      border-radius: 20px;
-      border: 2px solid #e0e0e0;
+      border-radius: 16px;
+      border: 1px solid #e5e7eb;
       background: white;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
       font-weight: 500;
       display: flex;
       align-items: center;
       gap: 8px;
+      font-size: 0.9em;
+      color: #111827;
     }
 
     .filter-chip:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      background: #f3f4f6;
+      border-color: #d1d5db;
     }
 
     .filter-chip.active {
-      border-color: var(--category-color, #667eea);
-      background: var(--category-color, #667eea);
+      border-color: var(--category-color, #111827);
+      background: var(--category-color, #111827);
       color: white;
     }
 
@@ -135,7 +142,7 @@ export class KnowledgeGraphModule extends LitElement {
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--category-color, #667eea);
+      background: var(--category-color, #111827);
     }
 
     .filter-chip.active .color-dot {
@@ -146,7 +153,8 @@ export class KnowledgeGraphModule extends LitElement {
       flex: 1;
       position: relative;
       overflow: hidden;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.3);
+      backdrop-filter: blur(10px);
     }
 
     #graph-canvas {
@@ -160,44 +168,51 @@ export class KnowledgeGraphModule extends LitElement {
 
     .controls {
       position: absolute;
-      bottom: 20px;
-      right: 20px;
+      bottom: 24px;
+      right: 24px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      background: white;
-      padding: 8px;
-      border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(26, 115, 232, 0.15);
+      border: 1px solid rgba(26, 115, 232, 0.1);
     }
 
     .control-btn {
-      width: 40px;
-      height: 40px;
-      border: 2px solid #e0e0e0;
+      width: 44px;
+      height: 44px;
+      border: 2px solid rgba(26, 115, 232, 0.15);
       background: white;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      font-size: 1.2em;
+      font-size: 1.3em;
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      color: #1a73e8;
     }
 
     .control-btn:hover {
-      background: #f0f0f0;
-      transform: scale(1.1);
+      background: #f3f4f6;
+      border-color: #d1d5db;
+    }
+
+    .control-btn:active {
+      transform: scale(0.95);
     }
 
     .legend {
       position: absolute;
       bottom: 20px;
       left: 20px;
-      background: rgba(255, 255, 255, 0.95);
+      background: #ffffff;
       padding: 16px;
       border-radius: 8px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
       max-height: 300px;
       overflow-y: auto;
     }
@@ -205,25 +220,32 @@ export class KnowledgeGraphModule extends LitElement {
     .legend h3 {
       margin: 0 0 12px 0;
       font-size: 1em;
-      color: #333;
+      color: #111827;
+      font-weight: 600;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       padding: 6px 0;
+      transition: all 0.2s ease;
+    }
+
+    .legend-item:hover {
+      transform: translateX(2px);
     }
 
     .legend-dot {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
       border-radius: 50%;
     }
 
     .legend-label {
       font-size: 0.9em;
-      color: #666;
+      color: #6b7280;
+      font-weight: 500;
     }
 
     .node-detail {
@@ -231,10 +253,10 @@ export class KnowledgeGraphModule extends LitElement {
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: white;
+      background: #ffffff;
       padding: 24px;
       border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      border: 1px solid #e5e7eb;
       max-width: 400px;
       z-index: 100;
       animation: fadeIn 0.3s ease;
@@ -243,7 +265,7 @@ export class KnowledgeGraphModule extends LitElement {
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translate(-50%, -50%) scale(0.9);
+        transform: translate(-50%, -50%) scale(0.95);
       }
       to {
         opacity: 1;
@@ -261,34 +283,38 @@ export class KnowledgeGraphModule extends LitElement {
     .node-detail-title {
       font-size: 1.3em;
       font-weight: 700;
-      color: #333;
+      color: #202124;
+      letter-spacing: -0.01em;
     }
 
     .node-detail-category {
       padding: 4px 12px;
       border-radius: 12px;
-      font-size: 0.85em;
-      font-weight: 600;
-      background: var(--category-color, #667eea);
+      font-size: 0.8em;
+      font-weight: 500;
+      background: var(--category-color, #111827);
       color: white;
     }
 
     .node-detail-description {
-      color: #666;
+      color: #6b7280;
       line-height: 1.6;
       margin-bottom: 16px;
+      font-size: 0.95em;
     }
 
     .node-detail-connections {
-      background: #f8f9fa;
+      background: #f9fafb;
       padding: 12px;
       border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .node-detail-connections h4 {
-      margin: 0 0 8px 0;
-      font-size: 0.95em;
-      color: #333;
+      margin: 0 0 10px 0;
+      font-size: 0.9em;
+      color: #111827;
+      font-weight: 600;
     }
 
     .connection-list {
@@ -300,43 +326,54 @@ export class KnowledgeGraphModule extends LitElement {
     .connection-tag {
       background: white;
       padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 0.85em;
-      color: #667eea;
+      border-radius: 8px;
+      font-size: 0.8em;
+      color: #111827;
       font-weight: 500;
+      border: 1px solid #e5e7eb;
+      transition: all 0.2s ease;
+    }
+
+    .connection-tag:hover {
+      background: #f3f4f6;
     }
 
     .close-btn {
-      background: none;
+      background: #f3f4f6;
       border: none;
-      font-size: 1.5em;
+      font-size: 1.2em;
       cursor: pointer;
-      color: #999;
-      padding: 4px;
+      color: #111827;
+      padding: 6px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
     }
 
     .close-btn:hover {
-      color: #333;
+      background: #e5e7eb;
     }
 
     .reset-btn {
       margin-left: auto;
       padding: 8px 16px;
-      background: #f0f0f0;
-      border: 2px solid #e0e0e0;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
       border-radius: 8px;
       cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
+      font-weight: 500;
+      transition: all 0.2s;
+      color: #111827;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9em;
     }
 
     .reset-btn:hover {
-      background: #e0e0e0;
+      background: #e5e7eb;
     }
 
     .stats {
       display: flex;
-      gap: 24px;
+      gap: 20px;
       margin-top: 12px;
     }
 
@@ -347,19 +384,19 @@ export class KnowledgeGraphModule extends LitElement {
     }
 
     .stat-value {
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #667eea;
+      font-size: 1.3em;
+      font-weight: 600;
+      color: #111827;
     }
 
     .stat-label {
-      font-size: 0.85em;
-      color: #666;
+      font-size: 0.8em;
+      color: #6b7280;
     }
 
     @media (max-width: 768px) {
       .header h1 {
-        font-size: 1.4em;
+        font-size: 1.2em;
       }
 
       .node-detail {

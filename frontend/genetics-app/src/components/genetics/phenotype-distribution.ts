@@ -60,14 +60,14 @@ export class PhenotypeDistribution extends Root {
   }
 
   private static readonly COLORS = [
-    '#1a73e8',
-    '#188038',
-    '#f9ab00',
-    '#d93025',
-    '#7c3aed',
-    '#2563eb',
-    '#059669',
-    '#e53935'
+    '#3b82f6',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#06b6d4',
+    '#84cc16'
   ];
 
   static styles = [
@@ -76,7 +76,7 @@ export class PhenotypeDistribution extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -87,16 +87,16 @@ export class PhenotypeDistribution extends Root {
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
 
     .chart-container {
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .chart {
@@ -115,7 +115,7 @@ export class PhenotypeDistribution extends Root {
       min-width: 100px;
       font-size: 0.9rem;
       font-weight: 500;
-      color: #5f6368;
+      color: #6b7280;
       text-align: right;
     }
 
@@ -124,9 +124,10 @@ export class PhenotypeDistribution extends Root {
       display: flex;
       align-items: center;
       height: 32px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 4px;
       overflow: hidden;
+      border: 1px solid #e5e7eb;
     }
 
     .bar {
@@ -141,13 +142,11 @@ export class PhenotypeDistribution extends Root {
     }
 
     .bar:hover {
-      opacity: 0.9;
-      transform: scaleY(1.05);
-      transform-origin: center;
+      opacity: 0.85;
     }
 
     .bar-text {
-      color: #fff;
+      color: #ffffff;
       font-weight: 600;
       font-size: 0.9rem;
       white-space: nowrap;
@@ -166,21 +165,22 @@ export class PhenotypeDistribution extends Root {
     .stat-percentage {
       font-size: 1rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
     }
 
     .stat-count {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
     }
 
     .total-stats {
       margin-top: 16px;
       padding: 12px;
-      background: #e8f0fe;
+      background: #fafafa;
       border-radius: 6px;
       display: flex;
       justify-content: space-around;
+      border: 1px solid #e5e7eb;
     }
 
     .stat-item {
@@ -189,34 +189,35 @@ export class PhenotypeDistribution extends Root {
 
     .stat-label {
       font-size: 0.8rem;
-      color: #5f6368;
+      color: #6b7280;
       margin-bottom: 4px;
     }
 
     .stat-value {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #1a73e8;
+      color: #111827;
     }
 
     .empty {
       text-align: center;
       padding: 40px;
-      color: #5f6368;
+      color: #6b7280;
       font-style: italic;
     }
 
     .legend {
       margin-top: 16px;
       padding: 12px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-title {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
@@ -232,7 +233,8 @@ export class PhenotypeDistribution extends Root {
       gap: 8px;
       padding: 4px;
       border-radius: 4px;
-      background: #fff;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-color {
@@ -244,7 +246,7 @@ export class PhenotypeDistribution extends Root {
 
     .legend-text {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
       flex: 1;
     }
   `];

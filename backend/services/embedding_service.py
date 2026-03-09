@@ -6,14 +6,16 @@ import socket
 
 load_dotenv()
 
-cache_dir = Path(tempfile.gettempdir()) / "huggingface_cache"
+# 使用项目目录下的缓存，而不是临时目录
+project_root = Path(__file__).parent.parent
+cache_dir = project_root / ".cache" / "huggingface"
 cache_dir.mkdir(parents=True, exist_ok=True)
 
 os.environ['HF_HOME'] = str(cache_dir)
 os.environ['TRANSFORMERS_CACHE'] = str(cache_dir)
 os.environ['HF_HUB_CACHE'] = str(cache_dir)
 os.environ['HF_DATASETS_CACHE'] = str(cache_dir)
-os.environ['HF_HUB_OFFLINE'] = '1'
+os.environ['HF_HUB_OFFLINE'] = '0'  # 允许联网下载模型
 
 import logging
 from typing import List, Optional

@@ -171,7 +171,8 @@ export class Flashcard extends LitElement {
             : ''}
           <div class="flashcard-content">${this.back}</div>
           <div class="flashcard-hint">
-            <span class="icon">↻</            点击查看问题
+            <span class="icon">↻</span>
+            点击查看问题
           </div>
         </div>
       </div>

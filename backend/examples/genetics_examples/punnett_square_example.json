@@ -13,10 +13,26 @@
           "id": "punnett_square",
           "component": {
             "PunnettSquare": {
-              "parent1Genotype": {"literalString": "Aa"},
-              "parent2Genotype": {"literalString": "aa"},
-              "trait": {"literalString": "眼睛颜色"},
-              "showPhenotype": {"literalBoolean": true}
+              "parent1Genotype": {"literalString": "RrYy"},
+              "parent2Genotype": {"literalString": "RrYy"},
+              "trait": {"literalString": "豌豆种子性状"},
+              "showPhenotype": {"literalBoolean": true},
+              "traitDefinitions": {
+                "literalArray": [
+                  {
+                    "name": "种子形状",
+                    "dominantTrait": "圆粒",
+                    "recessiveTrait": "皱粒",
+                    "incompleteDominance": false
+                  },
+                  {
+                    "name": "种子颜色",
+                    "dominantTrait": "黄色",
+                    "recessiveTrait": "绿色",
+                    "incompleteDominance": false
+                  }
+                ]
+              }
             }
           }
         }

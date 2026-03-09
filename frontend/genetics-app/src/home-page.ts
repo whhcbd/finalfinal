@@ -51,46 +51,42 @@ export class HomePage extends LitElement {
     :host {
       display: block;
       width: 100%;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px;
-      box-sizing: border-box;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      height: 100%;
+      background: #fafafa;
+      overflow-y: auto;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 48px 24px;
     }
 
     .header {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 16px;
-      padding: 40px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      text-align: center;
+      margin-bottom: 48px;
     }
 
     .header h1 {
-      margin: 0 0 10px 0;
       font-size: 2.5em;
-      color: #1a1a1a;
       font-weight: 700;
+      color: #111827;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
     }
 
     .header p {
-      margin: 0;
-      font-size: 1.2em;
-      color: #666;
+      font-size: 1.1em;
+      color: #6b7280;
+      font-weight: 400;
     }
 
     .progress-section {
-      background: white;
-      border-radius: 16px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       padding: 24px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      margin-bottom: 32px;
     }
 
     .progress-header {
@@ -101,129 +97,106 @@ export class HomePage extends LitElement {
     }
 
     .progress-label {
-      font-size: 1.1em;
+      font-size: 0.9em;
       font-weight: 600;
-      color: #333;
+      color: #111827;
     }
 
     .progress-percentage {
-      font-size: 1.2em;
-      font-weight: 700;
-      color: #667eea;
+      font-size: 1.1em;
+      font-weight: 600;
+      color: #111827;
     }
 
     .progress-bar {
-      height: 12px;
-      background: #e0e0e0;
-      border-radius: 6px;
+      height: 8px;
+      background: #f3f4f6;
+      border-radius: 4px;
       overflow: hidden;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.5s ease-in-out;
-      border-radius: 6px;
+      background: #111827;
+      transition: width 0.5s ease;
+      border-radius: 4px;
     }
 
     .cards-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      margin-top: 20px;
+      gap: 20px;
+      margin-bottom: 32px;
     }
 
     .nav-card {
-      background: white;
-      border-radius: 16px;
-      padding: 32px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 24px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid transparent;
+      transition: all 0.2s;
       position: relative;
-      overflow: hidden;
     }
 
     .nav-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
-    }
-
-    .nav-card:hover .card-icon {
-      transform: scale(1.2) rotate(5deg);
+      border-color: #111827;
+      transform: translateY(-2px);
     }
 
     .card-icon {
-      font-size: 3em;
-      margin-bottom: 16px;
-      transition: transform 0.3s ease;
+      font-size: 2em;
+      margin-bottom: 12px;
       display: block;
     }
 
     .card-title {
-      font-size: 1.5em;
-      font-weight: 700;
-      color: #333;
-      margin: 0 0 12px 0;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 8px;
     }
 
     .card-description {
-      font-size: 1em;
-      color: #666;
-      line-height: 1.6;
-      margin: 0;
-    }
-
-    .card-decoration {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      transition: width 0.3s ease;
-    }
-
-    .nav-card:hover .card-decoration {
-      width: 100%;
-      opacity: 0.05;
-    }
-
-    .card-content {
-      position: relative;
-      z-index: 1;
+      font-size: 0.9em;
+      color: #6b7280;
+      line-height: 1.5;
     }
 
     .stats-section {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 20px;
-      margin-top: 30px;
     }
 
     .stat-card {
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       padding: 24px;
       text-align: center;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     }
 
     .stat-value {
       font-size: 2.5em;
       font-weight: 700;
-      color: #667eea;
+      color: #111827;
       margin-bottom: 8px;
     }
 
     .stat-label {
-      font-size: 0.9em;
-      color: #666;
+      font-size: 0.85em;
+      color: #6b7280;
+      font-weight: 500;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.05em;
     }
 
     @media (max-width: 768px) {
+      .container {
+        padding: 32px 16px;
+      }
+
       .header h1 {
         font-size: 2em;
       }
@@ -232,8 +205,8 @@ export class HomePage extends LitElement {
         grid-template-columns: 1fr;
       }
 
-      .nav-card {
-        padding: 24px;
+      .stats-section {
+        grid-template-columns: 1fr;
       }
     }
   `;

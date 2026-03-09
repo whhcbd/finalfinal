@@ -777,6 +777,17 @@ async def chat(request: ChatRequest):
     )
 
 
+@app.get("/api/quiz/questions")
+async def get_quiz_questions(category: str):
+    """获取指定类别的测验题目"""
+    try:
+        from data.quiz_questions import QUIZ_QUESTIONS
+        return QUIZ_QUESTIONS.get(category, [])
+    except Exception as e:
+        logger.error(f"Failed to load quiz questions: {e}")
+        return []
+
+
 @app.get("/")
 async def root():
     return {"message": "Genetics A2UI Backend API", "status": "running"}

@@ -3,12 +3,12 @@
   "components": {
     "PunnettSquare": {
       "type": "object",
-      "description": "孟德尔方格图组件，用于展示基因杂交后代的基因型和表型比例",
+      "description": "孟德尔方格图组件，用于展示基因杂交后代的基因型和表型比例。支持单基因、双基因、多基因杂交，不完全显性，连锁遗传，卡方检验等功能。",
       "additionalProperties": false,
       "properties": {
         "parent1Genotype": {
           "type": "object",
-          "description": "亲本1的基因型（如 'Aa', 'BB'）",
+          "description": "亲本1的基因型（如 'Aa', 'AaBb', 'RrYy'）",
           "additionalProperties": false,
           "properties": {
             "literalString": {
@@ -21,7 +21,7 @@
         },
         "parent2Genotype": {
           "type": "object",
-          "description": "亲本2的基因型（如 'aa', 'Bb'）",
+          "description": "亲本2的基因型（如 'aa', 'AaBb', 'RrYy'）",
           "additionalProperties": false,
           "properties": {
             "literalString": {
@@ -34,7 +34,7 @@
         },
         "trait": {
           "type": "object",
-          "description": "控制的性状名称（如 '豌豆颜色', '花朵形状'）",
+          "description": "控制的性状名称（如 '豌豆种子性状', '花朵颜色'）",
           "additionalProperties": false,
           "properties": {
             "literalString": {
@@ -58,9 +58,88 @@
             }
           }
         },
+        "traitDefinitions": {
+          "type": "object",
+          "description": "性状定义数组，用于多基因杂交和自定义性状名称。每个元素定义一个基因位点的性状。",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "性状名称（如 '种子形状', '种子颜色'）"
+                  },
+                  "dominantTrait": {
+                    "type": "string",
+                    "description": "显性性状名称（如 '圆粒', '黄色'）"
+                  },
+                  "recessiveTrait": {
+                    "type": "string",
+                    "description": "隐性性状名称（如 '皱粒', '绿色'）"
+                  },
+                  "incompleteDominance": {
+                    "type": "boolean",
+                    "description": "是否为不完全显性"
+                  },
+                  "intermediateTrait": {
+                    "type": "string",
+                    "description": "中间型性状名称（如 '粉红色'），仅在不完全显性时使用"
+                  }
+                },
+                "required": ["name", "dominantTrait", "recessiveTrait"]
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "linkageInfo": {
+          "type": "object",
+          "description": "连锁遗传信息，用于标记基因是否位于同一染色体上",
+          "additionalProperties": false,
+          "properties": {
+            "literalObject": {
+              "type": "object",
+              "properties": {
+                "isLinked": {
+                  "type": "boolean",
+                  "description": "基因是否连锁"
+                },
+                "recombinationFrequency": {
+                  "type": "number",
+                  "description": "重组频率（百分比，如 15 表示 15%）"
+                }
+              },
+              "required": ["isLinked"]
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "observedData": {
+          "type": "object",
+          "description": "实际观察数据数组，用于卡方检验。数组顺序应与表型比例顺序一致。",
+          "additionalProperties": false,
+          "properties": {
+            "literalArray": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
         "dominantAllele": {
           "type": "object",
-          "description": "显性等位基因（如 'A', 'B'）",
+          "description": "显性等位基因（如 'A', 'B'）- 已弃用，请使用 traitDefinitions",
           "additionalProperties": false,
           "properties": {
             "literalString": {
@@ -73,7 +152,7 @@
         },
         "recessiveAllele": {
           "type": "object",
-          "description": "隐性等位基因（如 'a', 'b'）",
+          "description": "隐性等位基因（如 'a', 'b'）- 已弃用，请使用 traitDefinitions",
           "additionalProperties": false,
           "properties": {
             "literalString": {

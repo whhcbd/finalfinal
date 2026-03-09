@@ -138,28 +138,31 @@ export class QuizModule extends LitElement {
       display: block;
       width: 100%;
       min-height: 100vh;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #fafafa;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      position: relative;
+      overflow: hidden;
     }
 
     .container {
       max-width: 900px;
       margin: 0 auto;
       padding: 40px 20px;
+      position: relative;
     }
 
     .card {
-      background: white;
-      border-radius: 16px;
+      background: #ffffff;
+      border-radius: 12px;
       padding: 32px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 0.5s ease;
+      border: 1px solid #e5e7eb;
+      animation: fadeIn 0.3s ease;
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(20px);
+        transform: translateY(10px);
       }
       to {
         opacity: 1;
@@ -173,29 +176,37 @@ export class QuizModule extends LitElement {
     }
 
     .header h1 {
-      font-size: 2.5em;
+      font-size: 2em;
       margin: 0 0 12px 0;
-      color: #1a1a1a;
+      color: #111827;
+      font-weight: 600;
+      letter-spacing: -0.01em;
     }
 
     .header p {
-      color: #666;
-      font-size: 1.1em;
+      color: #6b7280;
+      font-size: 1em;
       margin: 0;
+      font-weight: 400;
     }
 
     .back-btn {
-      background: none;
-      border: none;
-      font-size: 1.5em;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      font-size: 1.1em;
       cursor: pointer;
-      padding: 8px;
+      padding: 8px 12px;
       margin-bottom: 16px;
-      transition: transform 0.2s ease;
+      border-radius: 6px;
+      transition: all 0.2s;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .back-btn:hover {
-      transform: translateX(-4px);
+      background: #e5e7eb;
     }
 
     .knowledge-grid {
@@ -206,58 +217,59 @@ export class QuizModule extends LitElement {
     }
 
     .knowledge-card {
-      background: #f8f9fa;
-      border: 2px solid transparent;
-      border-radius: 12px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       padding: 24px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s;
+      position: relative;
     }
 
     .knowledge-card:hover {
-      border-color: #667eea;
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+      border-color: #111827;
+      transform: translateY(-2px);
     }
 
     .knowledge-icon {
-      font-size: 3em;
+      font-size: 2.5em;
       margin-bottom: 12px;
+      display: block;
     }
 
     .knowledge-name {
-      font-size: 1.3em;
-      font-weight: 700;
-      color: #333;
+      font-size: 1.2em;
+      font-weight: 600;
+      color: #111827;
       margin-bottom: 8px;
     }
 
     .knowledge-description {
-      color: #666;
-      font-size: 0.95em;
+      color: #6b7280;
+      font-size: 0.9em;
       line-height: 1.5;
       margin-bottom: 12px;
     }
 
     .question-count {
-      color: #667eea;
-      font-weight: 600;
-      font-size: 0.9em;
+      color: #111827;
+      font-weight: 500;
+      font-size: 0.85em;
     }
 
     .progress-bar {
       width: 100%;
       height: 8px;
-      background: #e0e0e0;
+      background: #f3f4f6;
       border-radius: 4px;
       overflow: hidden;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-      transition: width 0.5s ease;
+      background: #111827;
+      transition: width 0.3s ease;
       border-radius: 4px;
     }
 
@@ -265,56 +277,60 @@ export class QuizModule extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
 
     .question-number {
-      font-size: 1.2em;
+      font-size: 1.1em;
       font-weight: 600;
-      color: #333;
+      color: #111827;
     }
 
     .streak-badge {
-      background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%);
+      background: #111827;
       color: white;
       padding: 8px 16px;
-      border-radius: 20px;
-      font-weight: 600;
+      border-radius: 16px;
+      font-weight: 500;
       display: flex;
       align-items: center;
       gap: 6px;
+      font-size: 0.9em;
     }
 
     .question-text {
-      font-size: 1.4em;
-      color: #333;
+      font-size: 1.3em;
+      color: #111827;
       line-height: 1.6;
-      margin-bottom: 32px;
+      margin-bottom: 24px;
       font-weight: 500;
     }
 
     .question-difficulty {
       display: inline-block;
-      padding: 4px 12px;
+      padding: 6px 14px;
       border-radius: 12px;
-      font-size: 0.85em;
+      font-size: 0.8em;
       font-weight: 600;
       margin-bottom: 16px;
     }
 
     .difficulty-easy {
-      background: #d4edda;
-      color: #155724;
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
     }
 
     .difficulty-medium {
-      background: #fff3cd;
-      color: #856404;
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
     }
 
     .difficulty-hard {
-      background: #f8d7da;
-      color: #721c24;
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
     }
 
     .options-list {
@@ -325,108 +341,111 @@ export class QuizModule extends LitElement {
 
     .option-item {
       padding: 16px 20px;
-      border: 2px solid #e0e0e0;
-      border-radius: 12px;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
       display: flex;
       align-items: center;
       gap: 12px;
-      font-size: 1.05em;
+      font-size: 1em;
+      background: white;
+      position: relative;
     }
 
     .option-item:hover:not(.disabled) {
-      border-color: #667eea;
-      background: #f8f9ff;
+      border-color: #111827;
+      background: #f9fafb;
     }
 
     .option-item.selected {
-      border-color: #667eea;
-      background: #667eea;
-      color: white;
+      border-color: #111827;
+      background: #f3f4f6;
     }
 
     .option-item.correct {
-      border-color: #28a745;
-      background: #d4edda;
-      color: #155724;
+      border-color: #10b981;
+      background: #d1fae5;
+      color: #065f46;
     }
 
     .option-item.incorrect {
-      border-color: #dc3545;
-      background: #f8d7da;
-      color: #721c24;
+      border-color: #ef4444;
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .option-item.disabled {
       cursor: not-allowed;
-      opacity: 0.7;
+      opacity: 0.6;
     }
 
     .option-letter {
-      width: 36px;
-      height: 36px;
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: #667eea;
+      background: #111827;
       color: white;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: 700;
+      font-weight: 600;
       flex-shrink: 0;
+      font-size: 0.9em;
     }
 
     .option-item.correct .option-letter {
-      background: #28a745;
+      background: #10b981;
     }
 
     .option-item.incorrect .option-letter {
-      background: #dc3545;
+      background: #ef4444;
     }
 
     .feedback-section {
-      margin-top: 24px;
+      margin-top: 20px;
       padding: 20px;
-      border-radius: 12px;
+      border-radius: 8px;
       animation: fadeIn 0.3s ease;
     }
 
     .feedback-section.correct {
-      background: #d4edda;
-      border: 2px solid #28a745;
+      background: #d1fae5;
+      border: 1px solid #10b981;
     }
 
     .feedback-section.incorrect {
-      background: #f8d7da;
-      border: 2px solid #dc3545;
+      background: #fee2e2;
+      border: 1px solid #ef4444;
     }
 
     .feedback-title {
-      font-size: 1.2em;
-      font-weight: 700;
-      margin-bottom: 12px;
+      font-size: 1.1em;
+      font-weight: 600;
+      margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
     .feedback-section.correct .feedback-title {
-      color: #155724;
+      color: #065f46;
     }
 
     .feedback-section.incorrect .feedback-title {
-      color: #721c24;
+      color: #991b1b;
     }
 
     .explanation {
-      color: #333;
+      color: #111827;
       line-height: 1.6;
-      margin-top: 12px;
+      margin-top: 10px;
     }
 
     .explanation-title {
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
+      color: #6b7280;
     }
 
     .action-buttons {
@@ -434,40 +453,47 @@ export class QuizModule extends LitElement {
       gap: 12px;
       margin-top: 24px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .btn {
-      padding: 12px 32px;
+      padding: 12px 28px;
       border: none;
       border-radius: 8px;
-      font-size: 1em;
-      font-weight: 600;
+      font-size: 0.95em;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #111827;
       color: white;
     }
 
     .btn-primary:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      background: #1f2937;
+    }
+
+    .btn-primary:active:not(:disabled) {
+      transform: scale(0.98);
     }
 
     .btn-secondary {
-      background: #f0f0f0;
-      color: #333;
+      background: #f3f4f6;
+      color: #111827;
+      border: 1px solid #e5e7eb;
     }
 
     .btn-secondary:hover {
-      background: #e0e0e0;
+      background: #e5e7eb;
     }
 
     .btn:disabled {
       opacity: 0.5;
       cursor: not-allowed;
+      transform: none !important;
     }
 
     .result-card {
@@ -479,37 +505,49 @@ export class QuizModule extends LitElement {
     }
 
     .score-circle {
-      width: 200px;
-      height: 200px;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
-      background: conic-gradient(from 0deg, #667eea 0%, #764ba2 100%);
+      background: #111827;
       margin: 0 auto 24px;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
+      animation: scaleIn 0.4s ease;
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     .score-circle::before {
       content: '';
       position: absolute;
-      width: 180px;
-      height: 180px;
+      width: 150px;
+      height: 150px;
       background: white;
       border-radius: 50%;
     }
 
     .score-value {
-      font-size: 3em;
+      font-size: 2.5em;
       font-weight: 700;
-      color: #667eea;
+      color: #111827;
       position: relative;
       z-index: 1;
     }
 
     .score-label {
-      font-size: 1.2em;
-      color: #666;
+      font-size: 1em;
+      color: #6b7280;
       margin-bottom: 8px;
     }
 
@@ -517,29 +555,30 @@ export class QuizModule extends LitElement {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 16px;
-      margin-top: 32px;
+      margin-top: 24px;
     }
 
     .detail-item {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 12px;
+      background: #f9fafb;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .detail-value {
-      font-size: 2em;
+      font-size: 1.8em;
       font-weight: 700;
-      color: #667eea;
+      color: #111827;
       margin-bottom: 4px;
     }
 
     .detail-label {
-      color: #666;
-      font-size: 0.9em;
+      color: #6b7280;
+      font-size: 0.85em;
     }
 
     .category-results {
-      margin-top: 32px;
+      margin-top: 24px;
       text-align: left;
     }
 
@@ -547,26 +586,27 @@ export class QuizModule extends LitElement {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 16px;
-      background: #f8f9fa;
-      border-radius: 8px;
+      padding: 12px;
+      background: #f9fafb;
+      border-radius: 6px;
       margin-bottom: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .category-name {
-      font-weight: 600;
-      color: #333;
+      font-weight: 500;
+      color: #111827;
     }
 
     .category-score {
-      color: #667eea;
-      font-weight: 700;
+      color: #111827;
+      font-weight: 600;
     }
 
     .empty-state {
       text-align: center;
       padding: 60px 20px;
-      color: #999;
+      color: #9ca3af;
     }
 
     .empty-state-icon {
@@ -584,7 +624,7 @@ export class QuizModule extends LitElement {
       }
 
       .header h1 {
-        font-size: 2em;
+        font-size: 1.5em;
       }
 
       .knowledge-grid {
@@ -592,7 +632,7 @@ export class QuizModule extends LitElement {
       }
 
       .question-text {
-        font-size: 1.2em;
+        font-size: 1.1em;
       }
     }
   `;
@@ -603,27 +643,30 @@ export class QuizModule extends LitElement {
     this.selectedKnowledgePoint = knowledgePointId;
 
     try {
-      const response = await fetch(`/api/quiz/questions?category=${knowledgePointId}`);
+      const response = await fetch(`http://localhost:8000/api/quiz/questions?category=${knowledgePointId}`);
       if (!response.ok) throw new Error('Failed to load questions');
-      
+
       this.questions = await response.json();
-      this.currentQuestionIndex = 0;
-      this.userAnswers = [];
-      this.selectedOptionId = null;
-      this.showFeedback = false;
-      this.quizStartTime = Date.now();
-      this.questionStartTime = Date.now();
-      this.correctCount = 0;
-      this.streakCount = 0;
-      this.maxStreak = 0;
+      this.resetQuizState();
     } catch (error) {
       console.error('Error loading questions:', error);
       this.questions = this.getSampleQuestions();
-      this.quizStartTime = Date.now();
-      this.questionStartTime = Date.now();
+      this.resetQuizState();
     } finally {
       this.isLoading = false;
     }
+  }
+
+  private resetQuizState() {
+    this.currentQuestionIndex = 0;
+    this.userAnswers = [];
+    this.selectedOptionId = null;
+    this.showFeedback = false;
+    this.quizStartTime = Date.now();
+    this.questionStartTime = Date.now();
+    this.correctCount = 0;
+    this.streakCount = 0;
+    this.maxStreak = 0;
   }
 
   private getSampleQuestions(): QuizQuestion[] {

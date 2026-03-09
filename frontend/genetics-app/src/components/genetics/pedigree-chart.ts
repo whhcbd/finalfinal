@@ -76,7 +76,7 @@ export class PedigreeChart extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -88,16 +88,16 @@ export class PedigreeChart extends Root {
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
 
     .chart-container {
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .generation {
@@ -106,8 +106,9 @@ export class PedigreeChart extends Root {
       gap: 40px;
       margin-bottom: 20px;
       padding: 10px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
+      border: 1px solid #e5e7eb;
     }
 
     .generation-label {
@@ -117,11 +118,11 @@ export class PedigreeChart extends Root {
       transform: translateX(-50%);
       font-size: 0.85rem;
       font-weight: 600;
-      color: #5f6368;
-      background: #fff;
+      color: #6b7280;
+      background: #ffffff;
       padding: 2px 8px;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .generation-wrapper {
@@ -138,7 +139,7 @@ export class PedigreeChart extends Root {
     }
 
     .individual:hover {
-      transform: scale(1.05);
+      transform: translateY(-2px);
     }
 
     .symbol {
@@ -156,38 +157,38 @@ export class PedigreeChart extends Root {
     }
 
     .symbol.male {
-      border-color: #1a73e8;
-      background: #e8f0fe;
-      color: #1a73e8;
+      border-color: #3b82f6;
+      background: #dbeafe;
+      color: #1e40af;
     }
 
     .symbol.female {
-      border-color: #d93025;
-      background: #fce8e6;
-      color: #d93025;
+      border-color: #ec4899;
+      background: #fce7f3;
+      color: #9f1239;
     }
 
     .symbol.normal {
-      border-color: #188038;
-      background: #e6f4ea;
-      color: #188038;
+      border-color: #10b981;
+      background: #d1fae5;
+      color: #065f46;
     }
 
     .symbol.affected {
-      border-color: #d93025;
-      background: #ffebee;
-      color: #d93025;
+      border-color: #ef4444;
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .symbol.carrier {
-      border-color: #f9ab00;
-      background: #fff8e1;
-      color: #f9ab00;
+      border-color: #f59e0b;
+      background: #fef3c7;
+      color: #92400e;
       border-style: dashed;
     }
 
     .symbol:hover {
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+      border-width: 4px;
     }
 
     .connections {
@@ -202,14 +203,15 @@ export class PedigreeChart extends Root {
     .legend {
       margin-top: 16px;
       padding: 12px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-title {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
@@ -225,7 +227,8 @@ export class PedigreeChart extends Root {
       gap: 8px;
       padding: 6px;
       border-radius: 4px;
-      background: #fff;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-symbol {
@@ -241,74 +244,46 @@ export class PedigreeChart extends Root {
     }
 
     .legend-symbol.male {
-      border-color: #1a73e8;
-      background: #e8f0fe;
-      color: #1a73e8;
+      border-color: #3b82f6;
+      background: #dbeafe;
+      color: #1e40af;
     }
 
     .legend-symbol.female {
-      border-color: #d93025;
-      background: #fce8e6;
-      color: #d93025;
+      border-color: #ec4899;
+      background: #fce7f3;
+      color: #9f1239;
     }
 
     .legend-symbol.normal {
-      border-color: #188038;
-      background: #e6f4ea;
-      color: #188038;
+      border-color: #10b981;
+      background: #d1fae5;
+      color: #065f46;
     }
 
     .legend-symbol.affected {
-      border-color: #d93025;
-      background: #ffebee;
-      color: #d93025;
+      border-color: #ef4444;
+      background: #fee2e2;
+      color: #991b1b;
     }
 
     .legend-symbol.carrier {
-      border-color: #f9ab00;
-      background: #fff8e1;
-      color: #f9ab00;
+      border-color: #f59e0b;
+      background: #fef3c7;
+      color: #92400e;
       border-style: dashed;
     }
 
     .legend-text {
       font-size: 0.85rem;
-      color: #5f6368;
-    }
-
-    .stats {
-      margin-top: 16px;
-      padding: 12px;
-      background: #e8f0fe;
-      border-radius: 6px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
-    }
-
-    .stat-item {
-      text-align: center;
-      padding: 8px;
-      background: #fff;
-      border-radius: 4px;
-    }
-
-    .stat-label {
-      font-size: 0.8rem;
-      color: #5f6368;
-      margin-bottom: 4px;
-    }
-
-    .stat-value {
-      font-size: 1rem;
-      font-weight: 600;
-      color: #1a73e8;
+      color: #6b7280;
+      flex: 1;
     }
 
     .empty {
       text-align: center;
       padding: 40px;
-      color: #5f6368;
+      color: #6b7280;
       font-style: italic;
     }
   `];

@@ -13,12 +13,28 @@ export interface GenotypeData {
   phenotype: string;
 }
 
+export interface TraitDefinition {
+  name: string;
+  dominantTrait: string;
+  recessiveTrait: string;
+  incompleteDominance?: boolean;
+  intermediateTrait?: string;
+}
+
+export interface LinkageInfo {
+  isLinked: boolean;
+  recombinationFrequency?: number;
+}
+
 @customElement('punnett-square')
 export class PunnettSquare extends Root {
   private _parent1Genotype: string = '';
   private _parent2Genotype: string = '';
   private _trait: string = '';
   private _showPhenotype: boolean = true;
+  private _traitDefinitions: TraitDefinition[] = [];
+  private _linkageInfo: LinkageInfo = { isLinked: false };
+  private _observedData: number[] = [];
 
   @property({ type: String })
   get parent1Genotype(): string {
@@ -60,7 +76,44 @@ export class PunnettSquare extends Root {
     this.requestUpdate('showPhenotype', oldValue);
   }
 
-  private unwrapValue(value: any, type: 'string' | 'boolean'): any {
+  @property({ type: Array })
+  get traitDefinitions(): TraitDefinition[] {
+    return this._traitDefinitions;
+  }
+  set traitDefinitions(value: any) {
+    const oldValue = this._traitDefinitions;
+    this._traitDefinitions = this.unwrapValue(value, 'array');
+    this.requestUpdate('traitDefinitions', oldValue);
+  }
+
+  @property({ type: Object })
+  get linkageInfo(): LinkageInfo {
+    return this._linkageInfo;
+  }
+  set linkageInfo(value: any) {
+    const oldValue = this._linkageInfo;
+    this._linkageInfo = this.unwrapValue(value, 'object');
+    this.requestUpdate('linkageInfo', oldValue);
+  }
+
+  @property({ type: Array })
+  get observedData(): number[] {
+    return this._observedData;
+  }
+  set observedData(value: any) {
+    const oldValue = this._observedData;
+    this._observedData = this.unwrapValue(value, 'array');
+    this.requestUpdate('observedData', oldValue);
+  }
+
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object'): any {
+    if (value === null || value === undefined) {
+      return type === 'string' ? '' :
+             type === 'boolean' ? false :
+             type === 'array' ? [] :
+             type === 'object' ? {} : null;
+    }
+
     // Handle A2UI Proxy-wrapped values
     if (value && typeof value === 'object') {
       if (type === 'string' && 'literalString' in value) {
@@ -68,6 +121,12 @@ export class PunnettSquare extends Root {
       }
       if (type === 'boolean' && 'literalBoolean' in value) {
         return value.literalBoolean;
+      }
+      if (type === 'array' && 'literalArray' in value) {
+        return value.literalArray;
+      }
+      if (type === 'object' && 'literalObject' in value) {
+        return value.literalObject;
       }
     }
     return value;
@@ -79,7 +138,7 @@ export class PunnettSquare extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -90,7 +149,7 @@ export class PunnettSquare extends Root {
     .trait-title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
@@ -109,35 +168,36 @@ export class PunnettSquare extends Root {
       gap: 8px;
       font-size: 1.1rem;
       font-weight: 500;
-      color: #5f6368;
+      color: #6b7280;
     }
 
     .parent-label {
-      color: #5f6368;
+      color: #6b7280;
       font-size: 0.9rem;
     }
 
     .genotype {
-      background: #e8f0fe;
-      color: #1a73e8;
+      background: #f3f4f6;
+      color: #111827;
       padding: 8px 16px;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
       font-size: 1.2rem;
       font-family: monospace;
+      border: 1px solid #e5e7eb;
     }
 
     .grid-container {
       display: grid;
-      gap: 2px;
-      background: #dadce0;
-      border: 2px solid #dadce0;
+      gap: 1px;
+      background: #e5e7eb;
+      border: 1px solid #e5e7eb;
       border-radius: 8px;
       overflow: hidden;
     }
 
     .grid-cell {
-      background: #fff;
+      background: #ffffff;
       padding: 12px;
       display: flex;
       flex-direction: column;
@@ -145,12 +205,17 @@ export class PunnettSquare extends Root {
       justify-content: center;
       min-height: 80px;
       position: relative;
+      transition: background 0.2s;
+    }
+
+    .grid-cell:hover:not(.header):not(.empty) {
+      background: #fafafa;
     }
 
     .grid-cell.header {
-      background: #f8f9fa;
+      background: #f9fafb;
       font-weight: 600;
-      color: #5f6368;
+      color: #6b7280;
       font-size: 0.9rem;
     }
 
@@ -161,7 +226,7 @@ export class PunnettSquare extends Root {
     .cell-genotype {
       font-size: 1.3rem;
       font-weight: 700;
-      color: #1a73e8;
+      color: #111827;
       font-family: monospace;
       margin-bottom: 4px;
       word-break: break-all;
@@ -169,36 +234,37 @@ export class PunnettSquare extends Root {
 
     .cell-phenotype {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
       text-align: center;
     }
 
     .cell-phenotype .dominant {
-      color: #188038;
+      color: #10b981;
       font-weight: 600;
     }
 
     .cell-phenotype .recessive {
-      color: #d93025;
+      color: #ef4444;
       font-weight: 600;
     }
 
     .cell-phenotype .heterozygous {
-      color: #f9ab00;
+      color: #f59e0b;
       font-weight: 600;
     }
 
     .offspring-section {
       margin-top: 24px;
       padding: 16px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 8px;
+      border: 1px solid #e5e7eb;
     }
 
     .offspring-title {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 12px;
     }
 
@@ -209,38 +275,38 @@ export class PunnettSquare extends Root {
     }
 
     .offspring-item {
-      background: #fff;
+      background: #ffffff;
       padding: 12px;
       border-radius: 6px;
-      border-left: 4px solid #1a73e8;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-left: 3px solid #111827;
+      border: 1px solid #e5e7eb;
     }
 
     .offspring-genotype {
       font-family: monospace;
       font-size: 1.1rem;
       font-weight: 600;
-      color: #1a73e8;
+      color: #111827;
       margin-bottom: 4px;
     }
 
     .offspring-phenotype {
       font-size: 0.9rem;
-      color: #5f6368;
+      color: #6b7280;
     }
 
     .offspring-ratio {
       font-size: 0.85rem;
-      color: #188038;
+      color: #111827;
       font-weight: 500;
     }
 
     .phenotype-legend {
       margin-top: 16px;
       padding: 12px;
-      background: #fff;
+      background: #ffffff;
       border-radius: 8px;
-      border: 1px solid #dadce0;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-item {
@@ -257,20 +323,145 @@ export class PunnettSquare extends Root {
     }
 
     .legend-indicator.dominant {
-      background: #188038;
+      background: #10b981;
     }
 
     .legend-indicator.recessive {
-      background: #d93025;
+      background: #ef4444;
     }
 
     .legend-indicator.heterozygous {
-      background: #f9ab00;
+      background: #f59e0b;
     }
 
     .legend-text {
       font-size: 0.9rem;
-      color: #5f6368;
+      color: #6b7280;
+    }
+
+    .cell-phenotype .incomplete {
+      color: #8b5cf6;
+      font-weight: 600;
+    }
+
+    .legend-indicator.incomplete {
+      background: #8b5cf6;
+    }
+
+    .warning-box {
+      margin-top: 16px;
+      padding: 12px;
+      background: #fef3c7;
+      border-left: 4px solid #f59e0b;
+      border-radius: 6px;
+    }
+
+    .warning-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 4px;
+    }
+
+    .warning-text {
+      font-size: 0.85rem;
+      color: #78350f;
+      line-height: 1.5;
+    }
+
+    .chi-square-section {
+      margin-top: 16px;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chi-square-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .chi-square-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+
+    .chi-square-table th,
+    .chi-square-table td {
+      padding: 8px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      font-size: 0.85rem;
+    }
+
+    .chi-square-table th {
+      background: #f9fafb;
+      font-weight: 600;
+      color: #6b7280;
+    }
+
+    .chi-square-result {
+      padding: 12px;
+      background: #fafafa;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .chi-square-value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 4px;
+    }
+
+    .chi-square-conclusion {
+      font-size: 0.85rem;
+      color: #6b7280;
+    }
+
+    .chi-square-conclusion.accept {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .chi-square-conclusion.reject {
+      color: #ef4444;
+      font-weight: 600;
+    }
+
+    .trait-names {
+      margin-top: 16px;
+      padding: 12px;
+      background: #f0fdf4;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .trait-names-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: 8px;
+    }
+
+    .trait-name-item {
+      font-size: 0.85rem;
+      color: #15803d;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .trait-name-item strong {
+      font-family: monospace;
+      background: #dcfce7;
+      padding: 2px 6px;
+      border-radius: 4px;
     }
     `
   ];
@@ -346,6 +537,11 @@ export class PunnettSquare extends Root {
   }
 
   private determinePhenotype(genotype: string): string {
+    // 检查是否有性状定义
+    if (this.traitDefinitions.length > 0) {
+      return this.determinePhenotypeWithTraits(genotype);
+    }
+
     const upperCaseCount = (genotype.match(/[A-Z]/g) || []).length;
     const totalAlleles = genotype.length;
 
@@ -358,6 +554,43 @@ export class PunnettSquare extends Root {
     }
   }
 
+  private determinePhenotypeWithTraits(genotype: string): string {
+    // 按基因位点分组
+    const genePairs: string[] = [];
+    for (let i = 0; i < genotype.length; i += 2) {
+      genePairs.push(genotype.substring(i, i + 2));
+    }
+
+    // 构建表型描述（多基因组合）
+    const phenotypeParts: string[] = [];
+
+    for (let i = 0; i < genePairs.length && i < this.traitDefinitions.length; i++) {
+      const pair = genePairs[i];
+      const trait = this.traitDefinitions[i];
+      const upperCount = (pair.match(/[A-Z]/g) || []).length;
+
+      if (trait.incompleteDominance) {
+        // 不完全显性
+        if (upperCount === 2) {
+          phenotypeParts.push(trait.dominantTrait);
+        } else if (upperCount === 1) {
+          phenotypeParts.push(trait.intermediateTrait || '中间型');
+        } else {
+          phenotypeParts.push(trait.recessiveTrait);
+        }
+      } else {
+        // 完全显性
+        if (upperCount >= 1) {
+          phenotypeParts.push(trait.dominantTrait);
+        } else {
+          phenotypeParts.push(trait.recessiveTrait);
+        }
+      }
+    }
+
+    return phenotypeParts.join('-');
+  }
+
   private calculatePhenotypeRatios(offspring: GenotypeData[]): Map<string, number> {
     const ratios = new Map<string, number>();
 
@@ -367,6 +600,60 @@ export class PunnettSquare extends Root {
     }
 
     return ratios;
+  }
+
+  private calculateChiSquare(offspring: GenotypeData[]): { value: number; pValue: number; accept: boolean } | null {
+    if (this.observedData.length === 0) return null;
+
+    const phenotypeRatios = this.calculatePhenotypeRatios(offspring);
+    const phenotypes = Array.from(phenotypeRatios.keys());
+
+    if (this.observedData.length !== phenotypes.length) return null;
+
+    const total = offspring.length;
+    let chiSquare = 0;
+
+    phenotypes.forEach((phenotype, index) => {
+      const expected = phenotypeRatios.get(phenotype) || 0;
+      const observed = this.observedData[index] || 0;
+
+      if (expected > 0) {
+        chiSquare += Math.pow(observed - expected, 2) / expected;
+      }
+    });
+
+    // 自由度 = 类别数 - 1
+    const df = phenotypes.length - 1;
+
+    // 简化的 p 值判断（临界值 3.841 对应 df=1, p=0.05）
+    const criticalValue = df === 1 ? 3.841 : df === 2 ? 5.991 : df === 3 ? 7.815 : 9.488;
+    const accept = chiSquare < criticalValue;
+
+    return {
+      value: chiSquare,
+      pValue: 0.05,
+      accept
+    };
+  }
+
+  private getPhenotypeDisplayName(phenotype: string): string {
+    // 如果表型已经是具体名称（包含"-"或中文），直接返回
+    if (phenotype.includes('-') || /[\u4e00-\u9fa5]/.test(phenotype)) {
+      return phenotype;
+    }
+
+    if (this.traitDefinitions.length === 0) {
+      return this.getPhenotypeLabel(phenotype);
+    }
+
+    // 使用自定义性状名称
+    const trait = this.traitDefinitions[0];
+    if (phenotype === 'dominant') return trait.dominantTrait;
+    if (phenotype === 'recessive') return trait.recessiveTrait;
+    if (phenotype === 'incomplete' && trait.intermediateTrait) return trait.intermediateTrait;
+    if (phenotype === 'heterozygous') return trait.dominantTrait; // 杂合子显示显性性状
+
+    return this.getPhenotypeLabel(phenotype);
   }
 
   override render() {
@@ -385,9 +672,44 @@ export class PunnettSquare extends Root {
       grid-template-rows: auto repeat(${gridSize}, 1fr);
     `;
 
+    const chiSquareResult = this.calculateChiSquare(offspring);
+
     return html`
       <div class="container">
         <div class="trait-title">${this.trait || '孟德尔方格图'}</div>
+
+        ${this.traitDefinitions.length > 0 ? html`
+          <div class="trait-names">
+            <div class="trait-names-title">性状定义</div>
+            ${map(this.traitDefinitions, (trait, index) => html`
+              <div class="trait-name-item">
+                <strong>${String.fromCharCode(65 + index)}${String.fromCharCode(65 + index)}</strong>
+                <span>${trait.dominantTrait}</span>
+                ${trait.incompleteDominance && trait.intermediateTrait ? html`
+                  <span>|</span>
+                  <strong>${String.fromCharCode(65 + index)}${String.fromCharCode(97 + index)}</strong>
+                  <span>${trait.intermediateTrait}</span>
+                ` : ''}
+                <span>|</span>
+                <strong>${String.fromCharCode(97 + index)}${String.fromCharCode(97 + index)}</strong>
+                <span>${trait.recessiveTrait}</span>
+              </div>
+            `)}
+          </div>
+        ` : ''}
+
+        ${this.linkageInfo.isLinked ? html`
+          <div class="warning-box">
+            <div class="warning-title">⚠️ 连锁遗传提示</div>
+            <div class="warning-text">
+              这些基因位于同一染色体上，不遵循自由组合定律。
+              ${this.linkageInfo.recombinationFrequency ? html`
+                重组频率约为 ${this.linkageInfo.recombinationFrequency}%。
+                实际后代比例可能偏离理论预测。
+              ` : ''}
+            </div>
+          </div>
+        ` : ''}
 
         <div class="parents">
           <div class="parent">
@@ -416,13 +738,13 @@ export class PunnettSquare extends Root {
                 <button
                   class="grid-cell"
                   @click=${() => this.handleCellClick(item)}
-                  aria-label="${item.genotype} - ${this.getPhenotypeLabel(item.phenotype)}"
+                  aria-label="${item.genotype} - ${this.getPhenotypeDisplayName(item.phenotype)}"
                   tabindex="0"
                 >
                   <div class="cell-genotype">${item.genotype}</div>
                   ${this.showPhenotype ? html`
                     <div class="cell-phenotype ${item.phenotype}">
-                      ${this.getPhenotypeLabel(item.phenotype)}
+                      ${this.getPhenotypeDisplayName(item.phenotype)}
                     </div>
                   ` : ''}
                 </button>
@@ -435,12 +757,11 @@ export class PunnettSquare extends Root {
           <div class="offspring-section">
             <div class="offspring-title">后代表型比例</div>
             <div class="offspring-grid">
-              ${map(Array.from(this.calculatePhenotypeRatios(offspring).entries()), ([phenotype, count]) => {
+              ${map(Array.from(this.calculatePhenotypeRatios(offspring).entries()).sort((a, b) => b[1] - a[1]), ([phenotype, count]) => {
                 const ratio = this.calculateRatio(count, offspring.length);
                 return html`
                   <div class="offspring-item">
-                    <div class="offspring-genotype">${phenotype}</div>
-                    <div class="offspring-phenotype">${this.getPhenotypeLabel(phenotype)}</div>
+                    <div class="offspring-phenotype">${this.getPhenotypeDisplayName(phenotype)}</div>
                     <div class="offspring-ratio">${ratio} (${count}/${offspring.length})</div>
                   </div>
                 `;
@@ -448,17 +769,74 @@ export class PunnettSquare extends Root {
             </div>
           </div>
 
-          <div class="phenotype-legend">
-            ${map([
-              { type: 'dominant', label: '显性性状' },
-              { type: 'recessive', label: '隐性性状' },
-              { type: 'heterozygous', label: '杂合性状' }
-            ], (item) => html`
-              <div class="legend-item">
-                <div class="legend-indicator ${item.type}"></div>
-                <span class="legend-text">${item.label}</span>
+          ${chiSquareResult ? html`
+            <div class="chi-square-section">
+              <div class="chi-square-title">卡方检验 (χ² Test)</div>
+              <table class="chi-square-table">
+                <thead>
+                  <tr>
+                    <th>表型</th>
+                    <th>理论期望</th>
+                    <th>实际观察</th>
+                    <th>(O-E)²/E</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${map(Array.from(this.calculatePhenotypeRatios(offspring).entries()), ([phenotype, expected], index) => {
+                    const observed = this.observedData[index] || 0;
+                    const contribution = expected > 0 ? Math.pow(observed - expected, 2) / expected : 0;
+                    return html`
+                      <tr>
+                        <td>${this.getPhenotypeDisplayName(phenotype)}</td>
+                        <td>${expected}</td>
+                        <td>${observed}</td>
+                        <td>${contribution.toFixed(3)}</td>
+                      </tr>
+                    `;
+                  })}
+                </tbody>
+              </table>
+              <div class="chi-square-result">
+                <div class="chi-square-value">χ² = ${chiSquareResult.value.toFixed(3)}</div>
+                <div class="chi-square-conclusion ${chiSquareResult.accept ? 'accept' : 'reject'}">
+                  ${chiSquareResult.accept
+                    ? '✓ 接受原假设：实际数据符合理论比例 (p > 0.05)'
+                    : '✗ 拒绝原假设：实际数据显著偏离理论比例 (p < 0.05)'}
+                </div>
               </div>
-            `)}
+            </div>
+          ` : ''}
+
+          <div class="phenotype-legend">
+            ${this.traitDefinitions.length > 0 ? html`
+              ${map(this.traitDefinitions, (trait, index) => html`
+                <div class="legend-item">
+                  <div class="legend-indicator dominant"></div>
+                  <span class="legend-text">${trait.dominantTrait}</span>
+                </div>
+                ${trait.incompleteDominance && trait.intermediateTrait ? html`
+                  <div class="legend-item">
+                    <div class="legend-indicator incomplete"></div>
+                    <span class="legend-text">${trait.intermediateTrait}</span>
+                  </div>
+                ` : ''}
+                <div class="legend-item">
+                  <div class="legend-indicator recessive"></div>
+                  <span class="legend-text">${trait.recessiveTrait}</span>
+                </div>
+              `)}
+            ` : html`
+              ${map([
+                { type: 'dominant', label: '显性性状' },
+                { type: 'recessive', label: '隐性性状' },
+                { type: 'heterozygous', label: '杂合性状' }
+              ], (item) => html`
+                <div class="legend-item">
+                  <div class="legend-indicator ${item.type}"></div>
+                  <span class="legend-text">${item.label}</span>
+                </div>
+              `)}
+            `}
           </div>
         ` : ''}
       </div>
@@ -469,7 +847,8 @@ export class PunnettSquare extends Root {
     const labels: Record<string, string> = {
       dominant: '显性',
       recessive: '隐性',
-      heterozygous: '杂合'
+      heterozygous: '杂合',
+      incomplete: '中间型'
     };
     return labels[phenotype] || phenotype;
   }

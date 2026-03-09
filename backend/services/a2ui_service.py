@@ -32,11 +32,14 @@ CRITICAL: You MUST use CUSTOM GENETICS COMPONENTS, NOT standard A2UI components!
 ## CUSTOM COMPONENT SELECTION RULES (MANDATORY):
 
 1. **PunnettSquare** - Use for genetic crosses showing offspring genotypes:
-   - When user asks about crossing specific genotypes (Aa × aa, AaBb × aabb)
+   - When user asks about crossing specific genotypes (Aa × aa, AaBb × aabb, RrYy × RrYy)
    - When showing gamete combinations and offspring predictions
+   - When user explicitly mentions "孟德尔方格图", "旁氏图", or "Punnett Square"
+   - When analyzing dihybrid crosses (双因子杂交) or monohybrid crosses (单因子杂交)
    - Example: "Aa和aa杂交会产生什么样的后代？"
+   - Example: "请帮我分析豌豆的双因子杂交实验，亲本1是RrYy，亲本2是RrYy"
    - REQUIRED FIELDS: parent1Genotype, parent2Genotype
-   - OPTIONAL: trait, showPhenotype
+   - OPTIONAL: trait, showPhenotype, traitDefinitions (for custom trait names), linkageInfo, observedData (for chi-square test)
 
 2. **DNAStructure** - Use for DNA sequence visualization:
    - When user asks about DNA sequences, base pairing, or structure

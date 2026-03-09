@@ -75,14 +75,14 @@ export class GeneExpression extends Root {
   }
 
   private static readonly DEFAULT_COLORS = [
-    '#1a73e8',
-    '#188038',
-    '#f9ab00',
-    '#d93025',
-    '#7c3aed',
-    '#2563eb',
-    '#059669',
-    '#e53935'
+    '#3b82f6',
+    '#10b981',
+    '#f59e0b',
+    '#ef4444',
+    '#8b5cf6',
+    '#ec4899',
+    '#06b6d4',
+    '#84cc16'
   ];
 
   private getConditionColor(index: number): string {
@@ -122,7 +122,7 @@ export class GeneExpression extends Root {
     :host {
       display: block;
       padding: 16px;
-      font-family: 'Roboto', sans-serif;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .container {
@@ -133,16 +133,16 @@ export class GeneExpression extends Root {
     .title {
       font-size: 1.25rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       text-align: center;
       margin-bottom: 16px;
     }
 
     .chart-container {
-      background: #fff;
+      background: #ffffff;
       padding: 20px;
       border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .chart-type-selector {
@@ -154,25 +154,25 @@ export class GeneExpression extends Root {
 
     .chart-type-btn {
       padding: 8px 16px;
-      border: 2px solid #dadce0;
-      background: #fff;
-      border-radius: 4px;
+      border: 1px solid #e5e7eb;
+      background: #ffffff;
+      border-radius: 6px;
       cursor: pointer;
       font-weight: 500;
-      color: #5f6368;
+      color: #6b7280;
       transition: all 0.2s ease;
     }
 
     .chart-type-btn:hover {
-      background: #e8f0fe;
-      border-color: #1a73e8;
-      color: #1a73e8;
+      background: #fafafa;
+      border-color: #111827;
+      color: #111827;
     }
 
     .chart-type-btn.active {
-      background: #1a73e8;
-      border-color: #1a73e8;
-      color: #fff;
+      background: #111827;
+      border-color: #111827;
+      color: #ffffff;
     }
 
     .bar-chart {
@@ -182,15 +182,16 @@ export class GeneExpression extends Root {
     }
 
     .gene-row {
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
       padding: 12px;
+      border: 1px solid #e5e7eb;
     }
 
     .gene-name {
       font-size: 0.95rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
@@ -211,18 +212,16 @@ export class GeneExpression extends Root {
 
     .bar {
       width: 100%;
-      background: #1a73e8;
+      background: #111827;
       border-radius: 4px 4px 0 0;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       cursor: pointer;
       position: relative;
       min-height: 4px;
     }
 
     .bar:hover {
-      opacity: 0.9;
-      transform: scaleY(1.05);
-      transform-origin: bottom;
+      opacity: 0.85;
     }
 
     .bar-label {
@@ -231,7 +230,7 @@ export class GeneExpression extends Root {
       left: 50%;
       transform: translateX(-50%);
       font-size: 0.75rem;
-      color: #5f6368;
+      color: #6b7280;
       text-align: center;
       white-space: nowrap;
     }
@@ -243,11 +242,11 @@ export class GeneExpression extends Root {
       transform: translateX(-50%);
       font-size: 0.8rem;
       font-weight: 600;
-      color: #202124;
-      background: #fff;
+      color: #111827;
+      background: #ffffff;
       padding: 2px 6px;
       border-radius: 4px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid #e5e7eb;
     }
 
     .line-chart {
@@ -264,82 +263,78 @@ export class GeneExpression extends Root {
     .legend {
       margin-top: 16px;
       padding: 12px;
-      background: #f8f9fa;
+      background: #fafafa;
       border-radius: 6px;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-title {
       font-size: 0.9rem;
       font-weight: 600;
-      color: #202124;
+      color: #111827;
       margin-bottom: 8px;
     }
 
     .legend-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
       gap: 8px;
-      padding: 4px 8px;
+      padding: 4px;
       border-radius: 4px;
-      background: #fff;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
     }
 
     .legend-color {
       width: 16px;
       height: 16px;
       border-radius: 4px;
+      flex-shrink: 0;
     }
 
     .legend-text {
       font-size: 0.85rem;
-      color: #5f6368;
+      color: #6b7280;
+      flex: 1;
     }
 
     .stats {
       margin-top: 16px;
       padding: 12px;
-      background: #e8f0fe;
+      background: #fafafa;
       border-radius: 6px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 12px;
+      display: flex;
+      justify-content: space-around;
+      border: 1px solid #e5e7eb;
     }
 
     .stat-item {
       text-align: center;
-      padding: 8px;
-      background: #fff;
-      border-radius: 4px;
     }
 
     .stat-label {
       font-size: 0.8rem;
-      color: #5f6368;
+      color: #6b7280;
       margin-bottom: 4px;
     }
 
     .stat-value {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: #1a73e8;
+      color: #111827;
     }
 
     .empty {
       text-align: center;
       padding: 40px;
-      color: #5f6368;
+      color: #6b7280;
       font-style: italic;
-    }
-
-    .toggle-wrapper {
-      margin-top: 12px;
-      text-align: center;
     }
   `];
 
