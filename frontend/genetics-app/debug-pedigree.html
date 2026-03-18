@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedigree Debug</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    #console {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      font-family: 'Consolas', monospace;
+      font-size: 14px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+    .log-entry {
+      margin: 4px 0;
+      padding: 4px;
+    }
+    .log-info { color: #4ec9b0; }
+    .log-warn { color: #dcdcaa; }
+    .log-error { color: #f48771; }
+    button {
+      padding: 10px 20px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    button:hover {
+      background: #1f2937;
+    }
+  </style>
+</head>
+<body>
+  <h1>家系图调试工具</h1>
+
+  <div>
+    <button onclick="clearConsole()">清空日志</button>
+    <button onclick="testPedigree()">重新测试</button>
+    <button onclick="inspectSVG()">检查SVG</button>
+  </div>
+
+  <div id="console"></div>
+
+  <div id="test-container"></div>
+
+  <script type="module">
+    import { PedigreeChart } from './src/components/genetics/pedigree-chart.ts';
+
+    // 拦截console.log
+    const originalLog = console.log;
+    const consoleDiv = document.getElementById('console');
+
+    window.logToScreen = function(message, type = 'info') {
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      consoleDiv.appendChild(entry);
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+      originalLog(message);
+    };
+
+    console.log = function(...args) {
+      const message = args.join(' ');
+      if (message.includes('[PedigreeChart]')) {
+        window.logToScreen(message, 'info');
+      }
+      originalLog.apply(console, args);
+    };
+
+    console.warn = function(...args) {
+      window.logToScreen(args.join(' '), 'warn');
+      console.warn.apply(console, args);
+    };
+
+    console.error = function(...args) {
+      window.logToScreen(args.join(' '), 'error');
+      console.error.apply(console, args);
+    };
+
+    window.clearConsole = function() {
+      consoleDiv.innerHTML = '';
+    };
+
+    window.inspectSVG = function() {
+      const chart = document.querySelector('pedigree-chart');
+      if (!chart) {
+        window.logToScreen('❌ 找不到 pedigree-chart 元素', 'error');
+        return;
+      }
+
+      const svg = chart.shadowRoot?.querySelector('svg.connections');
+      if (!svg) {
+        window.logToScreen('❌ 找不到 SVG 元素', 'error');
+        return;
+      }
+
+      window.logToScreen(`✓ SVG 元素存在`, 'info');
+      window.logToScreen(`✓ SVG 子元素数量: ${svg.children.length}`, 'info');
+
+      if (svg.children.length === 0) {
+        window.logToScreen('⚠ SVG 没有子元素 (没有连接线)', 'warn');
+      } else {
+        window.logToScreen(`✓ 连接线数量: ${svg.children.length}`, 'info');
+        Array.from(svg.children).forEach((line, i) => {
+          const x1 = line.getAttribute('x1');
+          const y1 = line.getAttribute('y1');
+          const x2 = line.getAttribute('x2');
+          const y2 = line.getAttribute('y2');
+          window.logToScreen(`  线 ${i+1}: (${x1},${y1}) → (${x2},${y2})`, 'info');
+        });
+      }
+
+      // 检查个体元素
+      const individuals = chart.shadowRoot?.querySelectorAll('.individual');
+      window.logToScreen(`✓ 个体元素数量: ${individuals?.length || 0}`, 'info');
+    };
+
+    window.testPedigree = function() {
+      window.logToScreen('=== 开始测试 ===', 'info');
+      const container = document.getElementById('test-container');
+      container.innerHTML = '';
+
+      const chart = document.createElement('pedigree-chart');
+      chart.trait = '色盲 (X连锁隐性遗传)';
+      chart.generations = [
+        {
+          individuals: [
+            {
+              id: "I-1",
+              gender: "male",
+              phenotype: "normal",
+              generation: 0,
+              label: "I-1"
+            },
+            {
+              id: "I-2",
+              gender: "female",
+              phenotype: "carrier",
+              generation: 0,
+              label: "I-2"
+            }
+          ]
+        },
+        {
+          individuals: [
+            {
+              id: "II-1",
+              gender: "male",
+              phenotype: "affected",
+              generation: 1,
+              label: "II-1",
+              parents: { father: "I-1", mother: "I-2" }
+            },
+            {
+              id: "II-2",
+              gender: "female",
+              phenotype: "carrier",
+              generation: 1,
+              label: "II-2",
+              parents: { father: "I-1", mother: "I-2" }
+            }
+          ]
+        }
+      ];
+
+      container.appendChild(chart);
+      window.logToScreen('✓ 家系图已创建', 'info');
+
+      // 等待渲染完成后检查
+      setTimeout(() => {
+        window.inspectSVG();
+      }, 1000);
+    };
+
+    // 自动运行测试
+    window.logToScreen('页面加载完成，开始测试...', 'info');
+    window.testPedigree();
+  </script>
+</body>
+</html>

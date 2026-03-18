@@ -22,6 +22,13 @@ class IntentService:
         return """
 你是一个意图识别助手，用于识别用户在生物遗传学学习中的需求。
 
+## 重要：上下文感知
+- 你会收到对话历史记录，必须结合上下文理解用户意图
+- 如果用户说"是的"、"好的"、"可以"、"画一个"、"展示一下"等模糊表达，需要参考之前的对话判断具体意图
+- 例如：如果之前讨论了"杂交"，用户说"画一个"，意图应该是 punnett_square
+- 例如：如果之前讨论了"DNA结构"，用户说"展示一下"，意图应该是 dna_structure
+- 例如：如果之前讨论了"家系遗传"，用户说"可以"，意图应该是 pedigree_chart
+
 ## INTENT CLASSIFICATION（严格按照以下规则分类）
 
 **punnett_square**：当用户提到以下词汇时
@@ -29,6 +36,7 @@ class IntentService:
 - Aa、aa、AA、AaBb、aabb、RrYy等具体基因型
 - "杂交会产生"、"后代基因型"、"配子组合"、"棋盘"、"双因子杂交"、"单因子杂交"
 - "分析...杂交实验"、"用孟德尔方格图"、"用旁氏图"、"展示后代"
+- "画一个"、"展示"、"可视化"（需结合上下文判断）
 - 注意：如果问的是"比例"、"分布"、"F2代表型"但没有提到具体基因型，应该是phenotype_distribution
 - 注意：如果明确提到"孟德尔方格图"、"旁氏图"、"Punnett Square"，必须是punnett_square
 
@@ -200,12 +208,26 @@ class IntentService:
         logger.info(f"Rule-based keyword extraction: {keywords_str}")
         return keywords_str
 
-    async def identify_intent(self, user_message: str) -> IntentResult:
-        """Identify user intent and extract keywords"""
+    async def identify_intent(self, user_message: str, conversation_history: list = None) -> IntentResult:
+        """Identify user intent and extract keywords
+
+        Args:
+            user_message: 当前用户消息
+            conversation_history: 对话历史，格式为 [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
+        """
         messages = [
-            {"role": "system", "content": self.system_prompt},
-            {"role": "user", "content": user_message}
+            {"role": "system", "content": self.system_prompt}
         ]
+
+        # 添加对话历史上下文（最近 3 轮对话）
+        if conversation_history:
+            recent_history = conversation_history[-6:]  # 最近 3 轮（每轮 2 条消息）
+            messages.extend(recent_history)
+            logger.info(f"意图识别使用了 {len(recent_history)} 条历史消息作为上下文")
+            logger.debug(f"历史消息: {[msg.get('content', '')[:50] for msg in recent_history]}")
+
+        # 添加当前用户消息
+        messages.append({"role": "user", "content": user_message})
 
         response_text = ""
         try:

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LocalStorage 检查工具</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+      margin-bottom: 10px;
+    }
+    button:hover {
+      background: #1f2937;
+    }
+    pre {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .stats {
+      background: #fafafa;
+      padding: 15px;
+      border-radius: 6px;
+      margin-bottom: 20px;
+      border: 1px solid #e5e7eb;
+    }
+    .stat-item {
+      margin: 5px 0;
+      font-size: 14px;
+    }
+    .stat-label {
+      font-weight: 600;
+      color: #111827;
+    }
+    .stat-value {
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>LocalStorage 检查工具</h1>
+
+    <div>
+      <button onclick="checkStorage()">检查存储</button>
+      <button onclick="checkA2UIData()">检查A2UI数据</button>
+      <button onclick="clearStorage()">清空存储</button>
+    </div>
+
+    <div id="stats" class="stats" style="display:none;"></div>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    function checkStorage() {
+      const output = document.getElementById('output');
+      const statsDiv = document.getElementById('stats');
+
+      const conversations = localStorage.getItem('conversations');
+
+      if (!conversations) {
+        output.textContent = '❌ localStorage 中没有找到 conversations 数据';
+        statsDiv.style.display = 'none';
+        return;
+      }
+
+      try {
+        const data = JSON.parse(conversations);
+
+        // 统计信息
+        const totalConversations = data.length;
+        let totalMessages = 0;
+        let messagesWithA2UI = 0;
+
+        data.forEach(conv => {
+          totalMessages += conv.messages.length;
+          conv.messages.forEach(msg => {
+            if (msg.a2uiData) {
+              messagesWithA2UI++;
+            }
+          });
+        });
+
+        statsDiv.style.display = 'block';
+        statsDiv.innerHTML = `
+          <div class="stat-item"><span class="stat-label">对话数量:</span> <span class="stat-value">${totalConversations}</span></div>
+          <div class="stat-item"><span class="stat-label">消息总数:</span> <span class="stat-value">${totalMessages}</span></div>
+          <div class="stat-item"><span class="stat-label">包含A2UI的消息:</span> <span class="stat-value">${messagesWithA2UI}</span></div>
+        `;
+
+        output.textContent = JSON.stringify(data, null, 2);
+      } catch (error) {
+        output.textContent = `❌ 解析 JSON 失败: ${error.message}`;
+        statsDiv.style.display = 'none';
+      }
+    }
+
+    function checkA2UIData() {
+      const output = document.getElementById('output');
+      const statsDiv = document.getElementById('stats');
+
+      const conversations = localStorage.getItem('conversations');
+
+      if (!conversations) {
+        output.textContent = '❌ localStorage 中没有找到 conversations 数据';
+        return;
+      }
+
+      try {
+        const data = JSON.parse(conversations);
+        const a2uiMessages = [];
+
+        data.forEach((conv, convIndex) => {
+          conv.messages.forEach((msg, msgIndex) => {
+            if (msg.a2uiData) {
+              a2uiMessages.push({
+                conversation: convIndex,
+                messageIndex: msgIndex,
+                messageId: msg.id,
+                role: msg.role,
+                hasA2UIData: true,
+                a2uiDataLength: msg.a2uiData.length,
+                a2uiData: msg.a2uiData
+              });
+            }
+          });
+        });
+
+        if (a2uiMessages.length === 0) {
+          output.textContent = '⚠ 没有找到包含 a2uiData 的消息';
+          statsDiv.style.display = 'none';
+          return;
+        }
+
+        statsDiv.style.display = 'block';
+        statsDiv.innerHTML = `
+          <div class="stat-item"><span class="stat-label">包含A2UI的消息数:</span> <span class="stat-value">${a2uiMessages.length}</span></div>
+        `;
+
+        output.textContent = JSON.stringify(a2uiMessages, null, 2);
+      } catch (error) {
+        output.textContent = `❌ 解析失败: ${error.message}`;
+      }
+    }
+
+    function clearStorage() {
+      if (confirm('确定要清空 localStorage 吗？这将删除所有对话历史！')) {
+        localStorage.clear();
+        document.getElementById('output').textContent = '✓ localStorage 已清空';
+        document.getElementById('stats').style.display = 'none';
+      }
+    }
+
+    // 页面加载时自动检查
+    window.addEventListener('load', () => {
+      checkStorage();
+    });
+  </script>
+</body>
+</html>

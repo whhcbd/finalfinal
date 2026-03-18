@@ -3,10 +3,10 @@ import logging
 import sys
 import os
 import re
-from typing import Optional, List
+from typing import Optional, List, Dict, Any
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
@@ -35,6 +35,8 @@ from services.vector_store import VectorStore
 from services.embedding_service import EmbeddingService
 from services.intent_service import IntentService
 from services.context_service import ContextService
+from services.data_model_service import DataModelService
+from services.action_handler import ActionHandler
 from services.a2ui_service import get_system_prompt as get_a2ui_system_prompt, validate_and_fix_response
 
 logger = logging.getLogger(__name__)
@@ -52,11 +54,13 @@ glm_service = None
 rag_service = None
 intent_service = None
 context_service = None
+data_model_service = None
+action_handler = None
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 启动时初始化服务
-    global glm_service, rag_service, intent_service, context_service
+    global glm_service, rag_service, intent_service, context_service, data_model_service, action_handler
 
     logger.info("Starting up Genetics A2UI Backend...")
 
@@ -87,6 +91,20 @@ async def lifespan(app: FastAPI):
         logger.info("Context Service initialized")
     except Exception as e:
         logger.error(f"Failed to initialize Context Service: {e}")
+        raise
+
+    try:
+        data_model_service = DataModelService()
+        logger.info("Data Model Service initialized")
+    except Exception as e:
+        logger.error(f"Failed to initialize Data Model Service: {e}")
+        raise
+
+    try:
+        action_handler = ActionHandler(glm_service, data_model_service, context_service)
+        logger.info("Action Handler initialized")
+    except Exception as e:
+        logger.error(f"Failed to initialize Action Handler: {e}")
         raise
 
     logger.info("Core services initialized successfully")
@@ -591,12 +609,24 @@ async def chat(request: ChatRequest):
 
     logger.info(f"收到聊天请求: message={request.message[:100]}..., session_id={request.session_id}, use_ui={request.use_ui}")
 
-    # 意图识别
-    intent_result = await intent_service.identify_intent(request.message)
+    # 构建对话历史（用于意图识别的上下文）
+    conversation_history = []
+    if request.history:
+        # 将前端传来的历史转换为标准格式
+        for msg in request.history[-6:]:  # 最近 3 轮对话
+            role = msg.get("role", "user")
+            content = msg.get("content", "")
+            if content:
+                conversation_history.append({"role": role, "content": content})
+
+    # 意图识别（带上下文）
+    intent_result = await intent_service.identify_intent(request.message, conversation_history)
     intent = intent_result.get("intent", "general")
     keywords = intent_result.get("keywords", "")
 
     logger.info(f"意图识别结果: intent={intent}, keywords={keywords}")
+    if conversation_history:
+        logger.info(f"使用了 {len(conversation_history)} 条历史消息作为上下文")
 
     # 判断是否需要使用A2UI组件
     # 只有以下意图才需要可视化组件
@@ -636,8 +666,14 @@ async def chat(request: ChatRequest):
     ]
 
     # 生成文本响应
-    text_response = await glm_service.call_llm(messages)
-    logger.info(f"LLM 文本响应（原始）: {text_response[:200]}...")
+    try:
+        text_response = await glm_service.call_llm(messages)
+        logger.info(f"LLM 文本响应（原始）: {text_response[:200]}...")
+    except Exception as e:
+        logger.error(f"生成文本响应失败: {e}")
+        # 返回友好的错误信息
+        error_message = "抱歉，AI 服务暂时无法响应。这可能是由于网络连接问题或服务器繁忙。请稍后重试。"
+        raise HTTPException(status_code=500, detail=error_message)
 
     # 增强的清理逻辑：移除任何意外的JSON或分隔符
     # 1. 检查并移除 a2ui 分隔符（支持多种格式）
@@ -803,6 +839,568 @@ async def health():
     }}
 
 
+# WebSocket 连接管理器
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: Dict[str, WebSocket] = {}
+
+    async def connect(self, websocket: WebSocket, session_id: str):
+        await websocket.accept()
+        self.active_connections[session_id] = websocket
+        logger.info(f"WebSocket 连接建立: session_id={session_id}")
+
+    def disconnect(self, session_id: str):
+        if session_id in self.active_connections:
+            del self.active_connections[session_id]
+            logger.info(f"WebSocket 连接断开: session_id={session_id}")
+
+    async def send_message(self, session_id: str, message: dict):
+        if session_id in self.active_connections:
+            websocket = self.active_connections[session_id]
+            await websocket.send_json(message)
+
+    async def send_text(self, session_id: str, text: str):
+        if session_id in self.active_connections:
+            websocket = self.active_connections[session_id]
+            await websocket.send_text(text)
+
+
+manager = ConnectionManager()
+
+
+@app.websocket("/ws/chat/{session_id}")
+async def websocket_chat(websocket: WebSocket, session_id: str):
+    """WebSocket 聊天端点"""
+    await manager.connect(websocket, session_id)
+
+    try:
+        while True:
+            # 接收客户端消息
+            data = await websocket.receive_json()
+            logger.info(f"收到 WebSocket 消息: session_id={session_id}, type={data.get('type')}")
+
+            message_type = data.get("type")
+
+            if message_type == "chat":
+                # 处理聊天消息
+                await handle_chat_message(websocket, session_id, data)
+
+            elif message_type == "action":
+                # 处理用户操作（按钮点击等）
+                await handle_action_message(websocket, session_id, data)
+
+            else:
+                logger.warning(f"未知的消息类型: {message_type}")
+                await websocket.send_json({
+                    "type": "error",
+                    "message": f"未知的消息类型: {message_type}"
+                })
+
+    except WebSocketDisconnect:
+        manager.disconnect(session_id)
+        logger.info(f"客户端断开连接: session_id={session_id}")
+
+    except Exception as e:
+        logger.error(f"WebSocket 错误: {e}")
+        manager.disconnect(session_id)
+
+
+async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict):
+    """处理聊天消息"""
+    global glm_service, rag_service, intent_service, context_service
+
+    message = data.get("message", "")
+    use_ui = data.get("use_ui", True)
+    history = data.get("history", [])
+
+    logger.info(f"处理聊天消息: message={message[:100]}..., use_ui={use_ui}")
+
+    try:
+        # 构建对话历史
+        conversation_history = []
+        if history:
+            for msg in history[-6:]:
+                role = msg.get("role", "user")
+                content = msg.get("content", "")
+                if content:
+                    conversation_history.append({"role": role, "content": content})
+
+        # 意图识别
+        intent_result = await intent_service.identify_intent(message, conversation_history)
+        intent = intent_result.get("intent", "general")
+        keywords = intent_result.get("keywords", "")
+
+        logger.info(f"意图识别结果: intent={intent}, keywords={keywords}")
+
+        # 判断是否需要使用A2UI组件
+        UI_REQUIRED_INTENTS = [
+            "punnett_square",
+            "dna_structure",
+            "phenotype_distribution",
+            "gene_expression",
+            "pedigree_chart",
+            "cross_over_map"
+        ]
+
+        should_use_ui = use_ui and (intent in UI_REQUIRED_INTENTS)
+
+        # 上下文检索
+        context_info = ""
+        if rag_service and not rag_service._disabled:
+            try:
+                context_info = await rag_service.get_context_for_query(message)
+                if context_info:
+                    logger.info(f"成功检索到相关上下文，长度: {len(context_info)} 字符")
+            except Exception as e:
+                logger.warning(f"RAG 检索失败: {e}")
+
+        # 构建 LLM 消息
+        system_prompt_text_only = TEXT_ONLY_INSTRUCTION
+        user_message = message
+        if context_info:
+            user_message = f"相关上下文：\n{context_info}\n\n用户问题：{message}"
+
+        messages = [
+            {"role": "system", "content": system_prompt_text_only},
+            {"role": "user", "content": user_message}
+        ]
+
+        # 生成文本响应
+        text_response = await glm_service.call_llm(messages)
+        logger.info(f"LLM 文本响应: {text_response[:200]}...")
+
+        # 清理文本响应
+        text_response = clean_text_response(text_response)
+
+        # 发送文本响应
+        await websocket.send_json({
+            "type": "text",
+            "text": text_response,
+            "intent": intent,
+            "keywords": keywords
+        })
+
+        # 生成 A2UI 组件
+        if should_use_ui:
+            logger.info("开始 A2UI 组件生成...")
+            a2ui_data = await generate_a2ui_component(intent, keywords, text_response, message, session_id)
+
+            if a2ui_data:
+                # 流式发送 A2UI 消息
+                for a2ui_message in a2ui_data:
+                    await websocket.send_json({
+                        "type": "a2ui",
+                        "message": a2ui_message
+                    })
+                    logger.info(f"发送 A2UI 消息: {list(a2ui_message.keys())}")
+
+        # 发送完成信号
+        await websocket.send_json({
+            "type": "complete"
+        })
+        logger.info("发送完成信号")
+
+        # 管理会话上下文
+        context_service.add_message(session_id, message, text_response)
+
+    except Exception as e:
+        logger.error(f"处理聊天消息失败: {e}")
+        await websocket.send_json({
+            "type": "error",
+            "message": "抱歉，处理您的消息时出现错误，请稍后重试。"
+        })
+
+
+async def handle_action_message(websocket: WebSocket, session_id: str, data: dict):
+    """处理用户操作消息（按钮点击等）"""
+    global action_handler
+
+    logger.info(f"处理 action 消息: {data}")
+
+    try:
+        await action_handler.handle_action(websocket, session_id, data)
+    except Exception as e:
+        logger.error(f"处理 action 消息失败: {e}")
+        await websocket.send_json({
+            "type": "error",
+            "message": f"处理操作失败: {str(e)}"
+        })
+
+
+def clean_text_response(text: str) -> str:
+    """清理文本响应，移除意外的JSON或分隔符"""
+    delimiter_patterns = [
+        r'---\s*a2ui_JSON\s*---',
+        r'---a2ui_JSON---',
+        r'---\s*a2ui\s*---',
+        r'\n\s*\[',
+    ]
+
+    for pattern in delimiter_patterns:
+        if re.search(pattern, text, re.IGNORECASE):
+            parts = re.split(pattern, text, maxsplit=1, flags=re.IGNORECASE)
+            text = parts[0].strip()
+            break
+
+    if "```" in text:
+        text = re.sub(r'```json.*?```', '', text, flags=re.DOTALL)
+        text = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
+        text = text.strip()
+
+    json_pattern = r'\n\s*[\[{][\s\S]*$'
+    if re.search(json_pattern, text):
+        text = re.sub(json_pattern, '', text).strip()
+
+    return text.strip()
+
+
+async def generate_a2ui_component(intent: str, keywords: str, text: str, user_message: str, session_id: str) -> Optional[List[dict]]:
+    """生成 A2UI 组件（使用数据绑定）"""
+    global glm_service, data_model_service
+
+    try:
+        # 生成初始数据模型
+        initial_data = data_model_service.generate_initial_data_model(intent, user_message)
+
+        # 保存到会话状态
+        context_service.set_data_model(session_id, "genetics_ui", initial_data)
+
+        logger.info(f"生成初始数据模型: {initial_data}")
+
+        ui_messages = [
+            {"role": "system", "content": get_system_prompt(use_ui=True, intent=intent)},
+            {"role": "user", "content": f"""用户问题：{user_message}
+
+意图类型：{intent}
+
+请生成 A2UI JSON 数组，使用数据绑定。
+
+⚠️ 关键要求：
+
+1. 使用数据绑定（path）而不是静态值（literalString）：
+   - 正确：{{"parent1Genotype": {{"path": "/parent1"}}}}
+   - 错误：{{"parent1Genotype": {{"literalString": "Aa"}}}}
+
+2. 必须包含以下消息（按顺序）：
+   a) beginRendering - 开始渲染并指定根组件
+   b) surfaceUpdate - 定义组件结构（使用 path 绑定）
+   c) dataModelUpdate - 设置初始数据
+
+3. beginRendering 示例：
+   {{"beginRendering": {{"surfaceId": "genetics_ui", "root": "main_component"}}}}
+
+4. surfaceUpdate 示例（使用 path）：
+   {{"surfaceUpdate": {{"surfaceId": "genetics_ui", "components": [
+     {{"id": "main_component", "component": {{"PunnettSquare": {{
+       "parent1Genotype": {{"path": "/parent1"}},
+       "parent2Genotype": {{"path": "/parent2"}},
+       "trait": {{"path": "/trait"}}
+     }}}}}}
+   ]}}}}
+
+5. dataModelUpdate 示例：
+   {{"dataModelUpdate": {{"surfaceId": "genetics_ui", "contents": [
+     {{"key": "parent1", "valueString": "Aa"}},
+     {{"key": "parent2", "valueString": "aa"}},
+     {{"key": "trait", "valueString": "花色"}}
+   ]}}}}
+
+现在生成包含这3个消息的 JSON 数组："""}
+        ]
+
+        ui_response = await glm_service.call_llm(ui_messages, response_format="json")
+        logger.info(f"LLM A2UI 响应: {ui_response[:500]}...")
+
+        try:
+            a2ui_data = json.loads(ui_response.strip())
+            logger.info(f"成功解析 A2UI JSON，包含 {len(a2ui_data)} 个消息")
+
+            # 转换 createSurface 为 beginRendering（兼容 v0.8）
+            for i, msg in enumerate(a2ui_data):
+                if "createSurface" in msg:
+                    logger.info("检测到 createSurface，转换为 beginRendering")
+                    surface_id = msg["createSurface"]["surfaceId"]
+                    # 查找 surfaceUpdate 中的根组件 ID
+                    root_component_id = None
+                    for update_msg in a2ui_data:
+                        if "surfaceUpdate" in update_msg:
+                            components = update_msg["surfaceUpdate"].get("components", [])
+                            if components and len(components) > 0:
+                                root_component_id = components[0]["id"]
+                                break
+
+                    # 替换为 beginRendering
+                    a2ui_data[i] = {
+                        "beginRendering": {
+                            "surfaceId": surface_id,
+                            "root": root_component_id or "main_component"
+                        }
+                    }
+                    logger.info(f"已转换为 beginRendering，root={root_component_id}")
+
+            # 验证是否包含必要的消息
+            has_create_surface = any("createSurface" in msg for msg in a2ui_data)
+            has_begin_rendering = any("beginRendering" in msg for msg in a2ui_data)
+            has_surface_update = any("surfaceUpdate" in msg for msg in a2ui_data)
+            has_data_model_update = any("dataModelUpdate" in msg for msg in a2ui_data)
+
+            if not (has_create_surface or has_begin_rendering) or not has_surface_update:
+                logger.warning("缺少必要的消息类型，使用降级策略")
+                a2ui_data = None
+            elif not has_data_model_update:
+                # 如果缺少 dataModelUpdate，自动生成
+                logger.info("自动生成 dataModelUpdate 消息")
+                data_model_msg = data_model_service.generate_data_model_update_message(
+                    "genetics_ui",
+                    {f"/{k}": v for k, v in initial_data.items()}
+                )
+                a2ui_data.append(data_model_msg)
+
+        except json.JSONDecodeError as e:
+            logger.error(f"JSON 解析失败: {e}")
+            a2ui_data = None
+
+        # 如果生成失败，使用本地降级（带数据绑定）
+        if not a2ui_data:
+            logger.warning("A2UI 生成失败，使用本地降级策略（数据绑定版本）")
+            a2ui_data = generate_local_a2ui_with_binding(intent, initial_data)
+
+        return a2ui_data
+
+    except Exception as e:
+        logger.error(f"❌ A2UI 生成失败: {e}")
+        return generate_local_a2ui_with_binding(intent, data_model_service.generate_initial_data_model(intent, user_message))
+
+
+def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) -> List[dict]:
+    """生成使用数据绑定的本地降级 A2UI"""
+    logger.info(f"生成数据绑定版本的降级 A2UI: intent={intent}")
+
+    a2ui_messages = []
+
+    # 根据意图生成组件定义（使用 path 绑定）
+    if intent == "punnett_square":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "PunnettSquare": {
+                                "parent1Genotype": {"path": "/parent1"},
+                                "parent2Genotype": {"path": "/parent2"},
+                                "trait": {"path": "/trait"},
+                                "showPhenotype": {"path": "/showPhenotype"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "dna_structure":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "DNAStructure": {
+                                "sequence": {"path": "/sequence"},
+                                "showLabels": {"path": "/showLabels"},
+                                "highlightRegions": {"path": "/highlightRegions"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "phenotype_distribution":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "PhenotypeDistribution": {
+                                "trait": {"path": "/trait"},
+                                "data": {"path": "/data"},
+                                "totalCount": {"path": "/totalCount"},
+                                "showPercentage": {"path": "/showPercentage"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "gene_expression":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "GeneExpression": {
+                                "genes": {"path": "/genes"},
+                                "conditions": {"path": "/conditions"},
+                                "expressionLevels": {"path": "/expressionLevels"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "pedigree_chart":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "PedigreeChart": {
+                                "generations": {"path": "/generations"},
+                                "trait": {"path": "/trait"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "cross_over_map":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "CrossOverMap": {
+                                "chromosomeLength": {"path": "/chromosomeLength"},
+                                "genes": {"path": "/genes"},
+                                "crossoverPoints": {"path": "/crossoverPoints"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    else:
+        # 默认使用 PunnettSquare
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "PunnettSquare": {
+                                "parent1Genotype": {"path": "/parent1"},
+                                "parent2Genotype": {"path": "/parent2"},
+                                "trait": {"path": "/trait"},
+                                "showPhenotype": {"path": "/showPhenotype"}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    # 生成 dataModelUpdate 消息
+    contents = []
+    for key, value in data_model.items():
+        if isinstance(value, str):
+            contents.append({"key": key, "valueString": value})
+        elif isinstance(value, bool):
+            contents.append({"key": key, "valueBoolean": value})
+        elif isinstance(value, (int, float)):
+            contents.append({"key": key, "valueNumber": value})
+        elif isinstance(value, list):
+            contents.append({"key": key, "valueArray": value})
+        elif isinstance(value, dict):
+            # 对于复杂对象，转换为 valueMap
+            contents.append({"key": key, "valueMap": _dict_to_value_map(value)})
+
+    a2ui_messages.append({
+        "dataModelUpdate": {
+            "surfaceId": "genetics_ui",
+            "contents": contents
+        }
+    })
+
+    logger.info(f"生成了 {len(a2ui_messages)} 条 A2UI 消息（数据绑定版本）")
+    return a2ui_messages
+
+
+def _dict_to_value_map(data: dict) -> List[dict]:
+    """将字典转换为 A2UI valueMap 格式"""
+    result = []
+    for key, value in data.items():
+        if isinstance(value, str):
+            result.append({"key": key, "valueString": value})
+        elif isinstance(value, bool):
+            result.append({"key": key, "valueBoolean": value})
+        elif isinstance(value, (int, float)):
+            result.append({"key": key, "valueNumber": value})
+        elif isinstance(value, list):
+            result.append({"key": key, "valueArray": value})
+        elif isinstance(value, dict):
+            result.append({"key": key, "valueMap": _dict_to_value_map(value)})
+    return result
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="127.0.0.1", port=8000)
+

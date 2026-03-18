@@ -141,10 +141,13 @@ export class Root extends SignalWatcher(LitElement) {
 
     return html` ${map(components, (component) => {
       // 1. Check if there is a registered custom component or override.
+      console.log('[A2UI Root] Rendering component:', component.type, 'enableCustomElements:', this.enableCustomElements);
       if (this.enableCustomElements) {
         const registeredCtor = componentRegistry.get(component.type);
+        console.log('[A2UI Root] Registry lookup for', component.type, ':', !!registeredCtor);
         // We also check customElements.get for non-registered but defined elements
         const elCtor = registeredCtor || customElements.get(component.type);
+        console.log('[A2UI Root] Final constructor:', !!elCtor);
 
         if (elCtor) {
           const node = component as AnyComponentNode;
@@ -163,7 +166,10 @@ export class Root extends SignalWatcher(LitElement) {
             // @ts-expect-error We're off the books.
             el[prop] = val;
           }
+          console.log('[A2UI Root] Created custom element:', el.tagName, 'with props:', Object.keys(component.properties));
           return html`${el}`;
+        } else {
+          console.warn('[A2UI Root] No constructor found for custom component:', component.type);
         }
       }
 

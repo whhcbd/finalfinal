@@ -15,7 +15,7 @@ os.environ['HF_HOME'] = str(cache_dir)
 os.environ['TRANSFORMERS_CACHE'] = str(cache_dir)
 os.environ['HF_HUB_CACHE'] = str(cache_dir)
 os.environ['HF_DATASETS_CACHE'] = str(cache_dir)
-os.environ['HF_HUB_OFFLINE'] = '0'  # 允许联网下载模型
+os.environ['HF_HUB_OFFLINE'] = '1'  # 使用本地缓存，不联网下载
 
 import logging
 from typing import List, Optional

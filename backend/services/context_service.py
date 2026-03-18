@@ -19,6 +19,8 @@ class ContextService:
     def __init__(self):
         self._context_cache: Dict[str, Tuple[LearnerContext, float]] = {}
         self._cache_ttl = 300  # 5 分钟缓存
+        # 数据模型状态管理
+        self._session_data_models: Dict[str, Dict[str, Any]] = {}  # {session_id: {surface_id: data_model}}
 
     def get_context(self, learner_id: str = "default") -> LearnerContext:
         """获取学习者上下文（带缓存）"""
@@ -96,3 +98,64 @@ class ContextService:
             "expired_entries": expired_count,
             "cache_ttl_seconds": self._cache_ttl
         }
+
+    # 数据模型状态管理方法
+
+    def get_data_model(self, session_id: str, surface_id: str = "genetics_ui") -> Dict[str, Any]:
+        """获取指定会话和 surface 的数据模型"""
+        if session_id not in self._session_data_models:
+            self._session_data_models[session_id] = {}
+
+        if surface_id not in self._session_data_models[session_id]:
+            self._session_data_models[session_id][surface_id] = {}
+
+        return self._session_data_models[session_id][surface_id]
+
+    def set_data_model(self, session_id: str, surface_id: str, data_model: Dict[str, Any]):
+        """设置指定会话和 surface 的数据模型"""
+        if session_id not in self._session_data_models:
+            self._session_data_models[session_id] = {}
+
+        self._session_data_models[session_id][surface_id] = data_model
+        logger.info(f"设置数据模型: session={session_id}, surface={surface_id}, keys={list(data_model.keys())}")
+
+    def update_data_model_field(self, session_id: str, surface_id: str, path: str, value: Any):
+        """更新数据模型中的指定字段
+
+        Args:
+            session_id: 会话ID
+            surface_id: Surface ID
+            path: 字段路径，如 "/parent1" 或 "/genes/0/name"
+            value: 新值
+        """
+        data_model = self.get_data_model(session_id, surface_id)
+
+        # 解析路径并更新值
+        keys = path.strip('/').split('/')
+        current = data_model
+
+        for key in keys[:-1]:
+            if key not in current:
+                current[key] = {}
+            current = current[key]
+
+        current[keys[-1]] = value
+        logger.info(f"更新数据模型字段: session={session_id}, path={path}, value={value}")
+
+    def merge_data_model(self, session_id: str, surface_id: str, updates: Dict[str, Any]):
+        """合并更新到数据模型
+
+        Args:
+            session_id: 会话ID
+            surface_id: Surface ID
+            updates: 要合并的更新
+        """
+        data_model = self.get_data_model(session_id, surface_id)
+        data_model.update(updates)
+        logger.info(f"合并数据模型: session={session_id}, updates={list(updates.keys())}")
+
+    def clear_session_data_model(self, session_id: str):
+        """清除指定会话的所有数据模型"""
+        if session_id in self._session_data_models:
+            del self._session_data_models[session_id]
+            logger.info(f"清除会话数据模型: session={session_id}")

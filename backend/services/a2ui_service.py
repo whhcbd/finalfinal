@@ -77,17 +77,63 @@ CRITICAL: You MUST use CUSTOM GENETICS COMPONENTS, NOT standard A2UI components!
 
 ❌ DO NOT use standard A2UI components (Container, Column, Row, Text, Card) for genetics visualizations
 ✅ ALWAYS use the custom genetics components listed above
-✅ Keep A2UI JSON simple - typically just 2-3 messages: beginRendering, surfaceUpdate, (optional) dataModelUpdate
+✅ Keep A2UI JSON simple - typically 3 messages: beginRendering, surfaceUpdate, dataModelUpdate
 ✅ Follow the example files exactly for component structure
-✅ Use literalString, literalBoolean, literalNumber, literalArray for property values
+✅ MUST include "rootComponentId" in surfaceUpdate message - this tells A2UI which component is the root
+✅ Use DATA BINDING with {"path": "/fieldName"} instead of literalString for dynamic values
+✅ Use literalString, literalBoolean, literalNumber, literalArray ONLY for static/constant values
+
+## DATA BINDING RULES (CRITICAL):
+
+**Use {"path": "/fieldName"} for dynamic data that may change:**
+- User input values (genotypes, sequences, trait names)
+- Calculated results that update based on user actions
+- Any data that should respond to dataModelUpdate messages
+
+**Use literalString/literalBoolean/literalNumber for static data:**
+- Fixed labels and titles
+- Component configuration options
+- Constant values that never change
+
+**Example:**
+```json
+{
+  "component": {
+    "PunnettSquare": {
+      "parent1Genotype": {"path": "/parent1"},  // ✅ Dynamic - uses data binding
+      "parent2Genotype": {"path": "/parent2"},  // ✅ Dynamic - uses data binding
+      "trait": {"path": "/trait"},              // ✅ Dynamic - uses data binding
+      "showPhenotype": {"literalBoolean": true} // ✅ Static - uses literal
+    }
+  }
+}
+```
 
 ## RESPONSE FORMAT:
 
 Your response MUST be a JSON array with the following structure:
 
 [
-  {"beginRendering": {"surfaceId": "genetics_ui", "root": "main_component"}},
-  {"surfaceUpdate": {"surfaceId": "genetics_ui", "components": [...]}}
+  {"beginRendering": {"surfaceId": "genetics_ui", "root": "component_id"}},
+  {"surfaceUpdate": {"surfaceId": "genetics_ui", "components": [...]}},
+  {"dataModelUpdate": {"surfaceId": "genetics_ui", "contents": [...]}}
+]
+
+CRITICAL: The "root" field in beginRendering MUST match the "id" of the root component in the surfaceUpdate components array.
+
+Example:
+[
+  {"beginRendering": {"surfaceId": "genetics_ui", "root": "punnett_square"}},
+  {"surfaceUpdate": {
+    "surfaceId": "genetics_ui",
+    "components": [
+      {
+        "id": "punnett_square",
+        "component": {"PunnettSquare": {...}}
+      }
+    ]
+  }},
+  {"dataModelUpdate": {"surfaceId": "genetics_ui", "contents": [...]}}
 ]
 
 Do NOT include:
@@ -154,7 +200,8 @@ IMPORTANT:
 - Copy the structure above precisely
 - Replace the data values with content relevant to the user's question
 - Keep all property names and nesting levels identical
-- Use literalString, literalArray, literalNumber wrappers as shown
+- Use {{"path": "/fieldName"}} for dynamic values that should support data binding
+- Use literalString, literalArray, literalNumber ONLY for static/constant values
 """
     except Exception as e:
         logger.error(f"Failed to load example for intent '{intent}': {e}")

@@ -19,6 +19,7 @@ interface ChatMessage {
   isTyping?: boolean;
   a2uiLoading?: boolean;
   isFallback?: boolean;
+  a2uiRendered?: boolean;
 }
 
 interface Conversation {
@@ -762,19 +763,35 @@ export class ChatModule extends LitElement {
       this.currentConversationId = this.conversations[0].id;
     }
 
-    // 初始化 ChatOrchestrator
+    // 初始化 ChatOrchestrator 并连接 WebSocket
     const renderer = new A2UIRenderer();
-    this.orchestrator = new ChatOrchestrator(renderer);
+    const sessionId = this.currentConversationId || crypto.randomUUID();
+    this.orchestrator = new ChatOrchestrator(renderer, sessionId);
+
+    // 连接 WebSocket
+    this.orchestrator.connect().then(() => {
+      console.log('[ChatModule] WebSocket 连接成功');
+    }).catch(error => {
+      console.error('[ChatModule] WebSocket 连接失败:', error);
+    });
 
     // 等待 DOM 更新后重新渲染历史消息中的 A2UI 组件
     this.updateComplete.then(() => {
-      this.reRenderHistoricalA2UI();
+      // 使用 setTimeout 确保 DOM 完全渲染
+      setTimeout(() => {
+        this.reRenderHistoricalA2UI();
+      }, 100);
     });
   }
 
   disconnectedCallback() {
     super.disconnectedCallback();
     this.stopStreaming();
+
+    // 断开 WebSocket 连接
+    if (this.orchestrator) {
+      this.orchestrator.disconnect();
+    }
   }
 
   private reRenderHistoricalA2UI() {
@@ -791,12 +808,14 @@ export class ChatModule extends LitElement {
           const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${msg.id}"]`);
           if (messageElement) {
             const a2uiContainer = messageElement.querySelector('.a2ui-container');
-            if (a2uiContainer) {
-              // 清空容器
-              a2uiContainer.innerHTML = '';
-              // 重新渲染 A2UI
-              this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, msg.a2uiData);
-              console.log(`[ChatModule] Re-rendered A2UI for message ${msg.id}`);
+            if (a2uiContainer && a2uiContainer.children.length === 0) {
+              // 只在容器为空时才渲染
+              try {
+                this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, msg.a2uiData);
+                console.log(`[ChatModule] Re-rendered A2UI for message ${msg.id}`);
+              } catch (error) {
+                console.error(`[ChatModule] Failed to re-render A2UI for message ${msg.id}:`, error);
+              }
             }
           }
         });
@@ -840,6 +859,12 @@ export class ChatModule extends LitElement {
 
   private selectConversation(id: string) {
     this.currentConversationId = id;
+    // 切换对话后重新渲染 A2UI 组件
+    this.updateComplete.then(() => {
+      setTimeout(() => {
+        this.reRenderHistoricalA2UI();
+      }, 100);
+    });
   }
 
   private deleteConversation(id: string, event: Event) {
@@ -921,13 +946,10 @@ export class ChatModule extends LitElement {
     try {
       this.setTypingIndicator(assistantMessage, false);
 
-      // 使用 ChatOrchestrator 处理消息
+      // 使用 ChatOrchestrator 通过 WebSocket 处理消息
       if (this.orchestrator) {
         // 调用 orchestrator 获取响应数据
-        const response = await this.orchestrator.processMessage(
-          userMessage,
-          this.currentConversationId || ''
-        );
+        const response = await this.orchestrator.processMessage(userMessage);
 
         // 更新消息内容（通过 Lit 的响应式系统）
         assistantMessage.content = response.text;
@@ -949,6 +971,7 @@ export class ChatModule extends LitElement {
             if (a2uiContainer) {
               this.orchestrator.renderA2UI(a2uiContainer as HTMLElement, response.a2ui);
               assistantMessage.a2uiData = response.a2ui; // 保存 A2UI 数据
+              assistantMessage.a2uiRendered = true; // 标记为已渲染
               assistantMessage.a2uiLoading = false; // 加载完成
             }
           }

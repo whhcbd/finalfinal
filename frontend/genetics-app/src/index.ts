@@ -35,7 +35,10 @@ registry.register('PunnettSquare', PunnettSquare as any, 'punnett-square', {
     parent1Genotype: { type: "string" },
     parent2Genotype: { type: "string" },
     trait: { type: "string" },
-    showPhenotype: { type: "boolean" }
+    showPhenotype: { type: "boolean" },
+    traitDefinitions: { type: "array" },
+    linkageInfo: { type: "object" },
+    observedData: { type: "array" }
   },
   required: ["parent1Genotype", "parent2Genotype"]
 });

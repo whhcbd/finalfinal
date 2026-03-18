@@ -21,25 +21,30 @@
 ## 技术栈
 
 ### 后端
+
 - **FastAPI**: Web 框架
 - **GLM-4.7**: 智谱 AI 大语言模型
 - **A2UI Python SDK v0.8**: A2UI 协议实现
 - **Python 3.10+**: 运行环境
 
 ### 前端
+
 - **Vite**: 构建工具
 - **Lit**: Web Components 框架
 - **TypeScript**: 类型安全
 - **marked**: Markdown 渲染
 - **KaTeX**: 数学公式渲染
 
-
 ## 项目结构
 
 ```
 my-a2ui-project/
 ├── .env                          # 环境变量配置
-├── backend/
+├── .gitignore                    # Git 忽略规则
+├── README.md                     # 项目说明（本文档）
+├── requirements.txt              # Python 依赖清单
+│
+├── backend/                      # 后端代码
 │   ├── main.py                   # FastAPI 应用入口
 │   ├── services/                 # 核心服务
 │   │   ├── glm_service.py        # GLM API 调用服务
@@ -60,7 +65,8 @@ my-a2ui-project/
 │           │   ├── inference/schema/  # Schema 管理和验证
 │           │   └── extension/         # A2UI 扩展
 │           └── specification/         # A2UI 协议规范文档
-├── frontend/
+│
+├── frontend/                     # 前端代码
 │   ├── genetics-app/             # 主应用
 │   │   ├── src/
 │   │   │   ├── app.ts            # 应用入口，路由集成
@@ -83,7 +89,38 @@ my-a2ui-project/
 │   │   └── vite.config.ts
 │   ├── lit/                      # A2UI Lit 渲染器（本地依赖）
 │   └── web_core/                 # A2UI Web 核心（本地依赖）
-└── README.md
+│
+├── docs/                         # 📁 项目文档
+│   ├── guides/                   # 开发指南
+│   │   ├── START_TESTING.md      # 快速测试指南
+│   │   ├── TESTING_GUIDE.md      # 完整测试指南
+│   │   ├── DATA_BINDING_CHANGES.md  # 数据绑定说明
+│   │   ├── WEBSOCKET_DEBUG_GUIDE.md # WebSocket 调试
+│   │   ├── FIX_SUMMARY.md        # 修复总结
+│   │   └── CONTEXT_AWARE_INTENT_TEST.md  # 意图测试
+│   ├── summaries/                # 项目总结
+│   │   ├── 阶段1+2完成总结.md
+│   │   └── 阶段2完成总结.md
+│   ├── full.md                   # 知识库文件
+│   └── [其他技术文档...]
+│
+├── scripts/                      # 📁 启动脚本
+│   ├── start-backend.bat         # 启动后端
+│   ├── start-frontend.bat        # 启动前端
+│   ├── restart-backend.bat       # 重启后端
+│   └── restart-frontend.bat      # 重启前端
+│
+├── tests/                        # 测试文件
+│   └── test_rag.py               # RAG 功能测试
+│
+├── logs/                         # 日志目录
+│   ├── backend.log               # 后端日志
+│   └── frontend.log              # 前端日志
+│
+└── specification/                # A2UI 规范
+    ├── v0_8/
+    ├── v0_9/
+    └── v0_10/
 ```
 
 ## 核心功能与工作流
@@ -91,8 +128,9 @@ my-a2ui-project/
 ### 1. AI 对话系统
 
 **工作流程**：
+
 ```
-用户输入 
+用户输入
   → 前端发送 POST /api/chat
   → 后端意图识别（IntentService）
   → 生成文本回答（GLM-4.7）
@@ -104,6 +142,7 @@ my-a2ui-project/
 ```
 
 **关键组件**：
+
 - `ChatModule` (frontend): 对话界面，消息管理，打字机效果
 - `ChatOrchestrator` (frontend): 协调消息发送和 A2UI 渲染
 - `A2UIRenderer` (frontend): 解析和渲染 A2UI JSON
@@ -112,9 +151,9 @@ my-a2ui-project/
 - `A2UIService` (backend): 生成系统提示词，验证 A2UI 响应
 
 **意图类型**（10 种）：
+
 - **遗传学组件（6种）**: punnett_square, dna_structure, phenotype_distribution, gene_expression, pedigree_chart, cross_over_map
 - **其他意图（4种）**: quiz, video, general, greeting
-
 
 ### 2. A2UI 可视化系统
 
@@ -122,6 +161,7 @@ my-a2ui-project/
 A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议。AI 生成结构化的 JSON 消息，前端渲染器根据这些消息动态渲染界面。
 
 **A2UI 消息格式**：
+
 ```json
 [
   {
@@ -138,9 +178,9 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
           "id": "main_component",
           "component": {
             "PunnettSquare": {
-              "parent1Genotype": {"literalString": "Aa"},
-              "parent2Genotype": {"literalString": "aa"},
-              "trait": {"literalString": "花色"}
+              "parent1Genotype": { "literalString": "Aa" },
+              "parent2Genotype": { "literalString": "aa" },
+              "trait": { "literalString": "花色" }
             }
           }
         }
@@ -152,16 +192,17 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
 
 **6 个自定义遗传学组件**：
 
-| 组件名 | 用途 | 关键属性 |
-|--------|------|----------|
-| **PunnettSquare** | 孟德尔方格图 | parent1Genotype, parent2Genotype, trait |
-| **DNAStructure** | DNA 双螺旋结构 | sequence, showLabels, highlightRegions |
-| **PhenotypeDistribution** | 表型分布柱状图 | data (phenotype, count, percentage) |
-| **GeneExpression** | 基因表达水平 | genes, expressionLevels, conditions |
-| **PedigreeChart** | 家系图 | generations, diseaseName, inheritancePattern |
-| **CrossOverMap** | 交叉互换图谱 | chromosome1, chromosome2, crossOverPoints |
+| 组件名                    | 用途           | 关键属性                                     |
+| ------------------------- | -------------- | -------------------------------------------- |
+| **PunnettSquare**         | 孟德尔方格图   | parent1Genotype, parent2Genotype, trait      |
+| **DNAStructure**          | DNA 双螺旋结构 | sequence, showLabels, highlightRegions       |
+| **PhenotypeDistribution** | 表型分布柱状图 | data (phenotype, count, percentage)          |
+| **GeneExpression**        | 基因表达水平   | genes, expressionLevels, conditions          |
+| **PedigreeChart**         | 家系图         | generations, diseaseName, inheritancePattern |
+| **CrossOverMap**          | 交叉互换图谱   | chromosome1, chromosome2, crossOverPoints    |
 
 **A2UI 生成流程**：
+
 ```
 用户问题
   → 意图识别
@@ -180,6 +221,7 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
 ### 3. 测验系统
 
 **工作流程**：
+
 ```
 用户选择知识点
   → 前端发送 GET /api/quiz/questions?category=xxx
@@ -192,6 +234,7 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
 ```
 
 **支持的知识点**：
+
 - 孟德尔遗传（mendelian）
 - DNA 结构与复制（dna）
 - 基因表达（gene-expression）
@@ -202,6 +245,7 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
 ### 4. 知识图谱
 
 **功能**：
+
 - 交互式节点和边可视化
 - 多类别过滤
 - 节点拖拽和缩放
@@ -210,12 +254,14 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
 ### 5. 会话管理
 
 **功能**：
+
 - 多对话历史记录
 - 本地 localStorage 持久化
 - 自动保存对话内容
 - 刷新页面不丢失历史
 
 **工作流程**：
+
 ```
 页面加载
   → 从 localStorage 加载对话历史
@@ -226,42 +272,47 @@ A2UI (Agent to UI) 是一个标准化的 AI 代理到用户界面的通信协议
   → 自动保存到 localStorage
 ```
 
-
 ## API 端点
 
 ### 聊天
+
 - `POST /api/chat` - AI 对话
   - 请求体：`{message, session_id?, use_ui?, history?}`
   - 响应：`{text, a2ui, intent, keywords, session_id}`
 
 ### 测验
+
 - `GET /api/quiz/questions?category={category}` - 获取测验题目
   - 参数：category (mendelian, dna, population 等)
   - 响应：题目数组
 
 ### 健康检查
+
 - `GET /` - API 状态
 - `GET /health` - 服务健康状态
 
 ## 环境变量配置
 
 `.env` 文件：
+
 ```env
 GLM_API_KEY=your_api_key_here
 GLM_MODEL=glm-4.7
-KNOWLEDGE_BASE_PATH=./data/knowledge_base.md
+KNOWLEDGE_BASE_PATH=C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
 EMBEDDING_MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
-HF_CACHE_DIR=./.cache/huggingface
+HF_CACHE_DIR=C:\trae_coding\A2UI-main\my-a2ui-project\.cache\huggingface
 ```
 
 **注意**：
+
 - `GLM_API_KEY`: 请替换为你的智谱 AI API Key
-- `KNOWLEDGE_BASE_PATH`: 知识库文件路径（相对路径或绝对路径）
+- `KNOWLEDGE_BASE_PATH`: 知识库文件路径（已更新为项目内路径）
 - `HF_CACHE_DIR`: Hugging Face 模型缓存目录
 
 ## 快速开始
 
 ### 前置要求
+
 - Python 3.10+
 - Node.js 18+
 - npm 或 yarn
@@ -269,6 +320,7 @@ HF_CACHE_DIR=./.cache/huggingface
 ### 安装依赖
 
 #### 后端
+
 ```powershell
 cd C:\trae_coding\A2UI-main\my-a2ui-project
 .venv\Scripts\Activate.ps1
@@ -276,6 +328,7 @@ cd C:\trae_coding\A2UI-main\my-a2ui-project
 ```
 
 #### 前端
+
 ```bash
 cd C:\trae_coding\A2UI-main\my-a2ui-project\frontend\genetics-app
 npm install
@@ -283,58 +336,77 @@ npm install
 
 ### 启动服务
 
-#### 启动后端
+#### 方法 1: 使用启动脚本（推荐）
+
+**Windows 用户**:
+
+```bash
+# 启动后端（终端 1）
+scripts\start-backend.bat
+
+# 启动前端（终端 2）
+scripts\start-frontend.bat
+```
+
+**重启服务**:
+```bash
+# 重启后端
+scripts\restart-backend.bat
+
+# 重启前端
+scripts\restart-frontend.bat
+```
+
+#### 方法 2: 手动启动
+
+**启动后端**:
+
 ```powershell
 cd C:\trae_coding\A2UI-main\my-a2ui-project
 .venv\Scripts\Activate.ps1
 py -m uvicorn backend.main:app --reload --port 8000
 ```
+
 后端运行在 `http://localhost:8000`
 
-#### 启动前端
+**启动前端**:
+
 ```bash
 cd C:\trae_coding\A2UI-main\my-a2ui-project\frontend\genetics-app
 npm run dev
 ```
+
 前端运行在 `http://localhost:5173`
 
 #### 构建前端
+
 ```bash
 npm run build
 ```
+
 构建产物输出到 `dist/` 目录
 
 ## 设计风格
 
 ### 当前设计（简洁专业）
+
 - **配色**: 灰度系统（#111827, #6b7280, #e5e7eb, #fafafa）
 - **字体**: Inter（已在 index.html 中加载）
 - **风格**: 简洁、专业、无装饰
 - **布局**: 卡片式，清晰的层次结构
 - **动画**: 最小化，仅保留必要的过渡效果
 
-### 移除的元素
-- ❌ DNA 螺旋背景动画
-- ❌ 渐变色背景
-- ❌ 玻璃态效果
-- ❌ 复杂阴影和光晕
-- ❌ CSS @import 语句（改为 HTML link）
-
 ## 已知问题与限制
 
-### RAG 功能（已停用）
-- **状态**: 已停用
-- **原因**: 本地嵌入模型文件不完整，无法加载
-- **影响**: 无法从知识库检索相关上下文，但不影响核心功能
-- **解决方案**: 需要重新下载完整的 sentence-transformers 模型
-
 ### 其他限制
+
 - 前端构建产物较大（~715KB），建议使用代码分割优化
 - A2UI 组件渲染依赖 AI 生成质量，可能偶尔出现格式错误（已有降级策略）
 
 ## 开发进度
 
 ### 已完成
+
 - ✅ 项目初始化和配置
 - ✅ 后端核心服务（GLM、Intent、Context、A2UI）
 - ✅ A2UI Schema 集成和 6 个自定义组件
@@ -350,11 +422,18 @@ npm run build
 - ✅ Quiz API 端点添加
 
 ### 待优化
-- 🔧 修复 RAG 服务（需要重新下载完整的 embedding 模型）
+
 - 📊 前端性能优化（代码分割、懒加载）
 - 🧪 添加单元测试和端到端测试
 - 🎨 UI 细节改进和响应式设计优化
 - 📝 添加更多遗传学知识点和测验题目
+
+- ⚡ **优化意图识别流程**（参考谷歌官方做法）：
+  - 合并意图识别和响应生成为单次 LLM 调用（减少 API 调用次数）
+  - 使用 JSON 模式强制结构化输出（`response_format="json"`）
+  - 添加对话上下文感知（识别"是的"、"好的"等确认词）
+  - 实现关键词正则匹配作为回退机制
+  - 预期效果：更快响应、更低成本、更可靠的输出格式
 
 ## 参考资料
 
@@ -368,13 +447,34 @@ npm run build
 
 ## 更新日志
 
+### 2026-03-16
+
+- ✅ 项目文件整理完成
+- ✅ 创建 docs/guides/ 和 docs/summaries/ 目录
+- ✅ 创建 scripts/ 目录，集中管理启动脚本
+- ✅ 移动 6 个指南文档到 docs/guides/
+- ✅ 移动 2 个总结文档到 docs/summaries/
+- ✅ 移动 4 个启动脚本到 scripts/
+- ✅ 移动测试文件到 tests/
+- ✅ 清理 logs/ 目录，删除 7 个空日志文件
+- ✅ 根目录文件从 24 个减少到 13 个（减少 46%）
+- ✅ 添加 .gitignore 文件
+- ✅ Git 仓库优化（从 21MB 压缩到 9.8MB）
+- ✅ 更新 .env 文件，知识库路径改为项目内路径
+- ✅ 更新 README 文档，反映最新项目结构
+
 ### 2026-03-09
+
 - ✅ 优化 README 文档
 - ✅ 修正环境变量配置示例（使用相对路径）
 - ✅ 更新 Python 版本要求（3.10+ 而非 3.13+）
 - ✅ 移除具体版本号，保持文档简洁
+- ✅ 修复 GLM API 连接问题（禁用 HTTP/2，优化超时配置）
+- ✅ 确认 RAG 服务和 embedding 模型已正常工作
+- ✅ 添加友好的错误提示信息
 
 ### 2026-03-08
+
 - ✅ 修复 CSS @import 错误（移除所有模块中的 @import 语句）
 - ✅ 修复刷新页面重复创建对话问题
 - ✅ 添加 Quiz API 端点（/api/quiz/questions）

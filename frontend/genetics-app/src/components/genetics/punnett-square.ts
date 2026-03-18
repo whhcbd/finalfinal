@@ -36,13 +36,19 @@ export class PunnettSquare extends Root {
   private _linkageInfo: LinkageInfo = { isLinked: false };
   private _observedData: number[] = [];
 
+  // 本地输入状态（用于交互式编辑）
+  private localParent1: string = '';
+  private localParent2: string = '';
+  private localTrait: string = '';
+
   @property({ type: String })
   get parent1Genotype(): string {
     return this._parent1Genotype;
   }
   set parent1Genotype(value: any) {
     const oldValue = this._parent1Genotype;
-    this._parent1Genotype = this.unwrapValue(value, 'string');
+    // Store the raw value (could be a path reference or literal)
+    this._parent1Genotype = value;
     this.requestUpdate('parent1Genotype', oldValue);
   }
 
@@ -52,7 +58,8 @@ export class PunnettSquare extends Root {
   }
   set parent2Genotype(value: any) {
     const oldValue = this._parent2Genotype;
-    this._parent2Genotype = this.unwrapValue(value, 'string');
+    // Store the raw value (could be a path reference or literal)
+    this._parent2Genotype = value;
     this.requestUpdate('parent2Genotype', oldValue);
   }
 
@@ -62,7 +69,8 @@ export class PunnettSquare extends Root {
   }
   set trait(value: any) {
     const oldValue = this._trait;
-    this._trait = this.unwrapValue(value, 'string');
+    // Store the raw value (could be a path reference or literal)
+    this._trait = value;
     this.requestUpdate('trait', oldValue);
   }
 
@@ -72,7 +80,8 @@ export class PunnettSquare extends Root {
   }
   set showPhenotype(value: any) {
     const oldValue = this._showPhenotype;
-    this._showPhenotype = this.unwrapValue(value, 'boolean');
+    // Store the raw value (could be a path reference or literal)
+    this._showPhenotype = value;
     this.requestUpdate('showPhenotype', oldValue);
   }
 
@@ -82,7 +91,8 @@ export class PunnettSquare extends Root {
   }
   set traitDefinitions(value: any) {
     const oldValue = this._traitDefinitions;
-    this._traitDefinitions = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._traitDefinitions = value;
     this.requestUpdate('traitDefinitions', oldValue);
   }
 
@@ -114,7 +124,31 @@ export class PunnettSquare extends Root {
              type === 'object' ? {} : null;
     }
 
-    // Handle A2UI Proxy-wrapped values
+    // Handle A2UI data binding (path references)
+    if (value && typeof value === 'object' && 'path' in value && value.path) {
+      if (!this.processor || !this.component) {
+        return type === 'string' ? '' :
+               type === 'boolean' ? false :
+               type === 'array' ? [] :
+               type === 'object' ? {} : null;
+      }
+
+      // Use A2UI's getData to resolve the path
+      const resolvedValue = this.processor.getData(this.component, value.path);
+
+      // If still undefined, try to get directly from dataModel
+      if (resolvedValue === undefined) {
+        const surface = (this.processor as any).surfaces?.get('genetics_ui');
+        if (surface && surface.dataModel) {
+          const key = value.path.startsWith('/') ? value.path.substring(1) : value.path;
+          return surface.dataModel.get(key);
+        }
+      }
+
+      return resolvedValue;
+    }
+
+    // Handle literal values
     if (value && typeof value === 'object') {
       if (type === 'string' && 'literalString' in value) {
         return value.literalString;
@@ -129,6 +163,7 @@ export class PunnettSquare extends Root {
         return value.literalObject;
       }
     }
+
     return value;
   }
 
@@ -463,6 +498,90 @@ export class PunnettSquare extends Root {
       padding: 2px 6px;
       border-radius: 4px;
     }
+
+    /* 交互式输入样式 */
+    .input-section {
+      margin-bottom: 20px;
+      padding: 16px;
+      background: #f9fafb;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .input-group {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #374151;
+    }
+
+    .input-field {
+      padding: 10px 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 1rem;
+      font-family: monospace;
+      font-weight: 600;
+      transition: border-color 0.2s;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .action-button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-button.primary {
+      background: #3b82f6;
+      color: white;
+    }
+
+    .action-button.primary:hover {
+      background: #2563eb;
+    }
+
+    .action-button.secondary {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .action-button.secondary:hover {
+      background: #d1d5db;
+    }
+
+    .action-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
     `
   ];
 
@@ -498,9 +617,12 @@ export class PunnettSquare extends Root {
     return result;
   }
 
-  private calculateOffspring(): GenotypeData[] {
-    const gametes1 = this.getGametes(this.parent1Genotype);
-    const gametes2 = this.getGametes(this.parent2Genotype);
+  private calculateOffspring(parent1?: string, parent2?: string): GenotypeData[] {
+    const p1 = parent1 || this.parent1Genotype;
+    const p2 = parent2 || this.parent2Genotype;
+
+    const gametes1 = this.getGametes(p1);
+    const gametes2 = this.getGametes(p2);
 
     if (gametes1.length === 0 || gametes2.length === 0) {
       return [];
@@ -636,18 +758,18 @@ export class PunnettSquare extends Root {
     };
   }
 
-  private getPhenotypeDisplayName(phenotype: string): string {
+  private getPhenotypeDisplayName(phenotype: string, traitDefs?: TraitDefinition[]): string {
     // 如果表型已经是具体名称（包含"-"或中文），直接返回
     if (phenotype.includes('-') || /[\u4e00-\u9fa5]/.test(phenotype)) {
       return phenotype;
     }
 
-    if (this.traitDefinitions.length === 0) {
+    if (!traitDefs || traitDefs.length === 0) {
       return this.getPhenotypeLabel(phenotype);
     }
 
     // 使用自定义性状名称
-    const trait = this.traitDefinitions[0];
+    const trait = traitDefs[0];
     if (phenotype === 'dominant') return trait.dominantTrait;
     if (phenotype === 'recessive') return trait.recessiveTrait;
     if (phenotype === 'incomplete' && trait.intermediateTrait) return trait.intermediateTrait;
@@ -657,9 +779,21 @@ export class PunnettSquare extends Root {
   }
 
   override render() {
-    const offspring = this.calculateOffspring();
-    const gametes1 = this.getGametes(this.parent1Genotype);
-    const gametes2 = this.getGametes(this.parent2Genotype);
+    // Unwrap values at render time (when dataModel is ready)
+    const parent1 = this.unwrapValue(this.parent1Genotype, 'string');
+    const parent2 = this.unwrapValue(this.parent2Genotype, 'string');
+    const traitName = this.unwrapValue(this.trait, 'string');
+    const showPheno = this.unwrapValue(this.showPhenotype, 'boolean');
+    const traitDefs = this.unwrapValue(this.traitDefinitions, 'array');
+
+    // Update local state for inputs
+    if (typeof parent1 === 'string') this.localParent1 = parent1;
+    if (typeof parent2 === 'string') this.localParent2 = parent2;
+    if (typeof traitName === 'string') this.localTrait = traitName;
+
+    const offspring = this.calculateOffspring(parent1, parent2);
+    const gametes1 = this.getGametes(parent1);
+    const gametes2 = this.getGametes(parent2);
 
     if (offspring.length === 0) {
       return html`<div class="empty">请输入有效的基因型（例如：Aa, AaBb, AaBbCc）</div>`;
@@ -676,12 +810,62 @@ export class PunnettSquare extends Root {
 
     return html`
       <div class="container">
-        <div class="trait-title">${this.trait || '孟德尔方格图'}</div>
+        <div class="trait-title">${traitName || '孟德尔方格图'}</div>
 
-        ${this.traitDefinitions.length > 0 ? html`
+        <!-- 交互式输入区域 -->
+        <div class="input-section">
+          <div class="input-row">
+            <div class="input-group">
+              <label class="input-label">亲本1基因型</label>
+              <input
+                type="text"
+                class="input-field"
+                .value=${this.localParent1}
+                @input=${(e: Event) => this.handleInputChange('parent1', e)}
+                placeholder="例如: Aa"
+              />
+            </div>
+            <div class="input-group">
+              <label class="input-label">亲本2基因型</label>
+              <input
+                type="text"
+                class="input-field"
+                .value=${this.localParent2}
+                @input=${(e: Event) => this.handleInputChange('parent2', e)}
+                placeholder="例如: aa"
+              />
+            </div>
+            <div class="input-group">
+              <label class="input-label">性状名称</label>
+              <input
+                type="text"
+                class="input-field"
+                .value=${this.localTrait}
+                @input=${(e: Event) => this.handleInputChange('trait', e)}
+                placeholder="例如: 花色"
+              />
+            </div>
+          </div>
+          <div class="button-group">
+            <button
+              class="action-button primary"
+              @click=${() => this.handleRecalculate()}
+            >
+              重新计算
+            </button>
+            <button
+              class="action-button secondary"
+              @click=${() => this.handleReset()}
+            >
+              重置
+            </button>
+          </div>
+        </div>
+
+        ${traitDefs && traitDefs.length > 0 ? html`
           <div class="trait-names">
             <div class="trait-names-title">性状定义</div>
-            ${map(this.traitDefinitions, (trait, index) => html`
+            ${map(traitDefs, (trait, index) => html`
               <div class="trait-name-item">
                 <strong>${String.fromCharCode(65 + index)}${String.fromCharCode(65 + index)}</strong>
                 <span>${trait.dominantTrait}</span>
@@ -738,13 +922,13 @@ export class PunnettSquare extends Root {
                 <button
                   class="grid-cell"
                   @click=${() => this.handleCellClick(item)}
-                  aria-label="${item.genotype} - ${this.getPhenotypeDisplayName(item.phenotype)}"
+                  aria-label="${item.genotype} - ${this.getPhenotypeDisplayName(item.phenotype, traitDefs)}"
                   tabindex="0"
                 >
                   <div class="cell-genotype">${item.genotype}</div>
-                  ${this.showPhenotype ? html`
+                  ${showPheno ? html`
                     <div class="cell-phenotype ${item.phenotype}">
-                      ${this.getPhenotypeDisplayName(item.phenotype)}
+                      ${this.getPhenotypeDisplayName(item.phenotype, traitDefs)}
                     </div>
                   ` : ''}
                 </button>
@@ -753,7 +937,7 @@ export class PunnettSquare extends Root {
           `)}
         </div>
 
-        ${this.showPhenotype ? html`
+        ${showPheno ? html`
           <div class="offspring-section">
             <div class="offspring-title">后代表型比例</div>
             <div class="offspring-grid">
@@ -761,7 +945,7 @@ export class PunnettSquare extends Root {
                 const ratio = this.calculateRatio(count, offspring.length);
                 return html`
                   <div class="offspring-item">
-                    <div class="offspring-phenotype">${this.getPhenotypeDisplayName(phenotype)}</div>
+                    <div class="offspring-phenotype">${this.getPhenotypeDisplayName(phenotype, traitDefs)}</div>
                     <div class="offspring-ratio">${ratio} (${count}/${offspring.length})</div>
                   </div>
                 `;
@@ -787,7 +971,7 @@ export class PunnettSquare extends Root {
                     const contribution = expected > 0 ? Math.pow(observed - expected, 2) / expected : 0;
                     return html`
                       <tr>
-                        <td>${this.getPhenotypeDisplayName(phenotype)}</td>
+                        <td>${this.getPhenotypeDisplayName(phenotype, traitDefs)}</td>
                         <td>${expected}</td>
                         <td>${observed}</td>
                         <td>${contribution.toFixed(3)}</td>
@@ -808,8 +992,8 @@ export class PunnettSquare extends Root {
           ` : ''}
 
           <div class="phenotype-legend">
-            ${this.traitDefinitions.length > 0 ? html`
-              ${map(this.traitDefinitions, (trait, index) => html`
+            ${traitDefs && traitDefs.length > 0 ? html`
+              ${map(traitDefs, (trait, index) => html`
                 <div class="legend-item">
                   <div class="legend-indicator dominant"></div>
                   <span class="legend-text">${trait.dominantTrait}</span>
@@ -861,6 +1045,52 @@ export class PunnettSquare extends Root {
   private handleCellClick(item: GenotypeData) {
     this.dispatchEvent(new CustomEvent('cell-click', {
       detail: { genotype: item.genotype, phenotype: item.phenotype },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  // 处理输入变化
+  private handleInputChange(field: 'parent1' | 'parent2' | 'trait', event: Event) {
+    const input = event.target as HTMLInputElement;
+    const value = input.value;
+
+    if (field === 'parent1') {
+      this.localParent1 = value;
+    } else if (field === 'parent2') {
+      this.localParent2 = value;
+    } else if (field === 'trait') {
+      this.localTrait = value;
+    }
+
+    this.requestUpdate();
+  }
+
+  // 处理重新计算按钮点击
+  private handleRecalculate() {
+    // 发送 action 事件到后端
+    this.dispatchEvent(new CustomEvent('action', {
+      detail: {
+        name: 'recalculate',
+        context: {
+          parent1: this.localParent1,
+          parent2: this.localParent2,
+          trait: this.localTrait
+        }
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  // 处理重置按钮点击
+  private handleReset() {
+    // 发送 reset action 到后端
+    this.dispatchEvent(new CustomEvent('action', {
+      detail: {
+        name: 'reset',
+        context: {}
+      },
       bubbles: true,
       composed: true
     }));

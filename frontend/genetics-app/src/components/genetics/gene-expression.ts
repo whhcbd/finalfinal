@@ -30,7 +30,8 @@ export class GeneExpression extends Root {
   }
   set genes(value: any) {
     const oldValue = this._genes;
-    this._genes = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._genes = value;
     this.requestUpdate('genes', oldValue);
   }
 
@@ -40,7 +41,8 @@ export class GeneExpression extends Root {
   }
   set expressionLevels(value: any) {
     const oldValue = this._expressionLevels;
-    this._expressionLevels = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._expressionLevels = value;
     this.requestUpdate('expressionLevels', oldValue);
   }
 
@@ -50,12 +52,12 @@ export class GeneExpression extends Root {
   }
   set conditions(value: any) {
     const oldValue = this._conditions;
-    this._conditions = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._conditions = value;
     this.requestUpdate('conditions', oldValue);
   }
 
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
-    // Handle null/undefined
     if (value === null || value === undefined) {
       return type === 'string' ? '' :
              type === 'boolean' ? false :
@@ -63,12 +65,44 @@ export class GeneExpression extends Root {
              type === 'array' ? [] : null;
     }
 
-    // Handle A2UI Proxy-wrapped values
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      if ('literalString' in value) return value.literalString;
-      if ('literalBoolean' in value) return value.literalBoolean;
-      if ('literalNumber' in value) return value.literalNumber;
-      if ('literalArray' in value) return value.literalArray;
+    // Handle A2UI data binding (path references)
+    if (value && typeof value === 'object' && 'path' in value && value.path) {
+      if (!this.processor || !this.component) {
+        return type === 'string' ? '' :
+               type === 'boolean' ? false :
+               type === 'number' ? 0 :
+               type === 'array' ? [] : null;
+      }
+
+      // Use A2UI's getData to resolve the path
+      const resolvedValue = this.processor.getData(this.component, value.path);
+
+      // If still undefined, try to get directly from dataModel
+      if (resolvedValue === undefined) {
+        const surface = (this.processor as any).surfaces?.get('genetics_ui');
+        if (surface && surface.dataModel) {
+          const key = value.path.startsWith('/') ? value.path.substring(1) : value.path;
+          return surface.dataModel.get(key);
+        }
+      }
+
+      return resolvedValue;
+    }
+
+    // Handle literal values
+    if (value && typeof value === 'object') {
+      if (type === 'string' && 'literalString' in value) {
+        return value.literalString;
+      }
+      if (type === 'boolean' && 'literalBoolean' in value) {
+        return value.literalBoolean;
+      }
+      if (type === 'number' && 'literalNumber' in value) {
+        return value.literalNumber;
+      }
+      if (type === 'array' && 'literalArray' in value) {
+        return value.literalArray;
+      }
     }
 
     return value;
@@ -85,16 +119,16 @@ export class GeneExpression extends Root {
     '#84cc16'
   ];
 
-  private getConditionColor(index: number): string {
-    if (this.conditions[index]?.color) {
-      return this.conditions[index].color;
+  private getConditionColor(index: number, conditions: Condition[]): string {
+    if (conditions[index]?.color) {
+      return conditions[index].color;
     }
     return GeneExpression.DEFAULT_COLORS[index % GeneExpression.DEFAULT_COLORS.length];
   }
 
-  private getMaxExpressionLevel(): number {
+  private getMaxExpressionLevel(genes: GeneData[]): number {
     let max = 0;
-    for (const gene of this.genes) {
+    for (const gene of genes) {
       for (const level of gene.expressionLevels) {
         if (level > max) {
           max = level;
@@ -110,8 +144,8 @@ export class GeneExpression extends Root {
     return sum / gene.expressionLevels.length;
   }
 
-  private getBarHeight(level: number): number {
-    const max = this.getMaxExpressionLevel();
+  private getBarHeight(level: number, genes: GeneData[]): number {
+    const max = this.getMaxExpressionLevel(genes);
     if (max === 0) return 0;
     return (level / max) * 100;
   }
@@ -341,7 +375,11 @@ export class GeneExpression extends Root {
   private chartType: 'bar' | 'line' = 'bar';
 
   override render() {
-    if (this.genes.length === 0) {
+    // Unwrap values at render time (when dataModel is ready)
+    const genes = this.unwrapValue(this._genes, 'array');
+    const conditions = this.unwrapValue(this._conditions, 'array');
+
+    if (genes.length === 0) {
       return html`<div class="empty">暂无基因表达数据</div>`;
     }
 
@@ -365,17 +403,17 @@ export class GeneExpression extends Root {
             </button>
           </div>
 
-          ${this.chartType === 'bar' ? this.renderBarChart() : this.renderLineChart()}
+          ${this.chartType === 'bar' ? this.renderBarChart(genes, conditions) : this.renderLineChart(genes, conditions)}
         </div>
 
         <div class="legend">
           <div class="legend-title">条件图例</div>
           <div class="legend-grid">
-            ${map(this.conditions, (condition, index) => html`
+            ${map(conditions, (condition, index) => html`
               <div class="legend-item">
                 <div
                   class="legend-color"
-                  style="background-color: ${this.getConditionColor(index)};"
+                  style="background-color: ${this.getConditionColor(index, conditions)};"
                 ></div>
                 <span class="legend-text">${condition.name}</span>
               </div>
@@ -386,29 +424,29 @@ export class GeneExpression extends Root {
         <div class="stats">
           <div class="stat-item">
             <div class="stat-label">基因数量</div>
-            <div class="stat-value">${this.genes.length}</div>
+            <div class="stat-value">${genes.length}</div>
           </div>
           <div class="stat-item">
             <div class="stat-label">条件数量</div>
-            <div class="stat-value">${this.conditions.length}</div>
+            <div class="stat-value">${conditions.length}</div>
           </div>
           <div class="stat-item">
             <div class="stat-label">最高表达量</div>
-            <div class="stat-value">${this.getMaxExpressionLevel()}</div>
+            <div class="stat-value">${this.getMaxExpressionLevel(genes)}</div>
           </div>
           <div class="stat-item">
             <div class="stat-label">平均表达量</div>
-            <div class="stat-value">${this.getAverageExpression()}</div>
+            <div class="stat-value">${this.getAverageExpression(genes)}</div>
           </div>
         </div>
       </div>
     `;
   }
 
-  private renderBarChart() {
+  private renderBarChart(genes: GeneData[], conditions: Condition[]) {
     return html`
       <div class="bar-chart">
-        ${map(this.genes, (gene, geneIndex) => html`
+        ${map(genes, (gene, geneIndex) => html`
           <div class="gene-row">
             <div class="gene-name">${gene.gene}</div>
             <div class="bars-container">
@@ -416,16 +454,16 @@ export class GeneExpression extends Root {
                 <div class="bar-wrapper">
                   <div
                     class="bar"
-                    style="height: ${this.getBarHeight(level)}%; background-color: ${this.getConditionColor(levelIndex)};"
-                    @click=${() => this.handleBarClick(gene, levelIndex, level)}
-                    aria-label="${gene.gene} - ${this.conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}: ${level}"
+                    style="height: ${this.getBarHeight(level, genes)}%; background-color: ${this.getConditionColor(levelIndex, conditions)};"
+                    @click=${() => this.handleBarClick(gene, levelIndex, level, conditions)}
+                    aria-label="${gene.gene} - ${conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}: ${level}"
                     tabindex="0"
                   >
-                    ${this.getBarHeight(level) > 15 ? html`
+                    ${this.getBarHeight(level, genes) > 15 ? html`
                       <div class="bar-value">${level}</div>
                     ` : ''}
                   </div>
-                  <div class="bar-label">${this.conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}</div>
+                  <div class="bar-label">${conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}</div>
                 </div>
               `)}
             </div>
@@ -435,7 +473,7 @@ export class GeneExpression extends Root {
     `;
   }
 
-  private renderLineChart() {
+  private renderLineChart(genes: GeneData[], conditions: Condition[]) {
     return html`
       <div class="line-chart">
         <canvas class="chart-canvas" id="lineChart"></canvas>
@@ -459,6 +497,10 @@ export class GeneExpression extends Root {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    // Unwrap values for drawing
+    const genes = this.unwrapValue(this._genes, 'array');
+    const conditions = this.unwrapValue(this._conditions, 'array');
+
     const rect = canvas.getBoundingClientRect();
     canvas.width = rect.width * 2;
     canvas.height = rect.height * 2;
@@ -467,14 +509,14 @@ export class GeneExpression extends Root {
     const padding = 40;
     const width = rect.width - padding * 2;
     const height = rect.height - padding * 2;
-    const maxLevel = this.getMaxExpressionLevel();
+    const maxLevel = this.getMaxExpressionLevel(genes);
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const xStep = width / (this.conditions.length - 1);
+    const xStep = width / (conditions.length - 1);
 
-    for (const gene of this.genes) {
-      const color = this.getConditionColor(this.genes.indexOf(gene));
+    for (const gene of genes) {
+      const color = this.getConditionColor(genes.indexOf(gene), conditions);
 
       ctx.beginPath();
       ctx.strokeStyle = color;
@@ -507,25 +549,25 @@ export class GeneExpression extends Root {
     ctx.fillStyle = '#5f6368';
     ctx.font = '12px Roboto';
 
-    this.conditions.forEach((condition, index) => {
+    conditions.forEach((condition, index) => {
       const x = padding + index * xStep;
       ctx.fillText(condition.name, x - 20, rect.height - 10);
     });
   }
 
-  private getAverageExpression(): string {
-    if (this.genes.length === 0) return '0.0';
-    const sum = this.genes.reduce((total, gene) => {
+  private getAverageExpression(genes: GeneData[]): string {
+    if (genes.length === 0) return '0.0';
+    const sum = genes.reduce((total, gene) => {
       return total + this.getAverageExpressionLevel(gene);
     }, 0);
-    return (sum / this.genes.length).toFixed(1);
+    return (sum / genes.length).toFixed(1);
   }
 
-  private handleBarClick(gene: GeneData, conditionIndex: number, level: number) {
+  private handleBarClick(gene: GeneData, conditionIndex: number, level: number, conditions: Condition[]) {
     this.dispatchEvent(new CustomEvent('bar-click', {
       detail: {
         gene: gene.gene,
-        condition: this.conditions[conditionIndex]?.name,
+        condition: conditions[conditionIndex]?.name,
         level
       },
       bubbles: true,

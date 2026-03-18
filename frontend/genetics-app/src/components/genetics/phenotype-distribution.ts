@@ -25,7 +25,8 @@ export class PhenotypeDistribution extends Root {
   }
   set data(value: any) {
     const oldValue = this._data;
-    this._data = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._data = value;
     this.requestUpdate('data', oldValue);
   }
 
@@ -35,25 +36,57 @@ export class PhenotypeDistribution extends Root {
   }
   set trait(value: any) {
     const oldValue = this._trait;
-    this._trait = this.unwrapValue(value, 'string');
+    // Store the raw value (could be a path reference or literal)
+    this._trait = value;
     this.requestUpdate('trait', oldValue);
   }
 
-  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
-    // Handle null/undefined
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object'): any {
     if (value === null || value === undefined) {
       return type === 'string' ? '' :
              type === 'boolean' ? false :
-             type === 'number' ? 0 :
-             type === 'array' ? [] : null;
+             type === 'array' ? [] :
+             type === 'object' ? {} : null;
     }
 
-    // Handle A2UI Proxy-wrapped values
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      if ('literalString' in value) return value.literalString;
-      if ('literalBoolean' in value) return value.literalBoolean;
-      if ('literalNumber' in value) return value.literalNumber;
-      if ('literalArray' in value) return value.literalArray;
+    // Handle A2UI data binding (path references)
+    if (value && typeof value === 'object' && 'path' in value && value.path) {
+      if (!this.processor || !this.component) {
+        return type === 'string' ? '' :
+               type === 'boolean' ? false :
+               type === 'array' ? [] :
+               type === 'object' ? {} : null;
+      }
+
+      // Use A2UI's getData to resolve the path
+      const resolvedValue = this.processor.getData(this.component, value.path);
+
+      // If still undefined, try to get directly from dataModel
+      if (resolvedValue === undefined) {
+        const surface = (this.processor as any).surfaces?.get('genetics_ui');
+        if (surface && surface.dataModel) {
+          const key = value.path.startsWith('/') ? value.path.substring(1) : value.path;
+          return surface.dataModel.get(key);
+        }
+      }
+
+      return resolvedValue;
+    }
+
+    // Handle literal values
+    if (value && typeof value === 'object') {
+      if (type === 'string' && 'literalString' in value) {
+        return value.literalString;
+      }
+      if (type === 'boolean' && 'literalBoolean' in value) {
+        return value.literalBoolean;
+      }
+      if (type === 'array' && 'literalArray' in value) {
+        return value.literalArray;
+      }
+      if (type === 'object' && 'literalObject' in value) {
+        return value.literalObject;
+      }
     }
 
     return value;
@@ -251,16 +284,16 @@ export class PhenotypeDistribution extends Root {
     }
   `];
 
-  private getTotalCount(): number {
-    return this.data.reduce((sum, item) => sum + item.count, 0);
+  private getTotalCount(data: PhenotypeData[]): number {
+    return data.reduce((sum, item) => sum + item.count, 0);
   }
 
-  private getMaxCount(): number {
-    return Math.max(...this.data.map(item => item.count));
+  private getMaxCount(data: PhenotypeData[]): number {
+    return Math.max(...data.map(item => item.count));
   }
 
-  private getBarWidth(count: number): number {
-    const max = this.getMaxCount();
+  private getBarWidth(count: number, data: PhenotypeData[]): number {
+    const max = this.getMaxCount(data);
     if (max === 0) return 0;
     return (count / max) * 100;
   }
@@ -270,30 +303,34 @@ export class PhenotypeDistribution extends Root {
   }
 
   override render() {
-    const totalCount = this.getTotalCount();
+    // Unwrap values at render time (when dataModel is ready)
+    const data = this.unwrapValue(this._data, 'array');
+    const trait = this.unwrapValue(this._trait, 'string');
 
-    if (this.data.length === 0) {
+    const totalCount = this.getTotalCount(data);
+
+    if (data.length === 0) {
       return html`<div class="empty">暂无表型分布数据</div>`;
     }
 
     return html`
       <div class="container">
-        <div class="title">${this.trait || '表型分布'}</div>
+        <div class="title">${trait || '表型分布'}</div>
 
         <div class="chart-container">
           <div class="chart">
-            ${map(this.data, (item, index) => html`
+            ${map(data, (item, index) => html`
               <div class="bar-row">
                 <div class="bar-label">${item.phenotype}</div>
                 <div class="bar-wrapper">
                   <div
                     class="bar"
-                    style="width: ${this.getBarWidth(item.count)}%; background-color: ${this.getBarColor(index)};"
+                    style="width: ${this.getBarWidth(item.count, data)}%; background-color: ${this.getBarColor(index)};"
                     @click=${() => this.handleBarClick(item)}
                     aria-label="${item.phenotype}: ${item.count} (${item.percentage}%)"
                     tabindex="0"
                   >
-                    ${this.getBarWidth(item.count) > 15 ? html`
+                    ${this.getBarWidth(item.count, data) > 15 ? html`
                       <span class="bar-text">${item.percentage.toFixed(1)}%</span>
                     ` : ''}
                   </div>
@@ -313,11 +350,11 @@ export class PhenotypeDistribution extends Root {
             </div>
             <div class="stat-item">
               <div class="stat-label">表型种类</div>
-              <div class="stat-value">${this.data.length}</div>
+              <div class="stat-value">${data.length}</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">最大数量</div>
-              <div class="stat-value">${this.getMaxCount()}</div>
+              <div class="stat-value">${this.getMaxCount(data)}</div>
             </div>
           </div>
         </div>
@@ -325,7 +362,7 @@ export class PhenotypeDistribution extends Root {
         <div class="legend">
           <div class="legend-title">颜色图例</div>
           <div class="legend-grid">
-            ${map(this.data, (item, index) => html`
+            ${map(data, (item, index) => html`
               <div class="legend-item">
                 <div
                   class="legend-color"

@@ -13,53 +13,94 @@
           "id": "pedigree_chart",
           "component": {
             "PedigreeChart": {
-              "generations": [
-                {
-                  "individuals": [
-                    { "id": "1", "gender": "male", "phenotype": "carrier", "generation": 0 },
-                    { "id": "2", "gender": "female", "phenotype": "carrier", "generation": 0 }
-                  ]
-                },
-                {
-                  "individuals": [
-                    {
-                      "id": "3",
-                      "gender": "male",
-                      "phenotype": "affected",
-                      "generation": 1,
-                      "parents": { "father": "1", "mother": "2" }
-                    },
-                    {
-                      "id": "4",
-                      "gender": "female",
-                      "phenotype": "normal",
-                      "generation": 1,
-                      "parents": { "father": "1", "mother": "2" }
-                    },
-                    {
-                      "id": "5",
-                      "gender": "male",
-                      "phenotype": "carrier",
-                      "generation": 1,
-                      "parents": { "father": "1", "mother": "2" }
-                    }
-                  ]
-                },
-                {
-                  "individuals": [
-                    {
-                      "id": "6",
-                      "gender": "female",
-                      "phenotype": "normal",
-                      "generation": 2,
-                      "parents": { "father": "4", "mother": "5" }
-                    }
-                  ]
-                }
-              ],
-              "trait": "常染色体隐性遗传病"
+              "generations": {
+                "path": "/generations"
+              },
+              "trait": {
+                "path": "/trait"
+              }
             }
           }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "generations",
+          "valueArray": [
+            {
+              "individuals": [
+                {
+                  "id": "1",
+                  "gender": "male",
+                  "phenotype": "carrier",
+                  "generation": 0
+                },
+                {
+                  "id": "2",
+                  "gender": "female",
+                  "phenotype": "carrier",
+                  "generation": 0
+                }
+              ]
+            },
+            {
+              "individuals": [
+                {
+                  "id": "3",
+                  "gender": "male",
+                  "phenotype": "affected",
+                  "generation": 1,
+                  "parents": {
+                    "father": "1",
+                    "mother": "2"
+                  }
+                },
+                {
+                  "id": "4",
+                  "gender": "female",
+                  "phenotype": "normal",
+                  "generation": 1,
+                  "parents": {
+                    "father": "1",
+                    "mother": "2"
+                  }
+                },
+                {
+                  "id": "5",
+                  "gender": "male",
+                  "phenotype": "carrier",
+                  "generation": 1,
+                  "parents": {
+                    "father": "1",
+                    "mother": "2"
+                  }
+                }
+              ]
+            },
+            {
+              "individuals": [
+                {
+                  "id": "6",
+                  "gender": "female",
+                  "phenotype": "normal",
+                  "generation": 2,
+                  "parents": {
+                    "father": "4",
+                    "mother": "5"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "key": "trait",
+          "valueString": "常染色体隐性遗传病"
         }
       ]
     }

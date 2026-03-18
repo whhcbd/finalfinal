@@ -13,28 +13,63 @@
           "id": "punnett_square",
           "component": {
             "PunnettSquare": {
-              "parent1Genotype": {"literalString": "RrYy"},
-              "parent2Genotype": {"literalString": "RrYy"},
-              "trait": {"literalString": "豌豆种子性状"},
-              "showPhenotype": {"literalBoolean": true},
+              "parent1Genotype": {
+                "path": "/parent1"
+              },
+              "parent2Genotype": {
+                "path": "/parent2"
+              },
+              "trait": {
+                "path": "/trait"
+              },
+              "showPhenotype": {
+                "path": "/showPhenotype"
+              },
               "traitDefinitions": {
-                "literalArray": [
-                  {
-                    "name": "种子形状",
-                    "dominantTrait": "圆粒",
-                    "recessiveTrait": "皱粒",
-                    "incompleteDominance": false
-                  },
-                  {
-                    "name": "种子颜色",
-                    "dominantTrait": "黄色",
-                    "recessiveTrait": "绿色",
-                    "incompleteDominance": false
-                  }
-                ]
+                "path": "/traitDefinitions"
               }
             }
           }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "parent1",
+          "valueString": "RrYy"
+        },
+        {
+          "key": "parent2",
+          "valueString": "RrYy"
+        },
+        {
+          "key": "trait",
+          "valueString": "豌豆种子性状"
+        },
+        {
+          "key": "showPhenotype",
+          "valueBoolean": true
+        },
+        {
+          "key": "traitDefinitions",
+          "valueArray": [
+            {
+              "name": "种子形状",
+              "dominantTrait": "圆粒",
+              "recessiveTrait": "皱粒",
+              "incompleteDominance": false
+            },
+            {
+              "name": "种子颜色",
+              "dominantTrait": "黄色",
+              "recessiveTrait": "绿色",
+              "incompleteDominance": false
+            }
+          ]
         }
       ]
     }

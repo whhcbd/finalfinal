@@ -13,13 +13,54 @@
           "id": "phenotype_distribution",
           "component": {
             "PhenotypeDistribution": {
-              "trait": "花色",
-              "data": [
-                {"phenotype": "紫色花", "count": 750, "percentage": 75},
-                {"phenotype": "白色花", "count": 250, "percentage": 25}
-              ]
+              "trait": {
+                "path": "/trait"
+              },
+              "data": {
+                "path": "/data"
+              },
+              "totalCount": {
+                "path": "/totalCount"
+              },
+              "showPercentage": {
+                "path": "/showPercentage"
+              }
             }
           }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "trait",
+          "valueString": "花色"
+        },
+        {
+          "key": "data",
+          "valueArray": [
+            {
+              "phenotype": "紫色花",
+              "count": 750,
+              "percentage": 75
+            },
+            {
+              "phenotype": "白色花",
+              "count": 250,
+              "percentage": 25
+            }
+          ]
+        },
+        {
+          "key": "totalCount",
+          "valueNumber": 1000
+        },
+        {
+          "key": "showPercentage",
+          "valueBoolean": true
         }
       ]
     }

@@ -26,7 +26,8 @@ export class DNAStructure extends Root {
   }
   set sequence(value: any) {
     const oldValue = this._sequence;
-    this._sequence = this.unwrapValue(value, 'string');
+    // Store the raw value (could be a path reference or literal)
+    this._sequence = value;
     this.requestUpdate('sequence', oldValue);
   }
 
@@ -36,7 +37,8 @@ export class DNAStructure extends Root {
   }
   set showLabels(value: any) {
     const oldValue = this._showLabels;
-    this._showLabels = this.unwrapValue(value, 'boolean');
+    // Store the raw value (could be a path reference or literal)
+    this._showLabels = value;
     this.requestUpdate('showLabels', oldValue);
   }
 
@@ -46,7 +48,8 @@ export class DNAStructure extends Root {
   }
   set highlightRegions(value: any) {
     const oldValue = this._highlightRegions;
-    this._highlightRegions = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._highlightRegions = value;
     this.requestUpdate('highlightRegions', oldValue);
   }
 
@@ -59,8 +62,32 @@ export class DNAStructure extends Root {
              type === 'array' ? [] : null;
     }
 
-    // Handle A2UI Proxy-wrapped values
-    if (typeof value === 'object' && !Array.isArray(value)) {
+    // Handle A2UI data binding (path references)
+    if (value && typeof value === 'object' && 'path' in value && value.path) {
+      if (!this.processor || !this.component) {
+        return type === 'string' ? '' :
+               type === 'boolean' ? false :
+               type === 'number' ? 0 :
+               type === 'array' ? [] : null;
+      }
+
+      // Use A2UI's getData to resolve the path
+      const resolvedValue = this.processor.getData(this.component, value.path);
+
+      // If still undefined, try to get directly from dataModel
+      if (resolvedValue === undefined) {
+        const surface = (this.processor as any).surfaces?.get('genetics_ui');
+        if (surface && surface.dataModel) {
+          const key = value.path.startsWith('/') ? value.path.substring(1) : value.path;
+          return surface.dataModel.get(key);
+        }
+      }
+
+      return resolvedValue;
+    }
+
+    // Handle literal values
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
       if ('literalString' in value) return value.literalString;
       if ('literalBoolean' in value) return value.literalBoolean;
       if ('literalNumber' in value) return value.literalNumber;
@@ -326,11 +353,11 @@ export class DNAStructure extends Root {
     }
   `];
 
-  private getBasePairs(): BasePair[] {
-    if (!this.sequence) return [];
+  private getBasePairs(sequence: string): BasePair[] {
+    if (!sequence) return [];
 
     const bases: BasePair[] = [];
-    const upperSequence = this.sequence.toUpperCase();
+    const upperSequence = sequence.toUpperCase();
 
     // 为每个碱基生成其互补碱基
     for (let i = 0; i < upperSequence.length; i++) {
@@ -347,8 +374,8 @@ export class DNAStructure extends Root {
     return bases;
   }
 
-  private isHighlighted(index: number): boolean {
-    return this.highlightRegions.some(region =>
+  private isHighlighted(index: number, highlightRegions: any[]): boolean {
+    return highlightRegions.some(region =>
       index >= region.start && index < region.end
     );
   }
@@ -367,9 +394,9 @@ export class DNAStructure extends Root {
     return pairs[base.toUpperCase()] || '?';
   }
 
-  private validateSequence(): boolean {
-    if (!this.sequence) return true;
-    const upperSequence = this.sequence.toUpperCase();
+  private validateSequence(sequence: string): boolean {
+    if (!sequence) return true;
+    const upperSequence = sequence.toUpperCase();
 
     for (const char of upperSequence) {
       if (!this.isValidBase(char)) {
@@ -380,9 +407,9 @@ export class DNAStructure extends Root {
     return true; // 移除长度必须是偶数的限制
   }
 
-  private getSequenceStats(): { baseCounts: Record<string, number>; length: number; gcContent: number } {
+  private getSequenceStats(sequence: string): { baseCounts: Record<string, number>; length: number; gcContent: number } {
     const baseCounts: Record<string, number> = { 'A': 0, 'T': 0, 'C': 0, 'G': 0 };
-    const upperSequence = this.sequence.toUpperCase();
+    const upperSequence = sequence.toUpperCase();
 
     for (const base of upperSequence) {
       if (baseCounts[base] !== undefined) {
@@ -398,20 +425,25 @@ export class DNAStructure extends Root {
   }
 
   override render() {
-    const isValid = this.validateSequence();
+    // Unwrap values at render time (when dataModel is ready)
+    const sequence = this.unwrapValue(this.sequence, 'string');
+    const showLabels = this.unwrapValue(this.showLabels, 'boolean');
+    const highlightRegions = this.unwrapValue(this.highlightRegions, 'array');
 
-    if (!isValid || this.sequence.length === 0) {
+    const isValid = this.validateSequence(sequence);
+
+    if (!isValid || sequence.length === 0) {
       return html`
         <div class="empty">
-          ${this.sequence.length === 0
+          ${sequence.length === 0
             ? '请输入DNA序列（例如：ATCGATCG）'
             : 'DNA序列包含无效的碱基。请只使用 A、T、C、G。'}
         </div>
       `;
     }
 
-    const basePairs = this.getBasePairs();
-    const stats = this.getSequenceStats();
+    const basePairs = this.getBasePairs(sequence);
+    const stats = this.getSequenceStats(sequence);
 
     return html`
       <div class="container">
@@ -423,13 +455,13 @@ export class DNAStructure extends Root {
               <div class="base-pair">
                 <div class="bond top"></div>
                 <div
-                  class="base ${pair.base1} ${this.isHighlighted(index) ? 'highlight' : ''}"
+                  class="base ${pair.base1} ${this.isHighlighted(index, highlightRegions) ? 'highlight' : ''}"
                   @click=${() => this.handleBaseClick(pair.base1, index)}
                   aria-label="${pair.base1}"
                 >
                   ${pair.base1}
                 </div>
-                ${this.showLabels ? html`<div class="label">${index + 1}</div>` : ''}
+                ${showLabels ? html`<div class="label">${index + 1}</div>` : ''}
               </div>
             `)}
           </div>
@@ -439,9 +471,9 @@ export class DNAStructure extends Root {
               const originalIndex = basePairs.length - 1 - index;
               return html`
               <div class="base-pair">
-                ${this.showLabels ? html`<div class="label">${originalIndex + 1}</div>` : ''}
+                ${showLabels ? html`<div class="label">${originalIndex + 1}</div>` : ''}
                 <div
-                  class="base ${pair.base2} ${this.isHighlighted(originalIndex) ? 'highlight' : ''}"
+                  class="base ${pair.base2} ${this.isHighlighted(originalIndex, highlightRegions) ? 'highlight' : ''}"
                   @click=${() => this.handleBaseClick(pair.base2, originalIndex)}
                   aria-label="${pair.base2}"
                 >
@@ -455,7 +487,7 @@ export class DNAStructure extends Root {
 
         <div class="sequence-info">
           <div class="sequence-text">
-            <strong>原始链 (5'→3')：</strong> ${this.sequence.toUpperCase()}<br>
+            <strong>原始链 (5'→3')：</strong> ${sequence.toUpperCase()}<br>
             <strong>互补链 (3'→5')：</strong> ${basePairs.map(p => p.base2).reverse().join('')}
           </div>
         </div>
@@ -475,7 +507,7 @@ export class DNAStructure extends Root {
           </div>
         </div>
 
-        ${this.showLabels ? html`
+        ${showLabels ? html`
           <div class="legend">
             <div class="legend-title">碱基配对规则</div>
             <div class="legend-grid">

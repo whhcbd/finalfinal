@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>测试数据绑定 - A2UI</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-container {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #333;
+    }
+    .test-section {
+      margin: 20px 0;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 4px solid #4CAF50;
+    }
+    .test-button {
+      background: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .test-button:hover {
+      background: #45a049;
+    }
+    .log-container {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    .log-entry {
+      margin: 2px 0;
+    }
+    .log-info { color: #4EC9B0; }
+    .log-success { color: #4CAF50; }
+    .log-error { color: #f44336; }
+    .log-warning { color: #ff9800; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧬 A2UI 数据绑定测试</h1>
+    <p>测试第二阶段功能：数据绑定和 dataModelUpdate 消息处理</p>
+
+    <div class="test-section">
+      <h3>测试 1: 验证 WebSocket 连接</h3>
+      <button class="test-button" onclick="testWebSocketConnection()">测试连接</button>
+      <div id="ws-status"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 2: 发送聊天消息并接收 A2UI</h3>
+      <button class="test-button" onclick="testChatMessage()">发送测试消息</button>
+      <div id="chat-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 3: 验证数据绑定</h3>
+      <button class="test-button" onclick="testDataBinding()">检查数据绑定</button>
+      <div id="binding-result"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>测试 4: 模拟 dataModelUpdate</h3>
+      <button class="test-button" onclick="testDataModelUpdate()">发送更新</button>
+      <div id="update-result"></div>
+    </div>
+
+    <div class="log-container" id="log-container">
+      <div class="log-entry log-info">等待测试...</div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { ChatOrchestrator } from './src/chat-orchestrator.js';
+    import { A2UIRenderer } from './src/a2ui-renderer.js';
+
+    // 全局变量
+    window.orchestrator = null;
+    window.renderer = null;
+    window.sessionId = 'test-' + Date.now();
+
+    // 日志函数
+    function log(message, type = 'info') {
+      const logContainer = document.getElementById('log-container');
+      const entry = document.createElement('div');
+      entry.className = `log-entry log-${type}`;
+      entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+      logContainer.appendChild(entry);
+      logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // 测试 1: WebSocket 连接
+    window.testWebSocketConnection = async function() {
+      log('开始测试 WebSocket 连接...', 'info');
+      const statusDiv = document.getElementById('ws-status');
+
+      try {
+        window.renderer = new A2UIRenderer();
+        window.orchestrator = new ChatOrchestrator(window.renderer, window.sessionId);
+
+        await window.orchestrator.connect();
+
+        log('✅ WebSocket 连接成功', 'success');
+        statusDiv.innerHTML = '<span style="color: green;">✅ 连接成功</span>';
+      } catch (error) {
+        log(`❌ WebSocket 连接失败: ${error.message}`, 'error');
+        statusDiv.innerHTML = `<span style="color: red;">❌ 连接失败: ${error.message}</span>`;
+      }
+    };
+
+    // 测试 2: 发送聊天消息
+    window.testChatMessage = async function() {
+      if (!window.orchestrator) {
+        log('❌ 请先测试 WebSocket 连接', 'error');
+        return;
+      }
+
+      log('发送测试消息: "Aa和aa杂交的棋盘图"', 'info');
+      const resultDiv = document.getElementById('chat-result');
+
+      try {
+        const response = await window.orchestrator.processMessage('Aa和aa杂交的棋盘图');
+
+        log(`✅ 收到文本响应: ${response.text.substring(0, 50)}...`, 'success');
+
+        if (response.a2ui && response.a2ui.length > 0) {
+          log(`✅ 收到 ${response.a2ui.length} 条 A2UI 消息`, 'success');
+
+          // 检查是否包含 dataModelUpdate
+          const hasDataModelUpdate = response.a2ui.some(msg => msg.dataModelUpdate);
+          if (hasDataModelUpdate) {
+            log('✅ 包含 dataModelUpdate 消息', 'success');
+          } else {
+            log('⚠️ 未包含 dataModelUpdate 消息', 'warning');
+          }
+
+          resultDiv.innerHTML = `<span style="color: green;">✅ 收到 ${response.a2ui.length} 条 A2UI 消息</span>`;
+        } else {
+          log('⚠️ 未收到 A2UI 消息', 'warning');
+          resultDiv.innerHTML = '<span style="color: orange;">⚠️ 未收到 A2UI 消息</span>';
+        }
+      } catch (error) {
+        log(`❌ 发送消息失败: ${error.message}`, 'error');
+        resultDiv.innerHTML = `<span style="color: red;">❌ 失败: ${error.message}</span>`;
+      }
+    };
+
+    // 测试 3: 验证数据绑定
+    window.testDataBinding = function() {
+      log('检查数据绑定格式...', 'info');
+      const resultDiv = document.getElementById('binding-result');
+
+      // 这里需要检查后端生成的 A2UI 是否使用了 path 绑定
+      log('ℹ️ 请在浏览器控制台查看 A2UI 消息结构', 'info');
+      log('ℹ️ 正确格式: {"path": "/parent1"} 而不是 {"literalString": "Aa"}', 'info');
+
+      resultDiv.innerHTML = '<span style="color: blue;">ℹ️ 请查看控制台日志</span>';
+    };
+
+    // 测试 4: 模拟 dataModelUpdate
+    window.testDataModelUpdate = function() {
+      if (!window.orchestrator || !window.renderer) {
+        log('❌ 请先测试 WebSocket 连接和发送消息', 'error');
+        return;
+      }
+
+      log('模拟发送 dataModelUpdate 消息...', 'info');
+      const resultDiv = document.getElementById('update-result');
+
+      try {
+        const testMessage = {
+          dataModelUpdate: {
+            surfaceId: 'genetics_ui',
+            contents: [
+              {
+                path: '/parent1',
+                value: { valueString: 'AA' }
+              },
+              {
+                path: '/parent2',
+                value: { valueString: 'aa' }
+              }
+            ]
+          }
+        };
+
+        window.renderer.updateDataModel('genetics_ui', [testMessage]);
+
+        log('✅ dataModelUpdate 消息已发送到 renderer', 'success');
+        log('ℹ️ 如果组件使用了数据绑定，应该会自动更新', 'info');
+
+        resultDiv.innerHTML = '<span style="color: green;">✅ 更新已发送</span>';
+      } catch (error) {
+        log(`❌ 更新失败: ${error.message}`, 'error');
+        resultDiv.innerHTML = `<span style="color: red;">❌ 失败: ${error.message}</span>`;
+      }
+    };
+
+    // 页面加载时的提示
+    log('测试页面已加载', 'success');
+    log('请按顺序执行测试：1 → 2 → 3 → 4', 'info');
+  </script>
+</body>
+</html>

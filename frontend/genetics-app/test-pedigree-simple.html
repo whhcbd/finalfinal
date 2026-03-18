@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pedigree Chart Simple Test</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+  </style>
+</head>
+<body>
+  <h1>家系图测试</h1>
+  <div id="test-container"></div>
+
+  <script type="module">
+    import { PedigreeChart } from './src/components/genetics/pedigree-chart.ts';
+
+    const chart = document.createElement('pedigree-chart');
+    chart.trait = '色盲 (X连锁隐性遗传)';
+    chart.generations = [
+      {
+        individuals: [
+          {
+            id: "I-1",
+            gender: "male",
+            phenotype: "normal",
+            generation: 0,
+            label: "I-1"
+          },
+          {
+            id: "I-2",
+            gender: "female",
+            phenotype: "carrier",
+            generation: 0,
+            label: "I-2"
+          }
+        ]
+      },
+      {
+        individuals: [
+          {
+            id: "II-1",
+            gender: "male",
+            phenotype: "affected",
+            generation: 1,
+            label: "II-1",
+            parents: { father: "I-1", mother: "I-2" }
+          },
+          {
+            id: "II-2",
+            gender: "female",
+            phenotype: "carrier",
+            generation: 1,
+            label: "II-2",
+            parents: { father: "I-1", mother: "I-2" }
+          },
+          {
+            id: "II-3",
+            gender: "male",
+            phenotype: "normal",
+            generation: 1,
+            label: "II-3",
+            parents: { father: "I-1", mother: "I-2" }
+          }
+        ]
+      }
+    ];
+
+    document.getElementById('test-container').appendChild(chart);
+
+    // 等待渲染完成后检查
+    setTimeout(() => {
+      console.log('Chart rendered');
+      const svg = chart.shadowRoot.querySelector('svg.connections');
+      console.log('SVG element:', svg);
+      console.log('SVG children:', svg?.children.length);
+    }, 500);
+  </script>
+</body>
+</html>

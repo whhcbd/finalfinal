@@ -31,7 +31,8 @@ export class CrossOverMap extends Root {
   }
   set chromosomeLength(value: any) {
     const oldValue = this._chromosomeLength;
-    this._chromosomeLength = this.unwrapValue(value, 'number');
+    // Store the raw value (could be a path reference or literal)
+    this._chromosomeLength = value;
     this.requestUpdate('chromosomeLength', oldValue);
   }
 
@@ -41,7 +42,8 @@ export class CrossOverMap extends Root {
   }
   set genes(value: any) {
     const oldValue = this._genes;
-    this._genes = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._genes = value;
     this.requestUpdate('genes', oldValue);
   }
 
@@ -51,25 +53,62 @@ export class CrossOverMap extends Root {
   }
   set crossoverPoints(value: any) {
     const oldValue = this._crossoverPoints;
-    this._crossoverPoints = this.unwrapValue(value, 'array');
+    // Store the raw value (could be a path reference or literal)
+    this._crossoverPoints = value;
     this.requestUpdate('crossoverPoints', oldValue);
   }
 
-  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
-    // Handle null/undefined
+  private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array' | 'object'): any {
     if (value === null || value === undefined) {
       return type === 'string' ? '' :
              type === 'boolean' ? false :
              type === 'number' ? 0 :
-             type === 'array' ? [] : null;
+             type === 'array' ? [] :
+             type === 'object' ? {} : null;
     }
 
-    // Handle A2UI Proxy-wrapped values
-    if (typeof value === 'object' && !Array.isArray(value)) {
-      if ('literalString' in value) return value.literalString;
-      if ('literalBoolean' in value) return value.literalBoolean;
-      if ('literalNumber' in value) return value.literalNumber;
-      if ('literalArray' in value) return value.literalArray;
+    // Handle A2UI data binding (path references)
+    if (value && typeof value === 'object' && 'path' in value && value.path) {
+      if (!this.processor || !this.component) {
+        return type === 'string' ? '' :
+               type === 'boolean' ? false :
+               type === 'number' ? 0 :
+               type === 'array' ? [] :
+               type === 'object' ? {} : null;
+      }
+
+      // Use A2UI's getData to resolve the path
+      const resolvedValue = this.processor.getData(this.component, value.path);
+
+      // If still undefined, try to get directly from dataModel
+      if (resolvedValue === undefined) {
+        const surface = (this.processor as any).surfaces?.get('genetics_ui');
+        if (surface && surface.dataModel) {
+          const key = value.path.startsWith('/') ? value.path.substring(1) : value.path;
+          return surface.dataModel.get(key);
+        }
+      }
+
+      return resolvedValue;
+    }
+
+    // Handle literal values
+    if (value && typeof value === 'object') {
+      if (type === 'string' && 'literalString' in value) {
+        return value.literalString;
+      }
+      if (type === 'boolean' && 'literalBoolean' in value) {
+        return value.literalBoolean;
+      }
+      if (type === 'number' && 'literalNumber' in value) {
+        return value.literalNumber;
+      }
+      if (type === 'array' && 'literalArray' in value) {
+        return value.literalArray;
+      }
+      if (type === 'object' && 'literalObject' in value) {
+        return value.literalObject;
+      }
     }
 
     return value;
@@ -86,20 +125,20 @@ export class CrossOverMap extends Root {
     '#84cc16'
   ];
 
-  private getGeneColor(index: number): string {
-    if (this.genes[index]?.color) {
-      return this.genes[index].color;
+  private getGeneColor(index: number, genes: Gene[]): string {
+    if (genes[index]?.color) {
+      return genes[index].color;
     }
     return CrossOverMap.DEFAULT_COLORS[index % CrossOverMap.DEFAULT_COLORS.length];
   }
 
-  private getPositionPercentage(position: number): number {
-    if (this.chromosomeLength === 0) return 0;
-    return (position / this.chromosomeLength) * 100;
+  private getPositionPercentage(position: number, chromosomeLength: number): number {
+    if (chromosomeLength === 0) return 0;
+    return (position / chromosomeLength) * 100;
   }
 
-  private isCrossoverPosition(position: number): boolean {
-    return this.crossoverPoints.some(cp => cp.position === position);
+  private isCrossoverPosition(position: number, crossoverPoints: CrossoverPoint[]): boolean {
+    return crossoverPoints.some(cp => cp.position === position);
   }
 
   static styles = [
@@ -374,7 +413,12 @@ export class CrossOverMap extends Root {
   `];
 
   override render() {
-    if (this.genes.length === 0) {
+    // Unwrap values at render time (when dataModel is ready)
+    const chromosomeLength = this.unwrapValue(this.chromosomeLength, 'number');
+    const genes = this.unwrapValue(this.genes, 'array');
+    const crossoverPoints = this.unwrapValue(this.crossoverPoints, 'array');
+
+    if (genes.length === 0) {
       return html`<div class="empty">暂无基因数据</div>`;
     }
 
@@ -386,17 +430,17 @@ export class CrossOverMap extends Root {
           <div class="chromosome-wrapper">
             <div class="chromosome-label">同源染色体</div>
             <div class="chromosome">
-              ${map(this.genes, (gene, index) => html`
+              ${map(genes, (gene, index) => html`
                 <div
                   class="gene"
-                  style="left: ${this.getPositionPercentage(gene.position)}%;"
-                  @click=${() => this.handleGeneClick(gene)}
+                  style="left: ${this.getPositionPercentage(gene.position, chromosomeLength)}%;"
+                  @click=${() => this.handleGeneClick(gene, index, genes)}
                   aria-label="${gene.name} - 位置 ${gene.position}"
                   tabindex="0"
                 >
                   <div
                     class="gene-marker"
-                    style="background-color: ${this.getGeneColor(index)};"
+                    style="background-color: ${this.getGeneColor(index, genes)};"
                   >
                     ${index + 1}
                   </div>
@@ -404,10 +448,10 @@ export class CrossOverMap extends Root {
                 </div>
               `)}
 
-              ${map(this.crossoverPoints, (cp, cpIndex) => html`
+              ${map(crossoverPoints, (cp, cpIndex) => html`
                 <div
                   class="crossover-point"
-                  style="left: ${this.getPositionPercentage(cp.position)}%;"
+                  style="left: ${this.getPositionPercentage(cp.position, chromosomeLength)}%;"
                   @click=${() => this.handleCrossoverClick(cp)}
                   aria-label="交叉互换点 ${cpIndex + 1}"
                   tabindex="0"
@@ -417,7 +461,7 @@ export class CrossOverMap extends Root {
                 </div>
               `)}
             </div>
-            <div class="chromosome-length">${this.chromosomeLength} cM</div>
+            <div class="chromosome-length">${chromosomeLength} cM</div>
           </div>
 
           <div class="legend">
@@ -437,19 +481,19 @@ export class CrossOverMap extends Root {
           <div class="stats">
             <div class="stat-item">
               <div class="stat-label">染色体长度</div>
-              <div class="stat-value">${this.chromosomeLength} cM</div>
+              <div class="stat-value">${chromosomeLength} cM</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">基因数量</div>
-              <div class="stat-value">${this.genes.length}</div>
+              <div class="stat-value">${genes.length}</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">交叉点数</div>
-              <div class="stat-value">${this.crossoverPoints.length}</div>
+              <div class="stat-value">${crossoverPoints.length}</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">基因密度</div>
-              <div class="stat-value">${this.calculateGeneDensity()}</div>
+              <div class="stat-value">${this.calculateGeneDensity(genes, chromosomeLength)}</div>
             </div>
           </div>
         </div>
@@ -457,18 +501,18 @@ export class CrossOverMap extends Root {
     `;
   }
 
-  private calculateGeneDensity(): string {
-    if (this.chromosomeLength === 0) return '0.0';
-    const density = (this.genes.length / this.chromosomeLength * 10).toFixed(1);
+  private calculateGeneDensity(genes: Gene[], chromosomeLength: number): string {
+    if (chromosomeLength === 0) return '0.0';
+    const density = (genes.length / chromosomeLength * 10).toFixed(1);
     return `${density} / 10 cM`;
   }
 
-  private handleGeneClick(gene: Gene) {
+  private handleGeneClick(gene: Gene, index: number, genes: Gene[]) {
     this.dispatchEvent(new CustomEvent('gene-click', {
       detail: {
         name: gene.name,
         position: gene.position,
-        color: gene.color || this.getGeneColor(this.genes.indexOf(gene))
+        color: gene.color || this.getGeneColor(index, genes)
       },
       bubbles: true,
       composed: true

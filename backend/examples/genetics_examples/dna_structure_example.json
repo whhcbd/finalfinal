@@ -13,11 +13,36 @@
           "id": "dna_structure",
           "component": {
             "DNAStructure": {
-              "sequence": "ATGCGATCG",
-              "showLabels": true,
-              "highlightRegions": []
+              "sequence": {
+                "path": "/sequence"
+              },
+              "showLabels": {
+                "path": "/showLabels"
+              },
+              "highlightRegions": {
+                "path": "/highlightRegions"
+              }
             }
           }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "sequence",
+          "valueString": "ATGCGATCG"
+        },
+        {
+          "key": "showLabels",
+          "valueBoolean": true
+        },
+        {
+          "key": "highlightRegions",
+          "valueArray": []
         }
       ]
     }

@@ -13,17 +13,59 @@
           "id": "gene_expression",
           "component": {
             "GeneExpression": {
-              "genes": [
-                { "gene": "GeneA", "expressionLevels": [100, 150, 80] },
-                { "gene": "GeneB", "expressionLevels": [200, 180, 220] }
-              ],
-              "conditions": [
-                { "name": "正常条件", "color": "#1a73e8" },
-                { "name": "高温", "color": "#d93025" },
-                { "name": "低温", "color": "#188038" }
-              ]
+              "genes": {
+                "path": "/genes"
+              },
+              "conditions": {
+                "path": "/conditions"
+              }
             }
           }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "genes",
+          "valueArray": [
+            {
+              "gene": "GeneA",
+              "expressionLevels": [
+                100,
+                150,
+                80
+              ]
+            },
+            {
+              "gene": "GeneB",
+              "expressionLevels": [
+                200,
+                180,
+                220
+              ]
+            }
+          ]
+        },
+        {
+          "key": "conditions",
+          "valueArray": [
+            {
+              "name": "正常条件",
+              "color": "#1a73e8"
+            },
+            {
+              "name": "高温",
+              "color": "#d93025"
+            },
+            {
+              "name": "低温",
+              "color": "#188038"
+            }
+          ]
         }
       ]
     }
