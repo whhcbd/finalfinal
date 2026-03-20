@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import sys
@@ -51,6 +52,7 @@ DEFAULT_INHERITANCE_PATTERN = "常染色体隐性"
 
 # 全局服务实例
 glm_service = None
+glm_fast_service = None  # 用于文本生成的快速模型
 rag_service = None
 intent_service = None
 context_service = None
@@ -60,12 +62,13 @@ action_handler = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # 启动时初始化服务
-    global glm_service, rag_service, intent_service, context_service, data_model_service, action_handler
+    global glm_service, glm_fast_service, rag_service, intent_service, context_service, data_model_service, action_handler
 
     logger.info("Starting up Genetics A2UI Backend...")
 
     try:
-        glm_service = GLMService()
+        glm_service = GLMService()  # glm-4.7，用于 A2UI 生成
+        glm_fast_service = GLMService(model="glm-4-flash")  # 快速模型，用于文本生成
         logger.info("GLM Service initialized")
     except Exception as e:
         logger.error(f"Failed to initialize GLM Service: {e}")
@@ -210,6 +213,19 @@ def fix_a2ui_wrappers(a2ui_data):
                                         comp_props[prop_name] = {"literalArray": prop_value}
                                         fixed_count += 1
                                         logger.debug(f"🔧 添加 literalArray 包装器: {prop_name}")
+
+    # 确保所有遗传学自定义组件都有 interactive 属性
+    interactive_components = {'DNAStructure', 'PunnettSquare', 'PhenotypeDistribution', 'GeneExpression', 'PedigreeChart', 'CrossOverMap', 'CentralDogma'}
+    for message in a2ui_data:
+        if 'surfaceUpdate' in message:
+            components = message['surfaceUpdate'].get('components', [])
+            for comp in components:
+                if 'component' in comp:
+                    for comp_name, comp_props in comp['component'].items():
+                        if comp_name in interactive_components and isinstance(comp_props, dict):
+                            if 'interactive' not in comp_props:
+                                comp_props['interactive'] = {'literalBoolean': True}
+                                logger.debug(f'🔧 注入 interactive 属性: {comp_name}')
 
     if fixed_count > 0:
         logger.info(f"✅ 自动修复了 {fixed_count} 个缺失的类型包装器")
@@ -379,7 +395,8 @@ async def generate_local_a2ui(intent: str, keywords: str, text: str, user_messag
                                 "DNAStructure": {
                                     "sequence": {"literalString": sequence},
                                     "showLabels": {"literalBoolean": True},
-                                    "highlightRegions": {"literalArray": []}
+                                    "highlightRegions": {"literalArray": []},
+                                    "interactive": {"literalBoolean": True}
                                 }
                             }
                         }
@@ -402,7 +419,27 @@ async def generate_local_a2ui(intent: str, keywords: str, text: str, user_messag
                                         {"phenotype": "白色花", "count": 250, "percentage": 25}
                                     ]},
                                     "totalCount": {"literalNumber": 1000},
-                                    "showPercentage": {"literalBoolean": True}
+                                    "showPercentage": {"literalBoolean": True},
+                                    "interactive": {"literalBoolean": True}
+                                }
+                            }
+                        }
+                    ]
+                }
+            })
+
+        elif intent == "central_dogma":
+            a2ui_content.append({
+                "surfaceUpdate": {
+                    "surfaceId": "genetics_ui",
+                    "components": [
+                        {
+                            "id": "main_component",
+                            "component": {
+                                "CentralDogma": {
+                                    "dnaSequence": {"literalString": "ATCGATCG"},
+                                    "animationSpeed": {"literalNumber": 1000},
+                                    "phase": {"literalString": "idle"}
                                 }
                             }
                         }
@@ -427,7 +464,8 @@ async def generate_local_a2ui(intent: str, keywords: str, text: str, user_messag
                                     "conditions": {"literalArray": [
                                         {"name": "肝脏", "color": "#1a73e8"},
                                         {"name": "大脑", "color": "#188038"}
-                                    ]}
+                                    ]},
+                                    "interactive": {"literalBoolean": True}
                                 }
                             }
                         }
@@ -465,7 +503,8 @@ async def generate_local_a2ui(intent: str, keywords: str, text: str, user_messag
                                             ]
                                         }
                                     ]},
-                                    "trait": {"literalString": DEFAULT_DISEASE_NAME}
+                                    "trait": {"literalString": DEFAULT_DISEASE_NAME},
+                                    "interactive": {"literalBoolean": True}
                                 }
                             }
                         }
@@ -489,7 +528,68 @@ async def generate_local_a2ui(intent: str, keywords: str, text: str, user_messag
                                     ]},
                                     "crossoverPoints": {"literalArray": [
                                         {"position": 40, "label": "交叉点1"}
-                                    ]}
+                                    ]},
+                                    "interactive": {"literalBoolean": True}
+                                }
+                            }
+                        }
+                    ]
+                }
+            })
+
+        elif intent == "mendel_simulator":
+            # 从用户消息中提取基因型
+            genotypes = re.findall(r'(?<![A-Za-z])([A-Za-z]{2,4})(?![A-Za-z])', user_message)
+            parent1 = "Aa"
+            parent2 = "Aa"
+            trait_type = "single"
+
+            if len(genotypes) >= 2:
+                parent1 = genotypes[0]
+                parent2 = genotypes[1]
+                if len(parent1) == 4 and len(parent2) == 4:
+                    trait_type = "double"
+            elif len(genotypes) == 1:
+                parent1 = parent2 = genotypes[0]
+                if len(parent1) == 4:
+                    trait_type = "double"
+
+            logger.info(f"孟德尔模拟器: parent1={parent1}, parent2={parent2}, trait_type={trait_type}")
+
+            a2ui_content.append({
+                "surfaceUpdate": {
+                    "surfaceId": "genetics_ui",
+                    "components": [
+                        {
+                            "id": "main_component",
+                            "component": {
+                                "MendelSimulator": {
+                                    "parent1Genotype": {"literalString": parent1},
+                                    "parent2Genotype": {"literalString": parent2},
+                                    "traitType": {"literalString": trait_type},
+                                    "simulationCount": {"literalNumber": 1000},
+                                    "interactive": {"literalBoolean": True}
+                                }
+                            }
+                        }
+                    ]
+                }
+            })
+
+        elif intent == "natural_selection_simulator":
+            a2ui_content.append({
+                "surfaceUpdate": {
+                    "surfaceId": "genetics_ui",
+                    "components": [
+                        {
+                            "id": "main_component",
+                            "component": {
+                                "NaturalSelectionSimulator": {
+                                    "populationSize": {"literalNumber": 100},
+                                    "initialDarkFrequency": {"literalNumber": 0.5},
+                                    "environmentColor": {"literalString": "dark"},
+                                    "generations": {"literalNumber": 50},
+                                    "interactive": {"literalBoolean": True}
                                 }
                             }
                         }
@@ -636,7 +736,10 @@ async def chat(request: ChatRequest):
         "phenotype_distribution",
         "gene_expression",
         "pedigree_chart",
-        "cross_over_map"
+        "cross_over_map",
+        "mendel_simulator",
+        "natural_selection_simulator",
+        "central_dogma"
     ]
 
     should_use_ui = request.use_ui and (intent in UI_REQUIRED_INTENTS)
@@ -907,7 +1010,7 @@ async def websocket_chat(websocket: WebSocket, session_id: str):
 
 async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict):
     """处理聊天消息"""
-    global glm_service, rag_service, intent_service, context_service
+    global glm_service, glm_fast_service, rag_service, intent_service, context_service
 
     message = data.get("message", "")
     use_ui = data.get("use_ui", True)
@@ -939,10 +1042,24 @@ async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict)
             "phenotype_distribution",
             "gene_expression",
             "pedigree_chart",
-            "cross_over_map"
+            "cross_over_map",
+            "mendel_simulator",
+            "natural_selection_simulator",
+            "central_dogma"
         ]
 
         should_use_ui = use_ui and (intent in UI_REQUIRED_INTENTS)
+
+        # 问候/闲聊直接返回固定回复，跳过 RAG 和 LLM
+        NO_RAG_INTENTS = {"greeting", "chitchat", "farewell"}
+        if intent in NO_RAG_INTENTS:
+            greeting_reply = "你好！我是遗传学教学助手，可以帮你解答遗传学相关问题，也可以通过互动图表来展示遗传学概念。请问有什么我可以帮助你的？"
+            await websocket.send_json({"type": "text_chunk", "chunk": greeting_reply})
+            await websocket.send_json({"type": "text", "text": greeting_reply, "intent": intent, "keywords": keywords})
+            await websocket.send_json({"type": "complete"})
+            context_service.add_message(session_id, message, greeting_reply)
+            logger.info(f"[快速回复] greeting/chitchat，跳过 RAG 和 LLM")
+            return
 
         # 上下文检索
         context_info = ""
@@ -965,14 +1082,22 @@ async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict)
             {"role": "user", "content": user_message}
         ]
 
-        # 生成文本响应
-        text_response = await glm_service.call_llm(messages)
+        # 生成文本响应（流式，逐 token 推送）
+        text_chunks = []
+        async for chunk in glm_fast_service.call_llm_stream(messages):
+            text_chunks.append(chunk)
+            await websocket.send_json({
+                "type": "text_chunk",
+                "chunk": chunk
+            })
+
+        text_response = "".join(text_chunks)
         logger.info(f"LLM 文本响应: {text_response[:200]}...")
 
         # 清理文本响应
         text_response = clean_text_response(text_response)
 
-        # 发送文本响应
+        # 发送完整文本（用于历史记录）
         await websocket.send_json({
             "type": "text",
             "text": text_response,
@@ -980,28 +1105,22 @@ async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict)
             "keywords": keywords
         })
 
-        # 生成 A2UI 组件
-        if should_use_ui:
-            logger.info("开始 A2UI 组件生成...")
-            a2ui_data = await generate_a2ui_component(intent, keywords, text_response, message, session_id)
-
-            if a2ui_data:
-                # 流式发送 A2UI 消息
-                for a2ui_message in a2ui_data:
-                    await websocket.send_json({
-                        "type": "a2ui",
-                        "message": a2ui_message
-                    })
-                    logger.info(f"发送 A2UI 消息: {list(a2ui_message.keys())}")
-
-        # 发送完成信号
-        await websocket.send_json({
-            "type": "complete"
-        })
+        # 先发完成信号，前端可以立即解除等待、显示文字
+        await websocket.send_json({"type": "complete"})
         logger.info("发送完成信号")
 
         # 管理会话上下文
         context_service.add_message(session_id, message, text_response)
+
+        # A2UI 在后台异步生成，完成后单独推送（不阻塞 complete）
+        if should_use_ui:
+            logger.info("启动后台 A2UI 生成任务...")
+            asyncio.create_task(
+                _generate_and_send_a2ui(websocket, intent, keywords, text_response, message, session_id)
+            )
+        else:
+            # 无 A2UI，立即通知前端关闭 loading
+            await websocket.send_json({"type": "a2ui_complete"})
 
     except Exception as e:
         logger.error(f"处理聊天消息失败: {e}")
@@ -1009,6 +1128,23 @@ async def handle_chat_message(websocket: WebSocket, session_id: str, data: dict)
             "type": "error",
             "message": "抱歉，处理您的消息时出现错误，请稍后重试。"
         })
+
+
+async def _generate_and_send_a2ui(websocket: WebSocket, intent: str, keywords: str, text: str, user_message: str, session_id: str):
+    """后台生成 A2UI 并推送，不阻塞 complete 信号"""
+    try:
+        a2ui_data = await generate_a2ui_component(intent, keywords, text, user_message, session_id)
+        if a2ui_data:
+            for a2ui_message in a2ui_data:
+                await websocket.send_json({
+                    "type": "a2ui",
+                    "message": a2ui_message
+                })
+                logger.info(f"[后台] 发送 A2UI 消息: {list(a2ui_message.keys())}")
+            await websocket.send_json({"type": "a2ui_complete"})
+            logger.info("[后台] A2UI 发送完成")
+    except Exception as e:
+        logger.error(f"[后台] A2UI 生成失败: {e}")
 
 
 async def handle_action_message(websocket: WebSocket, session_id: str, data: dict):
@@ -1105,11 +1241,44 @@ async def generate_a2ui_component(intent: str, keywords: str, text: str, user_me
      {{"key": "trait", "valueString": "花色"}}
    ]}}}}
 
+6. 如果意图是 pedigree_chart，必须使用 PedigreeChart 组件且 generations 为数组格式：
+   surfaceUpdate 示例（使用 path 绑定）：
+   {{"surfaceUpdate": {{"surfaceId": "genetics_ui", "components": [
+     {{"id": "main_component", "component": {{"PedigreeChart": {{
+       "generations": {{"path": "/generations"}},
+       "trait": {{"path": "/trait"}}
+     }}}}}}
+   ]}}}})
+
+   dataModelUpdate 示例（generations 是数组，每元素含 individuals 列表）：
+   {{"dataModelUpdate": {{"surfaceId": "genetics_ui", "contents": [
+     {{"key": "generations", "valueArray": [
+       {{"individuals": [
+         {{"id": "1", "gender": "male", "phenotype": "carrier", "generation": 0, "spouseId": "2"}},
+         {{"id": "2", "gender": "female", "phenotype": "carrier", "generation": 0, "spouseId": "1"}}
+       ]}},
+       {{"individuals": [
+         {{"id": "3", "gender": "male", "phenotype": "affected", "generation": 1, "parents": {{"father": "1", "mother": "2"}}}},
+         {{"id": "4", "gender": "female", "phenotype": "normal", "generation": 1, "parents": {{"father": "1", "mother": "2"}}}}
+       ]}}
+     ]}},
+     {{"key": "trait", "valueString": "性状名称"}}
+   ]}}}})
+
+   关键规则：
+   - gender: "male" 或 "female"
+   - phenotype: "normal"、"affected" 或 "carrier"
+   - generation 从 0 开始（0=第一代，1=第二代）
+   - parents 包含 father 和 mother 的 id
+   - spouseId 表示配偶 id（无子女配偶对也要填写）
+   - 根据题目内容生成完整的多代家系数据
+   - 每个 individual 必须填写 genotype 字段（根据遗传规律推算，如 "Aa"、"aa"、"X^AY"、"X^aX^A" 等）
+
 现在生成包含这3个消息的 JSON 数组："""}
         ]
 
-        ui_response = await glm_service.call_llm(ui_messages, response_format="json")
-        logger.info(f"LLM A2UI 响应: {ui_response[:500]}...")
+        ui_response = await glm_service.call_llm(ui_messages, response_format="json", max_tokens=6000)
+        logger.info(f"LLM A2UI 响应长度: {len(ui_response)}, 内容: {repr(ui_response[:300])}")
 
         try:
             a2ui_data = json.loads(ui_response.strip())
@@ -1197,7 +1366,8 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                                 "parent1Genotype": {"path": "/parent1"},
                                 "parent2Genotype": {"path": "/parent2"},
                                 "trait": {"path": "/trait"},
-                                "showPhenotype": {"path": "/showPhenotype"}
+                                "showPhenotype": {"path": "/showPhenotype"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }
@@ -1222,7 +1392,8 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                             "DNAStructure": {
                                 "sequence": {"path": "/sequence"},
                                 "showLabels": {"path": "/showLabels"},
-                                "highlightRegions": {"path": "/highlightRegions"}
+                                "highlightRegions": {"path": "/highlightRegions"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }
@@ -1248,7 +1419,33 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                                 "trait": {"path": "/trait"},
                                 "data": {"path": "/data"},
                                 "totalCount": {"path": "/totalCount"},
-                                "showPercentage": {"path": "/showPercentage"}
+                                "showPercentage": {"path": "/showPercentage"},
+                                "interactive": {"literalBoolean": True}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "central_dogma":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "CentralDogma": {
+                                "dnaSequence": {"literalString": "ATCGATCG"},
+                                "animationSpeed": {"literalNumber": 1000},
+                                "phase": {"literalString": "idle"}
                             }
                         }
                     }
@@ -1273,7 +1470,8 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                             "GeneExpression": {
                                 "genes": {"path": "/genes"},
                                 "conditions": {"path": "/conditions"},
-                                "expressionLevels": {"path": "/expressionLevels"}
+                                "expressionLevels": {"path": "/expressionLevels"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }
@@ -1297,7 +1495,8 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                         "component": {
                             "PedigreeChart": {
                                 "generations": {"path": "/generations"},
-                                "trait": {"path": "/trait"}
+                                "trait": {"path": "/trait"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }
@@ -1322,7 +1521,62 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                             "CrossOverMap": {
                                 "chromosomeLength": {"path": "/chromosomeLength"},
                                 "genes": {"path": "/genes"},
-                                "crossoverPoints": {"path": "/crossoverPoints"}
+                                "crossoverPoints": {"path": "/crossoverPoints"},
+                                "interactive": {"literalBoolean": True}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "mendel_simulator":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "MendelSimulator": {
+                                "parent1Genotype": {"path": "/parent1Genotype"},
+                                "parent2Genotype": {"path": "/parent2Genotype"},
+                                "traitType": {"path": "/traitType"},
+                                "simulationCount": {"path": "/simulationCount"},
+                                "interactive": {"literalBoolean": True}
+                            }
+                        }
+                    }
+                ]
+            }
+        })
+
+    elif intent == "natural_selection_simulator":
+        a2ui_messages.append({
+            "beginRendering": {
+                "surfaceId": "genetics_ui",
+                "root": "main_component"
+            }
+        })
+        a2ui_messages.append({
+            "surfaceUpdate": {
+                "surfaceId": "genetics_ui",
+                "components": [
+                    {
+                        "id": "main_component",
+                        "component": {
+                            "NaturalSelectionSimulator": {
+                                "populationSize": {"path": "/populationSize"},
+                                "initialDarkFrequency": {"path": "/initialDarkFrequency"},
+                                "environmentColor": {"path": "/environmentColor"},
+                                "generations": {"path": "/generations"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }
@@ -1349,7 +1603,8 @@ def generate_local_a2ui_with_binding(intent: str, data_model: Dict[str, Any]) ->
                                 "parent1Genotype": {"path": "/parent1"},
                                 "parent2Genotype": {"path": "/parent2"},
                                 "trait": {"path": "/trait"},
-                                "showPhenotype": {"path": "/showPhenotype"}
+                                "showPhenotype": {"path": "/showPhenotype"},
+                                "interactive": {"literalBoolean": True}
                             }
                         }
                     }

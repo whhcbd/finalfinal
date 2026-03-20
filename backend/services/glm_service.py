@@ -16,7 +16,7 @@ class GLMService:
         base_url: Optional[str] = None,
     ):
         self.api_key = api_key or os.getenv("GLM_API_KEY")
-        self.model = model or os.getenv("GLM_MODEL", "glm-4.5-air")
+        self.model = model or os.getenv("GLM_MODEL", "glm-4.7")
         self.base_url = base_url or "https://open.bigmodel.cn/api/paas/v4/chat/completions"
 
         if not self.api_key:
@@ -118,6 +118,8 @@ class GLMService:
         # 如果指定了 response_format，添加到请求中
         if response_format == "json":
             data["response_format"] = {"type": "json_object"}
+            # 禁用思维链推理，避免 reasoning_tokens 耗尽 max_tokens
+            data["thinking"] = {"type": "disabled"}
 
         # 重试逻辑
         for attempt in range(max_retries):
@@ -138,7 +140,12 @@ class GLMService:
                     result = response.json()
 
                     if "choices" in result and len(result["choices"]) > 0:
-                        return result["choices"][0]["message"]["content"]
+                        choice = result["choices"][0]
+                        finish_reason = choice.get("finish_reason", "unknown")
+                        content = choice["message"]["content"]
+                        if not content:
+                            logger.warning(f"GLM 返回空内容, finish_reason={finish_reason}, usage={result.get('usage')}")
+                        return content
                     else:
                         raise ValueError("Invalid response format from GLM API")
 

@@ -1,0 +1,60 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "natural_selection_simulator"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "natural_selection_simulator",
+          "component": {
+            "NaturalSelectionSimulator": {
+              "populationSize": {
+                "path": "/populationSize"
+              },
+              "initialFreqA": {
+                "path": "/initialFreqA"
+              },
+              "environmentType": {
+                "path": "/environmentType"
+              },
+              "selectionStrength": {
+                "path": "/selectionStrength"
+              },
+              "interactive": {
+                "literalBoolean": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "populationSize",
+          "valueNumber": 100
+        },
+        {
+          "key": "initialFreqA",
+          "valueNumber": 0.5
+        },
+        {
+          "key": "environmentType",
+          "valueString": "dark"
+        },
+        {
+          "key": "selectionStrength",
+          "valueNumber": 0.5
+        }
+      ]
+    }
+  }
+]

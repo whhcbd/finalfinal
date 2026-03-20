@@ -1,0 +1,50 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "main_component"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "main_component",
+          "component": {
+            "CentralDogma": {
+              "dnaSequence": {
+                "path": "/dnaSequence"
+              },
+              "animationSpeed": {
+                "path": "/animationSpeed"
+              },
+              "phase": {
+                "path": "/phase"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "dnaSequence",
+          "valueString": "ATCGATCG"
+        },
+        {
+          "key": "animationSpeed",
+          "valueNumber": 1000
+        },
+        {
+          "key": "phase",
+          "valueString": "idle"
+        }
+      ]
+    }
+  }
+]

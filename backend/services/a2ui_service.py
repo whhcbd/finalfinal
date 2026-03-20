@@ -73,6 +73,23 @@ CRITICAL: You MUST use CUSTOM GENETICS COMPONENTS, NOT standard A2UI components!
    - Example: "展示染色体交叉互换图"
    - REQUIRED FIELDS: genes (array with positions)
 
+7. **MendelSimulator** - Use for simulating Mendel's experiments:
+   - When user asks to simulate random fertilization, verify Mendel's laws
+   - When user mentions chi-square test, statistical verification of ratios
+   - When user says "模拟孟德尔实验", "验证基因分离定律", "模拟杂交", "卡方检验"
+   - Example: "我想做一个孟德尔实验模拟，验证基因分离定律"
+   - Example: "模拟 Aa × Aa 杂交 1000 次，看看是不是 3:1"
+   - REQUIRED FIELDS: parent1Genotype, parent2Genotype
+   - OPTIONAL: traitType ("single" or "double"), simulationCount (100/1000/10000), interactive
+
+8. **NaturalSelectionSimulator** - Use for simulating natural selection and population evolution:
+   - When user asks to simulate natural selection, observe gene frequency changes
+   - When user mentions population evolution, survival of the fittest, allele frequency
+   - When user says "自然选择", "种群演化", "基因频率变化", "模拟自然选择"
+   - Example: "我想模拟自然选择过程，观察基因频率的变化"
+   - REQUIRED FIELDS: populationSize, initialFreqA, environmentType
+   - OPTIONAL: selectionStrength (0.0-1.0), interactive
+
 ## CRITICAL RULES:
 
 ❌ DO NOT use standard A2UI components (Container, Column, Row, Text, Card) for genetics visualizations
@@ -173,6 +190,8 @@ def load_example_for_intent(intent: str) -> str:
         "gene_expression": "gene_expression_example.json",
         "cross_over_map": "cross_over_map_example.json",
         "phenotype_distribution": "phenotype_distribution_example.json",
+        "mendel_simulator": "mendel_simulator_example.json",
+        "natural_selection_simulator": "natural_selection_simulator_example.json",
     }
 
     filename = intent_to_file.get(intent)

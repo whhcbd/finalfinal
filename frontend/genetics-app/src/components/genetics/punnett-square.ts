@@ -4,9 +4,10 @@
 */
 
 import { Root } from '@a2ui/lit/ui';
-import { html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { html, css, unsafeCSS } from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import animationStyles from '../../styles/animations.css?inline';
 
 export interface GenotypeData {
   genotype: string;
@@ -35,11 +36,21 @@ export class PunnettSquare extends Root {
   private _traitDefinitions: TraitDefinition[] = [];
   private _linkageInfo: LinkageInfo = { isLinked: false };
   private _observedData: number[] = [];
+  private _interactive: boolean = true;
 
-  // 本地输入状态（用于交互式编辑）
-  private localParent1: string = '';
-  private localParent2: string = '';
-  private localTrait: string = '';
+  // 交互状态
+  @state()
+  private selectedCell: { row: number; col: number; genotype: string; phenotype: string } | null = null;
+
+  // 模拟器状态
+  @state()
+  private simulationResults: Map<string, number> = new Map();
+
+  @state()
+  private simulationCount: number = 0;
+
+  @state()
+  private isSimulating: boolean = false;
 
   @property({ type: String })
   get parent1Genotype(): string {
@@ -116,6 +127,16 @@ export class PunnettSquare extends Root {
     this.requestUpdate('observedData', oldValue);
   }
 
+  @property({ type: Boolean })
+  get interactive(): boolean {
+    return this._interactive;
+  }
+  set interactive(value: any) {
+    const oldValue = this._interactive;
+    this._interactive = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('interactive', oldValue);
+  }
+
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object'): any {
     if (value === null || value === undefined) {
       return type === 'string' ? '' :
@@ -169,6 +190,7 @@ export class PunnettSquare extends Root {
 
   static styles = [
     ...Root.styles,
+    css`${unsafeCSS(animationStyles)}`,
     css`
     :host {
       display: block;
@@ -240,11 +262,19 @@ export class PunnettSquare extends Root {
       justify-content: center;
       min-height: 80px;
       position: relative;
-      transition: background 0.2s;
+      transition: all 0.2s;
+      border: 2px solid transparent;
+      cursor: pointer;
     }
 
     .grid-cell:hover:not(.header):not(.empty) {
       background: #fafafa;
+    }
+
+    .grid-cell.selected {
+      background: #eff6ff;
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     }
 
     .grid-cell.header {
@@ -252,10 +282,12 @@ export class PunnettSquare extends Root {
       font-weight: 600;
       color: #6b7280;
       font-size: 0.9rem;
+      cursor: default;
     }
 
     .grid-cell.empty {
       background: transparent;
+      cursor: default;
     }
 
     .cell-genotype {
@@ -582,6 +614,198 @@ export class PunnettSquare extends Root {
       opacity: 0.5;
       cursor: not-allowed;
     }
+
+    /* 详情面板样式 */
+    .detail-panel {
+      margin-top: 16px;
+      padding: 16px;
+      background: #eff6ff;
+      border-radius: 8px;
+      border: 2px solid #3b82f6;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .detail-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1e40af;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .close-button {
+      background: none;
+      border: none;
+      color: #6b7280;
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 0;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .close-button:hover {
+      background: #dbeafe;
+    }
+
+    .detail-content {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+    }
+
+    .detail-label {
+      font-weight: 600;
+      color: #1e40af;
+      min-width: 80px;
+    }
+
+    .detail-value {
+      color: #111827;
+      font-family: monospace;
+      background: #ffffff;
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #bfdbfe;
+    }
+
+    .detail-explanation {
+      margin-top: 8px;
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #bfdbfe;
+      font-size: 0.9rem;
+      color: #374151;
+      line-height: 1.6;
+    }
+
+    /* 模拟器样式 */
+    .simulation-section {
+      margin-top: 24px;
+      padding: 16px;
+      background: #f0fdf4;
+      border-radius: 8px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .simulation-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+
+    .simulation-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .simulation-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #166534;
+    }
+
+    .simulation-select {
+      padding: 8px 12px;
+      border: 1px solid #bbf7d0;
+      border-radius: 6px;
+      background: #ffffff;
+      color: #166534;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+
+    .simulation-results {
+      margin-top: 16px;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 8px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .results-title {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: 12px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .result-item {
+      padding: 12px;
+      background: #f0fdf4;
+      border-radius: 6px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .result-phenotype {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #166534;
+      margin-bottom: 8px;
+    }
+
+    .result-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+    }
+
+    .stat-label {
+      color: #15803d;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      color: #166534;
+      font-family: monospace;
+    }
     `
   ];
 
@@ -770,10 +994,13 @@ export class PunnettSquare extends Root {
 
     // 使用自定义性状名称
     const trait = traitDefs[0];
+    if (!trait) {
+      return this.getPhenotypeLabel(phenotype);
+    }
     if (phenotype === 'dominant') return trait.dominantTrait;
     if (phenotype === 'recessive') return trait.recessiveTrait;
     if (phenotype === 'incomplete' && trait.intermediateTrait) return trait.intermediateTrait;
-    if (phenotype === 'heterozygous') return trait.dominantTrait; // 杂合子显示显性性状
+    if (phenotype === 'heterozygous') return trait.dominantTrait;
 
     return this.getPhenotypeLabel(phenotype);
   }
@@ -785,11 +1012,6 @@ export class PunnettSquare extends Root {
     const traitName = this.unwrapValue(this.trait, 'string');
     const showPheno = this.unwrapValue(this.showPhenotype, 'boolean');
     const traitDefs = this.unwrapValue(this.traitDefinitions, 'array');
-
-    // Update local state for inputs
-    if (typeof parent1 === 'string') this.localParent1 = parent1;
-    if (typeof parent2 === 'string') this.localParent2 = parent2;
-    if (typeof traitName === 'string') this.localTrait = traitName;
 
     const offspring = this.calculateOffspring(parent1, parent2);
     const gametes1 = this.getGametes(parent1);
@@ -811,56 +1033,6 @@ export class PunnettSquare extends Root {
     return html`
       <div class="container">
         <div class="trait-title">${traitName || '孟德尔方格图'}</div>
-
-        <!-- 交互式输入区域 -->
-        <div class="input-section">
-          <div class="input-row">
-            <div class="input-group">
-              <label class="input-label">亲本1基因型</label>
-              <input
-                type="text"
-                class="input-field"
-                .value=${this.localParent1}
-                @input=${(e: Event) => this.handleInputChange('parent1', e)}
-                placeholder="例如: Aa"
-              />
-            </div>
-            <div class="input-group">
-              <label class="input-label">亲本2基因型</label>
-              <input
-                type="text"
-                class="input-field"
-                .value=${this.localParent2}
-                @input=${(e: Event) => this.handleInputChange('parent2', e)}
-                placeholder="例如: aa"
-              />
-            </div>
-            <div class="input-group">
-              <label class="input-label">性状名称</label>
-              <input
-                type="text"
-                class="input-field"
-                .value=${this.localTrait}
-                @input=${(e: Event) => this.handleInputChange('trait', e)}
-                placeholder="例如: 花色"
-              />
-            </div>
-          </div>
-          <div class="button-group">
-            <button
-              class="action-button primary"
-              @click=${() => this.handleRecalculate()}
-            >
-              重新计算
-            </button>
-            <button
-              class="action-button secondary"
-              @click=${() => this.handleReset()}
-            >
-              重置
-            </button>
-          </div>
-        </div>
 
         ${traitDefs && traitDefs.length > 0 ? html`
           <div class="trait-names">
@@ -898,11 +1070,11 @@ export class PunnettSquare extends Root {
         <div class="parents">
           <div class="parent">
             <span class="parent-label">亲本1:</span>
-            <span class="genotype">${this.parent1Genotype}</span>
+            <span class="genotype">${parent1}</span>
           </div>
           <div class="parent">
             <span class="parent-label">亲本2:</span>
-            <span class="genotype">${this.parent2Genotype}</span>
+            <span class="genotype">${parent2}</span>
           </div>
         </div>
 
@@ -911,17 +1083,19 @@ export class PunnettSquare extends Root {
           ${map(gametes1, (g) => html`
             <div class="grid-cell header">${g}</div>
           `)}
-          ${map(gametes2, (g2) => html`
+          ${map(gametes2, (g2, rowIndex) => html`
             <div class="grid-cell header">${g2}</div>
-            ${map(gametes1, (g1) => {
+            ${map(gametes1, (g1, colIndex) => {
               const genotype = this.combineGametes(g1, g2);
               const item = offspring.find(o => o.genotype === genotype);
               if (!item) return '';
 
+              const isSelected = this.selectedCell?.row === rowIndex && this.selectedCell?.col === colIndex;
+
               return html`
                 <button
-                  class="grid-cell"
-                  @click=${() => this.handleCellClick(item)}
+                  class="grid-cell ${isSelected ? 'selected' : ''}"
+                  @click=${() => this.handleCellClick(item, rowIndex, colIndex)}
                   aria-label="${item.genotype} - ${this.getPhenotypeDisplayName(item.phenotype, traitDefs)}"
                   tabindex="0"
                 >
@@ -936,6 +1110,88 @@ export class PunnettSquare extends Root {
             })}
           `)}
         </div>
+
+        ${this.interactive ? html`
+          <div class="simulation-section">
+            <div class="simulation-title">随机受精模拟器</div>
+            <div class="simulation-controls">
+              <div class="simulation-info">
+                <span class="info-label">模拟次数:</span>
+                <select class="simulation-select" @change=${this.handleSimulationCountChange}>
+                  <option value="100">100 次</option>
+                  <option value="1000" selected>1000 次</option>
+                  <option value="10000">10000 次</option>
+                </select>
+              </div>
+              <button
+                class="action-button primary"
+                @click=${this.handleSimulate}
+                ?disabled=${this.isSimulating}
+              >
+                ${this.isSimulating ? '模拟中...' : '开始模拟'}
+              </button>
+              <button
+                class="action-button secondary"
+                @click=${this.handleResetSimulation}
+                ?disabled=${this.isSimulating || this.simulationResults.size === 0}
+              >
+                重置
+              </button>
+            </div>
+            ${this.simulationResults.size > 0 ? html`
+              <div class="simulation-results">
+                <div class="results-title">模拟结果 (共 ${this.simulationCount} 次)</div>
+                <div class="results-grid">
+                  ${map(Array.from(this.simulationResults.entries()), ([phenotype, count]) => {
+                    const percentage = (count / this.simulationCount * 100).toFixed(2);
+                    const expectedRatio = this.getExpectedRatio(phenotype, offspring);
+                    return html`
+                      <div class="result-item">
+                        <div class="result-phenotype">${this.getPhenotypeDisplayName(phenotype, traitDefs)}</div>
+                        <div class="result-stats">
+                          <div class="stat-row">
+                            <span class="stat-label">实际:</span>
+                            <span class="stat-value">${count} 次 (${percentage}%)</span>
+                          </div>
+                          <div class="stat-row">
+                            <span class="stat-label">理论:</span>
+                            <span class="stat-value">${expectedRatio}</span>
+                          </div>
+                        </div>
+                      </div>
+                    `;
+                  })}
+                </div>
+              </div>
+            ` : ''}
+          </div>
+        ` : ''}
+
+        ${this.selectedCell && this.interactive ? html`
+          <div class="detail-panel">
+            <div class="detail-title">
+              <span>格子详情</span>
+              <button class="close-button" @click=${() => this.selectedCell = null} aria-label="关闭">×</button>
+            </div>
+            <div class="detail-content">
+              <div class="detail-row">
+                <span class="detail-label">位置:</span>
+                <span class="detail-value">第 ${this.selectedCell.row + 1} 行, 第 ${this.selectedCell.col + 1} 列</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">基因型:</span>
+                <span class="detail-value">${this.selectedCell.genotype}</span>
+              </div>
+              <div class="detail-row">
+                <span class="detail-label">表型:</span>
+                <span class="detail-value">${this.getPhenotypeDisplayName(this.selectedCell.phenotype, traitDefs)}</span>
+              </div>
+              <div class="detail-explanation">
+                ${this.getCellExplanation(this.selectedCell, offspring.length)}
+              </div>
+            </div>
+          </div>
+        ` : ''}
 
         ${showPheno ? html`
           <div class="offspring-section">
@@ -1042,57 +1298,116 @@ export class PunnettSquare extends Root {
     return `${ratio}%`;
   }
 
-  private handleCellClick(item: GenotypeData) {
-    this.dispatchEvent(new CustomEvent('cell-click', {
-      detail: { genotype: item.genotype, phenotype: item.phenotype },
+  private handleCellClick(item: GenotypeData, row: number, col: number) {
+    if (!this.interactive) return;
+
+    // 更新选中状态
+    this.selectedCell = {
+      row,
+      col,
+      genotype: item.genotype,
+      phenotype: item.phenotype
+    };
+
+    // 发送 action 到后端获取详细信息
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
+      detail: {
+        type: 'action',
+        action: {
+          name: 'cell_click',
+          context: {
+            component: 'punnett_square',
+            row,
+            col,
+            genotype: item.genotype,
+            phenotype: item.phenotype
+          }
+        },
+        surfaceId: 'genetics_ui'
+      },
       bubbles: true,
       composed: true
     }));
   }
 
-  // 处理输入变化
-  private handleInputChange(field: 'parent1' | 'parent2' | 'trait', event: Event) {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
+  private getCellExplanation(cell: { genotype: string; phenotype: string }, totalCells: number): string {
+    const phenotypeLabel = this.getPhenotypeDisplayName(cell.phenotype, this.unwrapValue(this.traitDefinitions, 'array'));
+    const probability = (1 / totalCells * 100).toFixed(1);
 
-    if (field === 'parent1') {
-      this.localParent1 = value;
-    } else if (field === 'parent2') {
-      this.localParent2 = value;
-    } else if (field === 'trait') {
-      this.localTrait = value;
+    let explanation = `该格子代表一种可能的子代基因型组合。`;
+    explanation += `\n\n基因型 ${cell.genotype} 出现的概率为 1/${totalCells} = ${probability}%。`;
+
+    if (cell.phenotype === 'dominant' || cell.phenotype.includes('显性')) {
+      explanation += `\n\n该基因型表现为${phenotypeLabel}，因为含有至少一个显性等位基因。`;
+    } else if (cell.phenotype === 'recessive' || cell.phenotype.includes('隐性')) {
+      explanation += `\n\n该基因型表现为${phenotypeLabel}，因为两个等位基因都是隐性的。`;
+    } else if (cell.phenotype === 'heterozygous' || cell.phenotype.includes('杂合')) {
+      explanation += `\n\n该基因型为杂合子，表现为${phenotypeLabel}。`;
     }
 
+    return explanation;
+  }
+
+  private handleSimulationCountChange(e: Event) {
+    const select = e.target as HTMLSelectElement;
+    this.simulationCount = parseInt(select.value);
+  }
+
+  private async handleSimulate() {
+    if (this.isSimulating) return;
+
+    this.isSimulating = true;
+    this.simulationResults = new Map();
+
+    const parent1 = this.unwrapValue(this.parent1Genotype, 'string');
+    const parent2 = this.unwrapValue(this.parent2Genotype, 'string');
+    const gametes1 = this.getGametes(parent1);
+    const gametes2 = this.getGametes(parent2);
+
+    if (gametes1.length === 0 || gametes2.length === 0) {
+      this.isSimulating = false;
+      return;
+    }
+
+    // 获取模拟次数
+    const count = this.simulationCount || 1000;
+
+    // 模拟随机受精
+    for (let i = 0; i < count; i++) {
+      // 随机选择配子
+      const g1 = gametes1[Math.floor(Math.random() * gametes1.length)];
+      const g2 = gametes2[Math.floor(Math.random() * gametes2.length)];
+
+      // 组合配子
+      const genotype = this.combineGametes(g1, g2);
+      const phenotype = this.determinePhenotype(genotype);
+
+      // 统计结果
+      const currentCount = this.simulationResults.get(phenotype) || 0;
+      this.simulationResults.set(phenotype, currentCount + 1);
+
+      // 每100次更新一次UI（提升性能）
+      if (i % 100 === 0) {
+        this.requestUpdate();
+        await new Promise(resolve => setTimeout(resolve, 0));
+      }
+    }
+
+    this.isSimulating = false;
     this.requestUpdate();
   }
 
-  // 处理重新计算按钮点击
-  private handleRecalculate() {
-    // 发送 action 事件到后端
-    this.dispatchEvent(new CustomEvent('action', {
-      detail: {
-        name: 'recalculate',
-        context: {
-          parent1: this.localParent1,
-          parent2: this.localParent2,
-          trait: this.localTrait
-        }
-      },
-      bubbles: true,
-      composed: true
-    }));
+  private handleResetSimulation() {
+    this.simulationResults = new Map();
+    this.simulationCount = 1000;
+    this.requestUpdate();
   }
 
-  // 处理重置按钮点击
-  private handleReset() {
-    // 发送 reset action 到后端
-    this.dispatchEvent(new CustomEvent('action', {
-      detail: {
-        name: 'reset',
-        context: {}
-      },
-      bubbles: true,
-      composed: true
-    }));
+  private getExpectedRatio(phenotype: string, offspring: GenotypeData[]): string {
+    const phenotypeRatios = this.calculatePhenotypeRatios(offspring);
+    const count = phenotypeRatios.get(phenotype) || 0;
+    const total = offspring.length;
+    const percentage = (count / total * 100).toFixed(2);
+    return `${count}/${total} (${percentage}%)`;
   }
 }

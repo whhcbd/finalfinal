@@ -103,55 +103,51 @@ export class A2UIRenderer {
   ): void {
     console.log(`[A2UIRenderer] Rendering surface: ${surfaceId}`);
 
-    // 创建 a2ui-surface 元素
-    const surfaceElement = document.createElement('a2ui-surface') as any;
-    surfaceElement.setAttribute('surface-id', surfaceId);
+    // 创建 a2ui-theme-provider 元素（它提供 theme 上下文）
+    const themeProviderElement = document.createElement('a2ui-theme-provider') as any;
+    themeProviderElement.setAttribute('surface-id', surfaceId);
 
     // 设置 surface 数据和处理器
-    if (surfaceElement) {
-      surfaceElement.surface = surface;
-      surfaceElement.processor = processor;
-      // 🔑 关键：启用自定义组件！
-      surfaceElement.enableCustomElements = true;
+    if (themeProviderElement) {
+      themeProviderElement.surface = surface;
+      themeProviderElement.processor = processor;
 
-      console.log('[A2UIRenderer] Surface data set:', {
+      console.log('[A2UIRenderer] ThemeProvider data set:', {
         hasSurface: !!surface,
         hasProcessor: !!processor,
         surfaceKeys: surface ? Object.keys(surface) : [],
-        enableCustomElements: true
+        hasTheme: !!themeProviderElement.theme
       });
     }
 
     // 监听 action 事件
-    surfaceElement.addEventListener('action', (event: CustomEvent) => {
+    themeProviderElement.addEventListener('action', (event: CustomEvent) => {
       this.handleAction(surfaceId, event.detail);
     });
 
-    container.appendChild(surfaceElement);
-    console.log('[A2UIRenderer] Surface element appended to container');
+    container.appendChild(themeProviderElement);
+    console.log('[A2UIRenderer] ThemeProvider element appended to container');
 
     // 验证元素是否真的添加到了 DOM
     console.log('[A2UIRenderer] Container children count:', container.children.length);
     console.log('[A2UIRenderer] Container is connected:', container.isConnected);
-    console.log('[A2UIRenderer] Surface element parent:', surfaceElement.parentElement);
-    console.log('[A2UIRenderer] Surface element tag:', surfaceElement.tagName);
+    console.log('[A2UIRenderer] ThemeProvider element parent:', themeProviderElement.parentElement);
+    console.log('[A2UIRenderer] ThemeProvider element tag:', themeProviderElement.tagName);
 
     // 等待一帧后检查渲染状态
     requestAnimationFrame(() => {
-      console.log('[A2UIRenderer] After frame - Surface in container:', container.contains(surfaceElement));
-      console.log('[A2UIRenderer] After frame - Surface shadowRoot:', !!surfaceElement.shadowRoot);
-      console.log('[A2UIRenderer] After frame - Surface.surface:', surfaceElement.surface);
-      console.log('[A2UIRenderer] After frame - Surface.processor:', surfaceElement.processor);
+      console.log('[A2UIRenderer] After frame - ThemeProvider in container:', container.contains(themeProviderElement));
+      console.log('[A2UIRenderer] After frame - ThemeProvider shadowRoot:', !!themeProviderElement.shadowRoot);
+      console.log('[A2UIRenderer] After frame - ThemeProvider.surface:', themeProviderElement.surface);
+      console.log('[A2UIRenderer] After frame - ThemeProvider.processor:', themeProviderElement.processor);
 
-      // 检查是否有错误 - 使用 shadowRoot 而不是 children
-      const hasShadowRoot = !!surfaceElement.shadowRoot;
-      const hasSurface = !!surfaceElement.surface;
-      const hasComponentTree = !!surfaceElement.surface?.componentTree;
-
-      if (!hasShadowRoot && !hasComponentTree) {
-        console.error('[A2UIRenderer] Surface rendering failed - no shadow root or component tree');
+      // 检查 a2ui-surface 是否被渲染
+      const surfaceElement = themeProviderElement.shadowRoot?.querySelector('a2ui-surface');
+      if (surfaceElement) {
+        console.log('[A2UIRenderer] a2ui-surface found in shadowRoot');
+        console.log('[A2UIRenderer] a2ui-surface.shadowRoot:', !!surfaceElement.shadowRoot);
       } else {
-        console.log('[A2UIRenderer] Surface rendered successfully');
+        console.error('[A2UIRenderer] a2ui-surface not found in shadowRoot');
       }
     });
   }

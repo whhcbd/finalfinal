@@ -1,0 +1,60 @@
+[
+  {
+    "beginRendering": {
+      "surfaceId": "genetics_ui",
+      "root": "mendel_simulator"
+    }
+  },
+  {
+    "surfaceUpdate": {
+      "surfaceId": "genetics_ui",
+      "components": [
+        {
+          "id": "mendel_simulator",
+          "component": {
+            "MendelSimulator": {
+              "parent1Genotype": {
+                "path": "/parent1"
+              },
+              "parent2Genotype": {
+                "path": "/parent2"
+              },
+              "traitType": {
+                "path": "/traitType"
+              },
+              "simulationCount": {
+                "path": "/simulationCount"
+              },
+              "interactive": {
+                "literalBoolean": true
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "dataModelUpdate": {
+      "surfaceId": "genetics_ui",
+      "contents": [
+        {
+          "key": "parent1",
+          "valueString": "Aa"
+        },
+        {
+          "key": "parent2",
+          "valueString": "Aa"
+        },
+        {
+          "key": "traitType",
+          "valueString": "single"
+        },
+        {
+          "key": "simulationCount",
+          "valueNumber": 1000
+        }
+      ]
+    }
+  }
+]

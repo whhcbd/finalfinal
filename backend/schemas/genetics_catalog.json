@@ -162,6 +162,19 @@
               "type": "string"
             }
           }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
         }
       },
       "required": [
@@ -237,6 +250,19 @@
         "showComplementary": {
           "type": "object",
           "description": "是否显示互补链",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
           "additionalProperties": false,
           "properties": {
             "literalBoolean": {
@@ -329,6 +355,19 @@
               "type": "string"
             }
           }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
         }
       },
       "required": [
@@ -411,6 +450,19 @@
                 },
                 "required": ["name"]
               }
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
             },
             "path": {
               "type": "string"
@@ -508,6 +560,19 @@
               "type": "string"
             }
           }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
         }
       },
       "required": [
@@ -587,6 +652,19 @@
               "type": "string"
             }
           }
+        },
+        "interactive": {
+          "type": "object",
+          "description": "是否启用交互模式",
+          "additionalProperties": false,
+          "properties": {
+            "literalBoolean": {
+              "type": "boolean"
+            },
+            "path": {
+              "type": "string"
+            }
+          }
         }
       },
       "required": [
@@ -617,6 +695,40 @@
       ]
     }
   },
+  "CentralDogma": {
+      "type": "object",
+      "description": "中心法则可视化组件，展示 DNA 复制、转录和翻译过程",
+      "additionalProperties": false,
+      "properties": {
+        "dnaSequence": {
+          "type": "object",
+          "description": "DNA 序列（只含 A/T/G/C），默认 ATCGATCG",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": { "type": "string" },
+            "path": { "type": "string" }
+          }
+        },
+        "animationSpeed": {
+          "type": "object",
+          "description": "动画速度（毫秒），默认 1000",
+          "additionalProperties": false,
+          "properties": {
+            "literalNumber": { "type": "number" },
+            "path": { "type": "string" }
+          }
+        },
+        "phase": {
+          "type": "object",
+          "description": "初始阶段：idle | replication | transcription | translation | completed",
+          "additionalProperties": false,
+          "properties": {
+            "literalString": { "type": "string", "enum": ["idle", "replication", "transcription", "translation", "completed"] },
+            "path": { "type": "string" }
+          }
+        }
+      }
+    },
   "styles": {
     "geneticsTheme": {
       "type": "object",

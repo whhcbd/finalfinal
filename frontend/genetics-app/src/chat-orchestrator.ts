@@ -94,7 +94,7 @@ export class ChatOrchestrator {
         handler(data);
       } else {
         // 只对真正未知的消息类型发出警告，忽略已知但未注册的类型
-        const knownTypes = ['text', 'a2ui', 'error', 'dataModelUpdate', 'complete'];
+        const knownTypes = ['text', 'text_chunk', 'a2ui', 'error', 'dataModelUpdate', 'complete'];
         if (!knownTypes.includes(messageType)) {
           console.warn('[Orchestrator] 未知的消息类型:', messageType);
         } else {
@@ -165,7 +165,7 @@ export class ChatOrchestrator {
    * @param userMessage - 用户输入的消息
    * @returns 包含文本和 A2UI 数据的响应对象
    */
-  async processMessage(userMessage: string): Promise<ChatResponse> {
+  async processMessage(userMessage: string, onChunk?: (chunk: string) => void, onA2UI?: (messages: any[]) => void): Promise<ChatResponse> {
     // 添加到历史记录
     this.conversationHistory.push({ role: 'user', content: userMessage });
 
@@ -182,9 +182,19 @@ export class ChatOrchestrator {
       let textReceived = false;
       let lastMessageTime = Date.now();
 
+      // 流式 chunk 处理器
+      const textChunkHandler = (data: any) => {
+        if (data.chunk) {
+          textResponse += data.chunk;
+          lastMessageTime = Date.now();
+          if (onChunk) onChunk(data.chunk);
+        }
+      };
+
       // 创建临时消息处理器
       const textHandler = (data: any) => {
         console.log('[processMessage] 收到 text:', data.text);
+        // 以后端完整文本为准（经过清理）
         textResponse = data.text;
         textReceived = true;
         lastMessageTime = Date.now();
@@ -195,20 +205,34 @@ export class ChatOrchestrator {
 
       const a2uiHandler = (data: any) => {
         console.log('[processMessage] 收到 a2ui 消息');
-        lastMessageTime = Date.now();
         if (data.message) {
           a2uiMessages.push(data.message);
         }
       };
 
+      const a2uiCompleteHandler = (_data: any) => {
+        this.messageHandlers.delete('a2ui');
+        this.messageHandlers.delete('a2ui_complete');
+        console.log('[processMessage] A2UI 后台生成完成，触发回调');
+        if (onA2UI) {
+          onA2UI(a2uiMessages); // 无论有无内容都触发，让前端决定如何处理
+        }
+      };
+
+      const cleanup = () => {
+        this.messageHandlers.delete('text_chunk');
+        this.messageHandlers.delete('text');
+        this.messageHandlers.delete('error');
+        this.messageHandlers.delete('complete');
+        // a2ui 和 a2ui_complete 由 a2uiCompleteHandler 自行清理
+      };
+
       const errorHandler = (data: any) => {
         hasError = true;
         responseComplete = true;
-        // 清理处理器
-        this.messageHandlers.delete('text');
+        cleanup();
         this.messageHandlers.delete('a2ui');
-        this.messageHandlers.delete('error');
-        this.messageHandlers.delete('complete');
+        this.messageHandlers.delete('a2ui_complete');
         clearTimeout(timeout);
         resolve({
           text: data.message || '服务器错误',
@@ -216,26 +240,23 @@ export class ChatOrchestrator {
         });
       };
 
-      const completeHandler = (data: any) => {
+      const completeHandler = (_data: any) => {
         if (!responseComplete) {
           responseComplete = true;
-          console.log('[processMessage] 收到完成信号，返回数据:', { text: textResponse, a2uiCount: a2uiMessages.length });
-          // 清理处理器
-          this.messageHandlers.delete('text');
-          this.messageHandlers.delete('a2ui');
-          this.messageHandlers.delete('error');
-          this.messageHandlers.delete('complete');
+          console.log('[processMessage] 收到完成信号，立即返回文本');
+          cleanup();
           clearTimeout(timeout);
           resolve({
-            text: textResponse,
-            a2ui: a2uiMessages.length > 0 ? a2uiMessages : undefined
+            text: textResponse
           });
         }
       };
 
       // 注册临时处理器
+      this.onMessage('text_chunk', textChunkHandler);
       this.onMessage('text', textHandler);
       this.onMessage('a2ui', a2uiHandler);
+      this.onMessage('a2ui_complete', a2uiCompleteHandler);
       this.onMessage('error', errorHandler);
       this.onMessage('complete', completeHandler);
 

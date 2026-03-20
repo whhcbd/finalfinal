@@ -188,6 +188,42 @@ class DataModelService:
                 "crossoverPoints": [{"position": 40, "label": "交叉点1"}]
             }
 
+        elif intent == "mendel_simulator":
+            # 从用户消息中提取基因型
+            parent1 = "Aa"
+            parent2 = "Aa"
+            trait_type = "single"
+
+            if extracted_data:
+                parent1 = extracted_data.get("parent1", "Aa")
+                parent2 = extracted_data.get("parent2", "Aa")
+            else:
+                # 尝试从用户消息中提取基因型
+                import re
+                # 匹配 AaBb × AaBb 或 Aa × Aa 格式
+                match = re.search(r'([A-Za-z]{2,4})\s*[×xX]\s*([A-Za-z]{2,4})', user_message)
+                if match:
+                    parent1 = match.group(1)
+                    parent2 = match.group(2)
+                    # 判断是单因子还是双因子
+                    if len(parent1) == 4 and len(parent2) == 4:
+                        trait_type = "double"
+
+            data_model = {
+                "parent1Genotype": parent1,
+                "parent2Genotype": parent2,
+                "traitType": trait_type,
+                "simulationCount": 1000
+            }
+
+        elif intent == "natural_selection_simulator":
+            data_model = {
+                "populationSize": extracted_data.get("populationSize", 100) if extracted_data else 100,
+                "initialDarkFrequency": extracted_data.get("initialDarkFrequency", 0.5) if extracted_data else 0.5,
+                "environmentColor": extracted_data.get("environmentColor", "dark") if extracted_data else "dark",
+                "generations": extracted_data.get("generations", 50) if extracted_data else 50
+            }
+
         logger.info(f"生成初始数据模型: intent={intent}, keys={list(data_model.keys())}")
         return data_model
 

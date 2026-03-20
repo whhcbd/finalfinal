@@ -4,9 +4,10 @@
 */
 
 import { Root } from '@a2ui/lit/ui';
-import { html, css } from 'lit';
+import { html, css, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import animationStyles from '../../styles/animations.css?inline';
 
 export interface PhenotypeData {
   phenotype: string;
@@ -18,6 +19,7 @@ export interface PhenotypeData {
 export class PhenotypeDistribution extends Root {
   private _data: PhenotypeData[] = [];
   private _trait: string = '';
+  private _interactive: boolean = true;
 
   @property({ type: Array })
   get data(): PhenotypeData[] {
@@ -40,6 +42,22 @@ export class PhenotypeDistribution extends Root {
     this._trait = value;
     this.requestUpdate('trait', oldValue);
   }
+
+  @property({ type: Boolean })
+  get interactive(): boolean {
+    return this._interactive;
+  }
+  set interactive(value: any) {
+    const oldValue = this._interactive;
+    this._interactive = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('interactive', oldValue);
+  }
+
+  @property({ type: Object })
+  selectedPhenotype: PhenotypeData | null = null;
+
+  @property({ type: Array })
+  selectedFilters: string[] = [];
 
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object'): any {
     if (value === null || value === undefined) {
@@ -105,6 +123,7 @@ export class PhenotypeDistribution extends Root {
 
   static styles = [
     ...Root.styles,
+    css`${unsafeCSS(animationStyles)}`,
     css`
     :host {
       display: block;
@@ -282,6 +301,156 @@ export class PhenotypeDistribution extends Root {
       color: #6b7280;
       flex: 1;
     }
+
+    .bar.selected {
+      border: 3px solid #111827;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+    }
+
+    .bar.animating {
+      transition: width 0.5s ease-out, opacity 0.3s ease;
+    }
+
+    .detail-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      z-index: 1000;
+      min-width: 350px;
+      max-width: 500px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .modal-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-color-badge {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .modal-content {
+      font-size: 0.95rem;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .modal-content strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #111827;
+    }
+
+    .filter-controls {
+      margin-top: 16px;
+      padding: 16px;
+      background: #fafafa;
+      border-radius: 8px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .filter-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .filter-options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .filter-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .filter-checkbox:hover {
+      border-color: #111827;
+      background: #fafafa;
+    }
+
+    .filter-checkbox.active {
+      background: #111827;
+      color: #ffffff;
+      border-color: #111827;
+    }
+
+    .filter-checkbox input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+    }
+
+    .filter-label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    @keyframes pulse-bar {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+    }
+
+    .bar.selected {
+      animation: pulse-bar 1.5s infinite;
+    }
   `];
 
   private getTotalCount(data: PhenotypeData[]): number {
@@ -307,7 +476,8 @@ export class PhenotypeDistribution extends Root {
     const data = this.unwrapValue(this._data, 'array');
     const trait = this.unwrapValue(this._trait, 'string');
 
-    const totalCount = this.getTotalCount(data);
+    const filteredData = this.getFilteredData(data);
+    const totalCount = this.getTotalCount(filteredData);
 
     if (data.length === 0) {
       return html`<div class="empty">暂无表型分布数据</div>`;
@@ -317,20 +487,24 @@ export class PhenotypeDistribution extends Root {
       <div class="container">
         <div class="title">${trait || '表型分布'}</div>
 
+        ${this._interactive ? this.renderFilterControls(data) : ''}
+
         <div class="chart-container">
           <div class="chart">
-            ${map(data, (item, index) => html`
+            ${map(filteredData, (item, index) => {
+              const originalIndex = data.findIndex(d => d.phenotype === item.phenotype);
+              return html`
               <div class="bar-row">
                 <div class="bar-label">${item.phenotype}</div>
                 <div class="bar-wrapper">
                   <div
-                    class="bar"
-                    style="width: ${this.getBarWidth(item.count, data)}%; background-color: ${this.getBarColor(index)};"
-                    @click=${() => this.handleBarClick(item)}
+                    class="bar ${this.selectedPhenotype?.phenotype === item.phenotype ? 'selected' : ''} animating"
+                    style="width: ${this.getBarWidth(item.count, filteredData)}%; background-color: ${this.getBarColor(originalIndex)};"
+                    @click=${() => this.handleBarClick(item, originalIndex)}
                     aria-label="${item.phenotype}: ${item.count} (${item.percentage}%)"
                     tabindex="0"
                   >
-                    ${this.getBarWidth(item.count, data) > 15 ? html`
+                    ${this.getBarWidth(item.count, filteredData) > 15 ? html`
                       <span class="bar-text">${item.percentage.toFixed(1)}%</span>
                     ` : ''}
                   </div>
@@ -340,7 +514,7 @@ export class PhenotypeDistribution extends Root {
                   <div class="stat-count">${item.count}</div>
                 </div>
               </div>
-            `)}
+            `})}
           </div>
 
           <div class="total-stats">
@@ -350,11 +524,11 @@ export class PhenotypeDistribution extends Root {
             </div>
             <div class="stat-item">
               <div class="stat-label">表型种类</div>
-              <div class="stat-value">${data.length}</div>
+              <div class="stat-value">${filteredData.length}</div>
             </div>
             <div class="stat-item">
               <div class="stat-label">最大数量</div>
-              <div class="stat-value">${this.getMaxCount(data)}</div>
+              <div class="stat-value">${this.getMaxCount(filteredData)}</div>
             </div>
           </div>
         </div>
@@ -376,19 +550,129 @@ export class PhenotypeDistribution extends Root {
             `)}
           </div>
         </div>
+
+        ${this.selectedPhenotype ? this.renderDetailModal() : ''}
       </div>
     `;
   }
 
-  private handleBarClick(item: PhenotypeData) {
-    this.dispatchEvent(new CustomEvent('bar-click', {
+  private handleBarClick(item: PhenotypeData, colorIndex: number) {
+    if (!this._interactive) return;
+
+    this.selectedPhenotype = item;
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
       detail: {
-        phenotype: item.phenotype,
-        count: item.count,
-        percentage: item.percentage
+        component: 'phenotype_distribution',
+        action: 'bar_click',
+        data: {
+          phenotype: item.phenotype,
+          count: item.count,
+          percentage: item.percentage
+        }
       },
       bubbles: true,
       composed: true
     }));
+  }
+
+  private renderDetailModal() {
+    if (!this.selectedPhenotype) return '';
+
+    const data = this.unwrapValue(this._data, 'array');
+    const colorIndex = data.findIndex(d => d.phenotype === this.selectedPhenotype!.phenotype);
+    const color = this.getBarColor(colorIndex);
+    const totalCount = this.getTotalCount(data);
+
+    return html`
+      <div class="modal-overlay" @click=${() => this.closeModal()}></div>
+      <div class="detail-modal">
+        <button class="modal-close" @click=${() => this.closeModal()}>×</button>
+        <div class="modal-header">
+          <div class="modal-color-badge" style="background-color: ${color};"></div>
+          <span>${this.selectedPhenotype.phenotype}</span>
+        </div>
+        <div class="modal-content">
+          <p><strong>数量：</strong>${this.selectedPhenotype.count} 个体</p>
+          <p><strong>百分比：</strong>${this.selectedPhenotype.percentage.toFixed(2)}%</p>
+          <p><strong>占比：</strong>${this.selectedPhenotype.count} / ${totalCount}</p>
+          <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+            <strong>统计信息：</strong>
+          </p>
+          <ul style="margin: 8px 0; padding-left: 20px; line-height: 1.8;">
+            <li>该表型在群体中的频率为 ${this.selectedPhenotype.percentage.toFixed(2)}%</li>
+            <li>共有 ${this.selectedPhenotype.count} 个个体表现出该表型</li>
+            <li>在 ${totalCount} 个总个体中排名第 ${this.getRank(this.selectedPhenotype, data)} 位</li>
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.9rem; color: #6b7280;">
+            💡 提示：表型分布反映了基因型与环境相互作用的结果
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  private renderFilterControls(data: PhenotypeData[]) {
+    return html`
+      <div class="filter-controls">
+        <div class="filter-title">筛选表型</div>
+        <div class="filter-options">
+          ${map(data, (item) => {
+            const isSelected = this.selectedFilters.length === 0 || this.selectedFilters.includes(item.phenotype);
+            return html`
+              <label class="filter-checkbox ${isSelected ? 'active' : ''}">
+                <input
+                  type="checkbox"
+                  .checked=${isSelected}
+                  @change=${(e: Event) => this.handleFilterChange(item.phenotype, (e.target as HTMLInputElement).checked)}
+                />
+                <span class="filter-label">${item.phenotype}</span>
+              </label>
+            `;
+          })}
+        </div>
+      </div>
+    `;
+  }
+
+  private getFilteredData(data: PhenotypeData[]): PhenotypeData[] {
+    if (this.selectedFilters.length === 0) {
+      return data;
+    }
+    return data.filter(item => this.selectedFilters.includes(item.phenotype));
+  }
+
+  private handleFilterChange(phenotype: string, checked: boolean) {
+    if (checked) {
+      if (!this.selectedFilters.includes(phenotype)) {
+        this.selectedFilters = [...this.selectedFilters, phenotype];
+      }
+    } else {
+      this.selectedFilters = this.selectedFilters.filter(p => p !== phenotype);
+    }
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
+      detail: {
+        component: 'phenotype_distribution',
+        action: 'filter_change',
+        data: {
+          selectedFilters: this.selectedFilters
+        }
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private getRank(item: PhenotypeData, data: PhenotypeData[]): number {
+    const sorted = [...data].sort((a, b) => b.count - a.count);
+    return sorted.findIndex(d => d.phenotype === item.phenotype) + 1;
+  }
+
+  private closeModal() {
+    this.selectedPhenotype = null;
+    this.requestUpdate();
   }
 }

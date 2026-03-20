@@ -15,6 +15,9 @@ interface ComponentData {
   Container?: { children?: any[] };
   Row?: { children?: any[] };
   Column?: { children?: any[] };
+  CentralDogma?: { dnaSequence?: any; animationSpeed?: any; phase?: any };
+  MendelSimulator?: { parent1Genotype?: any; parent2Genotype?: any; traitType?: any; simulationCount?: any; interactive?: any };
+  NaturalSelectionSimulator?: { populationSize?: any; initialDarkFrequency?: any; environmentColor?: any; generations?: any; interactive?: any };
 }
 
 export class A2UIManager {
@@ -304,6 +307,31 @@ export class A2UIManager {
         }
         return element;
       }
+        case 'CentralDogma': {
+          const element = document.createElement('central-dogma');
+          if (props.dnaSequence) (element as any).dnaSequence = this.resolveProperty(props.dnaSequence);
+          if (props.animationSpeed) (element as any).animationSpeed = this.resolveProperty(props.animationSpeed);
+          if (props.phase) (element as any).phase = this.resolveProperty(props.phase);
+          return element;
+        }
+        case 'MendelSimulator': {
+          const element = document.createElement('mendel-simulator');
+          if (props.parent1Genotype) (element as any).parent1Genotype = this.resolveProperty(props.parent1Genotype);
+          if (props.parent2Genotype) (element as any).parent2Genotype = this.resolveProperty(props.parent2Genotype);
+          if (props.traitType) (element as any).traitType = this.resolveProperty(props.traitType);
+          if (props.simulationCount) (element as any).simulationCount = this.resolveProperty(props.simulationCount);
+          if (props.interactive !== undefined) (element as any).interactive = this.resolveProperty(props.interactive);
+          return element;
+        }
+        case 'NaturalSelectionSimulator': {
+          const element = document.createElement('natural-selection-simulator');
+          if (props.populationSize) (element as any).populationSize = this.resolveProperty(props.populationSize);
+          if (props.initialDarkFrequency) (element as any).initialDarkFrequency = this.resolveProperty(props.initialDarkFrequency);
+          if (props.environmentColor) (element as any).environmentColor = this.resolveProperty(props.environmentColor);
+          if (props.generations) (element as any).generations = this.resolveProperty(props.generations);
+          if (props.interactive !== undefined) (element as any).interactive = this.resolveProperty(props.interactive);
+          return element;
+        }
         default:
           console.error('Unknown component:', componentName, 'Full component data:', componentData);
           const fallback = document.createElement('div');

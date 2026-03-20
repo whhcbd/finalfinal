@@ -4,9 +4,10 @@
 */
 
 import { Root } from '@a2ui/lit/ui';
-import { html, css } from 'lit';
+import { html, css, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import animationStyles from '../../styles/animations.css?inline';
 
 export interface BasePair {
   base1: string;
@@ -19,6 +20,7 @@ export class DNAStructure extends Root {
   private _sequence: string = '';
   private _showLabels: boolean = true;
   private _highlightRegions: Array<{ start: number; end: number; label: string }> = [];
+  private _interactive: boolean = true;
 
   @property({ type: String })
   get sequence(): string {
@@ -52,6 +54,19 @@ export class DNAStructure extends Root {
     this._highlightRegions = value;
     this.requestUpdate('highlightRegions', oldValue);
   }
+
+  @property({ type: Boolean })
+  get interactive(): boolean {
+    return this._interactive;
+  }
+  set interactive(value: any) {
+    const oldValue = this._interactive;
+    this._interactive = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('interactive', oldValue);
+  }
+
+  @property({ type: Object })
+  selectedBase: { base: string; index: number; pair: string } | null = null;
 
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
     // Handle null/undefined
@@ -99,6 +114,7 @@ export class DNAStructure extends Root {
 
   static styles = [
     ...Root.styles,
+    css`${unsafeCSS(animationStyles)}`,
     css`
     :host {
       display: block;
@@ -351,6 +367,93 @@ export class DNAStructure extends Root {
       color: #6b7280;
       font-style: italic;
     }
+
+    .base.selected {
+      border-width: 3px;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+      transform: scale(1.1);
+    }
+
+    .base.paired {
+      border-color: #10b981;
+      background: #d1fae5;
+    }
+
+    .hydrogen-bond {
+      position: absolute;
+      width: 1px;
+      background: #6b7280;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .base-pair.show-bonds .hydrogen-bond {
+      opacity: 1;
+    }
+
+    .base-detail-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      z-index: 1000;
+      min-width: 320px;
+      max-width: 500px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    }
+
+    .modal-header {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e5e7eb;
+    }
+
+    .modal-content {
+      font-size: 0.95rem;
+      color: #6b7280;
+      line-height: 1.6;
+    }
+
+    .modal-content strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #6b7280;
+      cursor: pointer;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: #111827;
+    }
   `];
 
   private getBasePairs(sequence: string): BasePair[] {
@@ -375,6 +478,7 @@ export class DNAStructure extends Root {
   }
 
   private isHighlighted(index: number, highlightRegions: any[]): boolean {
+    if (!Array.isArray(highlightRegions)) return false;
     return highlightRegions.some(region =>
       index >= region.start && index < region.end
     );
@@ -452,12 +556,14 @@ export class DNAStructure extends Root {
         <div class="dna-wrapper">
           <div class="strand left">
             ${map(basePairs, (pair, index) => html`
-              <div class="base-pair">
+              <div class="base-pair ${this.selectedBase?.index === index ? 'show-bonds' : ''}">
                 <div class="bond top"></div>
+                ${this.renderHydrogenBonds(pair.base1, index)}
                 <div
-                  class="base ${pair.base1} ${this.isHighlighted(index, highlightRegions) ? 'highlight' : ''}"
-                  @click=${() => this.handleBaseClick(pair.base1, index)}
+                  class="base ${pair.base1} ${this.isHighlighted(index, highlightRegions) ? 'highlight' : ''} ${this.selectedBase?.index === index ? 'selected' : ''} ${this.selectedBase?.index === index && this.selectedBase?.base === pair.base1 ? 'paired' : ''}"
+                  @click=${() => this.handleBaseClick(pair.base1, index, true)}
                   aria-label="${pair.base1}"
+                  tabindex="0"
                 >
                   ${pair.base1}
                 </div>
@@ -470,15 +576,17 @@ export class DNAStructure extends Root {
             ${map([...basePairs].reverse(), (pair, index) => {
               const originalIndex = basePairs.length - 1 - index;
               return html`
-              <div class="base-pair">
+              <div class="base-pair ${this.selectedBase?.index === originalIndex ? 'show-bonds' : ''}">
                 ${showLabels ? html`<div class="label">${originalIndex + 1}</div>` : ''}
                 <div
-                  class="base ${pair.base2} ${this.isHighlighted(originalIndex, highlightRegions) ? 'highlight' : ''}"
-                  @click=${() => this.handleBaseClick(pair.base2, originalIndex)}
+                  class="base ${pair.base2} ${this.isHighlighted(originalIndex, highlightRegions) ? 'highlight' : ''} ${this.selectedBase?.index === originalIndex ? 'selected' : ''} ${this.selectedBase?.index === originalIndex && this.selectedBase?.base === pair.base2 ? 'paired' : ''}"
+                  @click=${() => this.handleBaseClick(pair.base2, originalIndex, false)}
                   aria-label="${pair.base2}"
+                  tabindex="0"
                 >
                   ${pair.base2}
                 </div>
+                ${this.renderHydrogenBonds(pair.base2, originalIndex)}
                 <div class="bond bottom"></div>
               </div>
             `})}
@@ -512,31 +620,118 @@ export class DNAStructure extends Root {
             <div class="legend-title">碱基配对规则</div>
             <div class="legend-grid">
               ${map([
-                { base: 'A', label: '腺嘌呤', pair: 'T', pairLabel: '胸腺嘧啶' },
-                { base: 'T', label: '胸腺嘧啶', pair: 'A', pairLabel: '腺嘌呤' },
-                { base: 'C', label: '胞嘧啶', pair: 'G', pairLabel: '鸟嘌呤' },
-                { base: 'G', label: '鸟嘌呤', pair: 'C', pairLabel: '胞嘧啶' }
+                { base: 'A', label: '腺嘌呤', pair: 'T', pairLabel: '胸腺嘧啶', bonds: 2 },
+                { base: 'T', label: '胸腺嘧啶', pair: 'A', pairLabel: '腺嘌呤', bonds: 2 },
+                { base: 'C', label: '胞嘧啶', pair: 'G', pairLabel: '鸟嘌呤', bonds: 3 },
+                { base: 'G', label: '鸟嘌呤', pair: 'C', pairLabel: '胞嘧啶', bonds: 3 }
               ], (item) => html`
                 <div class="legend-item">
                   <div class="legend-base ${item.base}">${item.base}</div>
                   <div class="legend-text">
                     ${item.label}<br>
-                    <small>与 ${item.pairLabel} (${item.pair}) 配对</small>
+                    <small>与 ${item.pairLabel} (${item.pair}) 配对 - ${item.bonds}个氢键</small>
                   </div>
                 </div>
               `)}
             </div>
           </div>
         ` : ''}
+
+        ${this.selectedBase ? this.renderBaseDetailModal() : ''}
       </div>
     `;
   }
 
-  private handleBaseClick(base: string, index: number) {
-    this.dispatchEvent(new CustomEvent('base-click', {
-      detail: { base, index, pair: this.getComplementaryBase(base) },
+  private handleBaseClick(base: string, index: number, isTopStrand: boolean) {
+    if (!this._interactive) return;
+
+    const pair = this.getComplementaryBase(base);
+    this.selectedBase = { base, index, pair };
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
+      detail: {
+        component: 'dna_structure',
+        action: 'base_click',
+        data: {
+          base,
+          index,
+          pair,
+          isTopStrand
+        }
+      },
       bubbles: true,
       composed: true
     }));
+  }
+
+  private renderHydrogenBonds(base: string, index: number) {
+    if (!this.selectedBase || this.selectedBase.index !== index) {
+      return '';
+    }
+
+    const bondCount = (base === 'A' || base === 'T') ? 2 : 3;
+    const bonds = [];
+
+    for (let i = 0; i < bondCount; i++) {
+      bonds.push(html`
+        <div class="hydrogen-bond" style="
+          height: 20px;
+          top: ${10 + i * 8}px;
+        "></div>
+      `);
+    }
+
+    return bonds;
+  }
+
+  private renderBaseDetailModal() {
+    if (!this.selectedBase) return '';
+
+    const { base, pair } = this.selectedBase;
+    const bondCount = (base === 'A' || base === 'T') ? 2 : 3;
+    const baseName = this.getBaseName(base);
+    const pairName = this.getBaseName(pair);
+
+    return html`
+      <div class="modal-overlay" @click=${() => this.closeModal()}></div>
+      <div class="base-detail-modal">
+        <button class="modal-close" @click=${() => this.closeModal()}>×</button>
+        <div class="modal-header">碱基配对详情</div>
+        <div class="modal-content">
+          <p><strong>选中碱基：</strong>${baseName} (${base})</p>
+          <p><strong>配对碱基：</strong>${pairName} (${pair})</p>
+          <p><strong>氢键数量：</strong>${bondCount} 个</p>
+          <p><strong>配对规则：</strong></p>
+          <ul style="margin: 8px 0; padding-left: 20px;">
+            ${base === 'A' || base === 'T' ? html`
+              <li>腺嘌呤 (A) 与 胸腺嘧啶 (T) 通过 <strong>2个氢键</strong> 配对</li>
+              <li>嘌呤与嘧啶配对，保持DNA双螺旋结构稳定</li>
+            ` : html`
+              <li>鸟嘌呤 (G) 与 胞嘧啶 (C) 通过 <strong>3个氢键</strong> 配对</li>
+              <li>G-C 配对比 A-T 配对更稳定（氢键更多）</li>
+            `}
+          </ul>
+          <p style="margin-top: 12px; font-size: 0.9rem; color: #6b7280;">
+            💡 提示：碱基互补配对是DNA复制和遗传信息传递的基础
+          </p>
+        </div>
+      </div>
+    `;
+  }
+
+  private getBaseName(base: string): string {
+    const names: Record<string, string> = {
+      'A': '腺嘌呤',
+      'T': '胸腺嘧啶',
+      'C': '胞嘧啶',
+      'G': '鸟嘌呤'
+    };
+    return names[base.toUpperCase()] || base;
+  }
+
+  private closeModal() {
+    this.selectedBase = null;
+    this.requestUpdate();
   }
 }

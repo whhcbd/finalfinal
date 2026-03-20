@@ -12,9 +12,11 @@
     "@a2ui/lit": "file:../lit",
     "@a2ui/web_core": "file:../web_core",
     "@lit-labs/signals": "^0.2.0",
+    "chart.js": "^4.5.1",
     "katex": "^0.16.33",
     "lit": "^3.3.1",
-    "marked": "^17.0.3"
+    "marked": "^17.0.3",
+    "plotly.js-dist-min": "^3.4.0"
   },
   "devDependencies": {
     "@types/katex": "^0.16.8",

@@ -529,6 +529,9 @@ export class ChatModule extends LitElement {
       padding: 16px;
       margin-top: 12px;
       border: 1px solid #e0e0e0;
+      width: 100%;
+      box-sizing: border-box;
+      overflow-x: auto;
     }
 
     .a2ui-loading {
@@ -948,34 +951,46 @@ export class ChatModule extends LitElement {
 
       // 使用 ChatOrchestrator 通过 WebSocket 处理消息
       if (this.orchestrator) {
-        // 调用 orchestrator 获取响应数据
-        const response = await this.orchestrator.processMessage(userMessage);
-
-        // 更新消息内容（通过 Lit 的响应式系统）
-        assistantMessage.content = response.text;
-
-        // 如果有 A2UI 数据，标记为加载中
-        if (response.a2ui && response.a2ui.length > 0) {
-          assistantMessage.a2uiLoading = true;
-        }
+        // 调用 orchestrator 获取响应数据，onChunk 实时更新消息内容
+        // onA2UI 在后台 A2UI 生成完成后被调用
+        assistantMessage.a2uiLoading = true;
         this.requestUpdate();
 
-        // 等待 DOM 更新后再渲染 A2UI
-        await this.updateComplete;
-
-        // 如果有 A2UI 数据，渲染它
-        if (response.a2ui && response.a2ui.length > 0) {
-          const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${assistantMessage.id}"]`);
-          if (messageElement) {
-            const a2uiContainer = messageElement.querySelector('.a2ui-container');
-            if (a2uiContainer) {
-              this.orchestrator.renderA2UI(a2uiContainer as HTMLElement, response.a2ui);
-              assistantMessage.a2uiData = response.a2ui; // 保存 A2UI 数据
-              assistantMessage.a2uiRendered = true; // 标记为已渲染
-              assistantMessage.a2uiLoading = false; // 加载完成
+        const response = await this.orchestrator.processMessage(
+          userMessage,
+          (chunk: string) => {
+            assistantMessage.content += chunk;
+            this.requestUpdate();
+          },
+          async (a2uiData: any[]) => {
+            // A2UI 后台生成完成
+            if (a2uiData.length === 0) {
+              // 无 A2UI 内容，关闭 loading
+              assistantMessage.a2uiLoading = false;
+              this.requestUpdate();
+              return;
+            }
+            // 有 A2UI 内容，先确保容器存在再渲染
+            assistantMessage.a2uiData = a2uiData;
+            assistantMessage.a2uiLoading = false;
+            this.requestUpdate();
+            await this.updateComplete;
+            const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${assistantMessage.id}"]`);
+            if (messageElement) {
+              const a2uiContainer = messageElement.querySelector('.a2ui-container');
+              if (a2uiContainer) {
+                this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, a2uiData);
+                assistantMessage.a2uiRendered = true;
+                this.saveConversations();
+                this.requestUpdate();
+              }
             }
           }
-        }
+        );
+
+        // 以后端清理后的完整文本为准
+        assistantMessage.content = response.text;
+        // a2uiLoading 由 onA2UI 回调或 a2ui_complete（无内容时）负责关闭
       }
 
       assistantMessage.isStreaming = false;

@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import TypedDict, Optional
 import json
 import logging
 import re
@@ -37,7 +37,8 @@ class IntentService:
 - "杂交会产生"、"后代基因型"、"配子组合"、"棋盘"、"双因子杂交"、"单因子杂交"
 - "分析...杂交实验"、"用孟德尔方格图"、"用旁氏图"、"展示后代"
 - "画一个"、"展示"、"可视化"（需结合上下文判断）
-- 注意：如果问的是"比例"、"分布"、"F2代表型"但没有提到具体基因型，应该是phenotype_distribution
+- 注意：如果问的是"比例"、"分布"、"F2代表型"但没有提到具体基因型，必须是phenotype_distribution，不能是punnett_square
+- 注意：如果用户问的是"表型分布"、"后代比例"、"表现型比例"，即使提到了"杂交"，也应该是phenotype_distribution
 - 注意：如果明确提到"孟德尔方格图"、"旁氏图"、"Punnett Square"，必须是punnett_square
 
 **dna_structure**：当用户提到以下词汇时
@@ -50,6 +51,8 @@ class IntentService:
 - "显性和隐性的比例"、"表型分布"、"群体中"
 - F2代、F1代、后代比例、紫色花、白色花、3:1、9:3:3:1
 - "比例是多少"、"分布情况"、"表型统计"
+- "豌豆杂交实验后代的表型分布"、"杂交后代的表型比例"、"展示...比例"
+- 重要：只要用户问的核心是"表型比例"或"表型分布"，即使句子中包含"杂交"，也应该是phenotype_distribution
 
 **gene_expression**：当用户提到以下词汇时
 - 基因表达、转录、翻译、RNA、蛋白质、调控、启动子
@@ -66,6 +69,19 @@ class IntentService:
 - "交叉互换位置"、"基因位置"、"染色体位置"、"交叉发生"
 - "基因A和基因B"、"两个基因"、"基因间"
 - 注意：只要提到"交叉"+"基因"或"交叉"+"染色体"，就应该是 cross_over_map
+
+**mendel_simulator**：当用户提到以下词汇时
+- 孟德尔模拟器、孟德尔实验、模拟受精、验证孟德尔定律、随机受精
+- "模拟...杂交"、"验证...比例"、"卡方检验"、"统计验证"
+- "模拟 Aa × Aa"、"模拟 AaBb × AaBb"、"模拟...次"
+- "看看是不是 3:1"、"看看是不是 9:3:3:1"
+- 注意：如果明确提到"模拟"+"杂交"或"验证"+"比例"或"随机受精"，应该是 mendel_simulator 而不是 punnett_square
+
+**natural_selection_simulator**：当用户提到以下词汇时
+- 自然选择、种群演化、基因频率、选择压力、适应度、捕食者
+- "模拟自然选择"、"种群演化"、"基因频率变化"、"环境选择"
+- 哈迪-温伯格平衡、种群遗传、深色浅色、环境背景
+- "初始种群"、"世代演化"、"适应度变化"
 
 **quiz**：当用户提到以下词汇时
 - 测验、考试、测试、考题、题目
@@ -95,7 +111,7 @@ class IntentService:
 ## RESPONSE FORMAT
 返回严格的 JSON 格式：
 {
-  "intent": "<punnett_square|dna_structure|phenotype_distribution|gene_expression|pedigree_chart|cross_over_map|quiz|video|general|greeting>",
+  "intent": "<punnett_square|dna_structure|phenotype_distribution|gene_expression|pedigree_chart|cross_over_map|mendel_simulator|natural_selection_simulator|quiz|video|general|greeting>",
   "keywords": "<逗号分隔的英文关键词，至少一个>"
 }
 
@@ -123,6 +139,15 @@ class IntentService:
 
 用户: "基因A和基因B的交叉互换位置在哪里"
 输出: {"intent": "cross_over_map", "keywords": "gene, crossover, linkage, chromosome, position"}
+
+用户: "用孟德尔模拟器验证 Aa × Aa 的分离比例"
+输出: {"intent": "mendel_simulator", "keywords": "Mendel, simulation, cross, ratio, verification"}
+
+用户: "模拟 AaBb × AaBb 的自由组合，看看是不是 9:3:3:1"
+输出: {"intent": "mendel_simulator", "keywords": "simulation, dihybrid cross, ratio, Mendel, independent assortment"}
+
+用户: "模拟自然选择，初始种群 100 个体，50% 深色 50% 浅色"
+输出: {"intent": "natural_selection_simulator", "keywords": "natural selection, population, evolution, gene frequency, adaptation"}
 
 用户: "测试我对孟德尔遗传定律的理解"
 输出: {"intent": "quiz", "keywords": "Mendel, genetics, inheritance, dominant, recessive"}
@@ -208,6 +233,35 @@ class IntentService:
         logger.info(f"Rule-based keyword extraction: {keywords_str}")
         return keywords_str
 
+    def _rule_based_intent(self, user_message: str) -> Optional[str]:
+        """用规则快速判断意图，无法确定时返回 None（交给 LLM）"""
+        msg = user_message.strip()
+
+        # 问候
+        if re.match(r'^(你好|嗨|hi|hello|早上好|晚上好|早|晚安)[！!。.,，?？\s]*$', msg, re.IGNORECASE):
+            return 'greeting'
+
+        # 关键词规则（越具体越靠前）
+        rules = [
+            ('central_dogma',               r'^中心法则|展示中心法则|演示中心法则|DNA复制|DNA.{0,3}复制|转录.{0,3}翻译|mRNA翻译|蛋白质合成|核糖体.{0,5}翻译|解旋|RNA聚合酶|中心法则演示|展示DNA复制|展示转录|展示翻译|DNA转录|mRNA翻译|遗传信息|基因转录|蛋白质合成过程|转录翻译$'),
+            ('mendel_simulator',             r'模拟.{0,10}(杂交|受精)|验证.{0,10}(比例|定律)|随机受精|卡方检验|孟德尔模拟'),
+            ('natural_selection_simulator',  r'自然选择|种群演化|基因频率|选择压力|适应度|捕食者|哈迪.?温伯格'),
+            ('punnett_square',               r'孟德尔方格图|旁氏图|[Pp]unnett|[a-Za-z]{2}[×x\t][a-Za-z]{2}|杂交.{0,15}(后代|基因型)|测交|自交|配子'),
+            ('dna_structure',                r'^DNA.{0,5}(结构|双螺旋)|双螺旋|碱基配对|核苷酸|脱氧核糖|DNA序列|碱基序列$'),
+            ('cross_over_map',               r'交叉互换|基因连锁|重组频率|染色体交换|连锁.{0,10}基因'),
+            ('pedigree_chart',               r'家系图|系谱图|家系图|遗传病.{0,10}(世代|家族)|X连锁|常染色体.{0,5}(显|隐)性'),
+            ('gene_expression',              r'基因表达|转录.{0,5}翻译|mRNA|tRNA|rRNA|启动子|调控.{0,5}基因'),
+            ('phenotype_distribution',       r'表型.{0,10}(分布|比例)|表现型.{0,10}(分布|比例)|f[12]代.{0,10}(比例|分布)|9.?3.?3.?1|显性.{0,5}隐性.{0,5}比例'),
+            ('quiz',                         r'测验|测试.{0,5}(知识|理解)|出题|生成题目|考题'),
+            ('video',                        r'看视频|视频讲解|演示视频|视频.{0,5}了解'),
+        ]
+
+        for intent, pattern in rules:
+            if re.search(pattern, msg, re.IGNORECASE | re.UNICODE):
+                return intent
+
+        return None  # 无法确定，交给 LLM
+
     async def identify_intent(self, user_message: str, conversation_history: list = None) -> IntentResult:
         """Identify user intent and extract keywords
 
@@ -215,6 +269,14 @@ class IntentService:
             user_message: 当前用户消息
             conversation_history: 对话历史，格式为 [{"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]
         """
+        # 先用规则快速判断，明确命中则直接返回，省掉一次 LLM 调用
+        rule_intent = self._rule_based_intent(user_message)
+        if rule_intent is not None:
+            keywords = self._extract_keywords_fallback(user_message)
+            logger.info(f"[规则匹配] intent={rule_intent}, keywords={keywords}")
+            return IntentResult(intent=rule_intent, keywords=keywords)
+
+        logger.info("规则未命中，调用 LLM 识别意图")
         messages = [
             {"role": "system", "content": self.system_prompt}
         ]

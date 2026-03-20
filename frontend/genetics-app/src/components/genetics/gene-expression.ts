@@ -4,9 +4,10 @@
 */
 
 import { Root } from '@a2ui/lit/ui';
-import { html, css } from 'lit';
+import { html, css, unsafeCSS } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
+import animationStyles from '../../styles/animations.css?inline';
 
 export interface GeneData {
   gene: string;
@@ -23,6 +24,7 @@ export class GeneExpression extends Root {
   private _genes: GeneData[] = [];
   private _expressionLevels: number[][] = [];
   private _conditions: Condition[] = [];
+  private _interactive: boolean = true;
 
   @property({ type: Array })
   get genes(): GeneData[] {
@@ -56,6 +58,25 @@ export class GeneExpression extends Root {
     this._conditions = value;
     this.requestUpdate('conditions', oldValue);
   }
+
+  @property({ type: Boolean })
+  get interactive(): boolean {
+    return this._interactive;
+  }
+  set interactive(value: any) {
+    const oldValue = this._interactive;
+    this._interactive = this.unwrapValue(value, 'boolean');
+    this.requestUpdate('interactive', oldValue);
+  }
+
+  @property({ type: Object })
+  selectedGene: { gene: string; conditionIndex: number } | null = null;
+
+  @property({ type: Boolean })
+  lacOperonMode: boolean = false;
+
+  @property({ type: Boolean })
+  lactosePresent: boolean = false;
 
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'number' | 'array'): any {
     if (value === null || value === undefined) {
@@ -152,6 +173,7 @@ export class GeneExpression extends Root {
 
   static styles = [
     ...Root.styles,
+    css`${unsafeCSS(animationStyles)}`,
     css`
     :host {
       display: block;
@@ -370,13 +392,203 @@ export class GeneExpression extends Root {
       color: #6b7280;
       font-style: italic;
     }
+
+    .interactive-controls {
+      margin-top: 16px;
+      padding: 16px;
+      background: #fafafa;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .control-section {
+      margin-bottom: 16px;
+    }
+
+    .control-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #111827;
+      margin-bottom: 12px;
+    }
+
+    .slider-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .slider-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .slider-label {
+      min-width: 80px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #111827;
+    }
+
+    .slider-input {
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #e5e7eb;
+      outline: none;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    .slider-input::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #111827;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .slider-input::-webkit-slider-thumb:hover {
+      transform: scale(1.2);
+      background: #3b82f6;
+    }
+
+    .slider-input::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #111827;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+    }
+
+    .slider-input::-moz-range-thumb:hover {
+      transform: scale(1.2);
+      background: #3b82f6;
+    }
+
+    .slider-value {
+      min-width: 50px;
+      text-align: right;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .lac-operon-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .toggle-label {
+      flex: 1;
+      font-size: 0.9rem;
+      color: #111827;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 24px;
+      background: #e5e7eb;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .toggle-switch.active {
+      background: #10b981;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: #ffffff;
+      border-radius: 50%;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .toggle-switch.active .toggle-slider {
+      transform: translateX(24px);
+    }
+
+    .operon-info {
+      padding: 12px;
+      background: #ffffff;
+      border-radius: 6px;
+      border: 1px solid #e5e7eb;
+      font-size: 0.85rem;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    .bar.animating {
+      transition: height 0.5s ease-out, background-color 0.5s ease-out;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+      }
+      50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+      }
+    }
+
+    .bar.selected {
+      animation: pulse 1.5s infinite;
+      border: 2px solid #3b82f6;
+    }
   `];
 
   private chartType: 'bar' | 'line' = 'bar';
 
+  private getNormalizedGenes(): GeneData[] {
+    const rawGenes = this.unwrapValue(this._genes, 'array');
+    const rawExpressionLevels = this.unwrapValue(this._expressionLevels, 'array');
+    return rawGenes.map((g: any, i: number) => {
+      if (typeof g === 'string') {
+        return { gene: g, expressionLevels: rawExpressionLevels[i] ?? [] };
+      }
+      if (g && typeof g === 'object') {
+        const levels = g.expressionLevels ?? rawExpressionLevels[i] ?? [];
+        return { gene: g.gene ?? g.name ?? String(g), expressionLevels: Array.isArray(levels) ? levels : [] };
+      }
+      return { gene: String(g), expressionLevels: rawExpressionLevels[i] ?? [] };
+    });
+  }
+
   override render() {
     // Unwrap values at render time (when dataModel is ready)
-    const genes = this.unwrapValue(this._genes, 'array');
+    const genes = this.getNormalizedGenes();
     const conditions = this.unwrapValue(this._conditions, 'array');
 
     if (genes.length === 0) {
@@ -386,6 +598,8 @@ export class GeneExpression extends Root {
     return html`
       <div class="container">
         <div class="title">基因表达水平</div>
+
+        ${this._interactive ? this.renderInteractiveControls(genes, conditions) : ''}
 
         <div class="chart-container">
           <div class="chart-type-selector">
@@ -453,7 +667,7 @@ export class GeneExpression extends Root {
               ${map(gene.expressionLevels, (level, levelIndex) => html`
                 <div class="bar-wrapper">
                   <div
-                    class="bar"
+                    class="bar ${this._interactive && this.selectedGene?.gene === gene.gene && this.selectedGene?.conditionIndex === levelIndex ? 'selected' : ''} ${this._interactive ? 'animating' : ''}"
                     style="height: ${this.getBarHeight(level, genes)}%; background-color: ${this.getConditionColor(levelIndex, conditions)};"
                     @click=${() => this.handleBarClick(gene, levelIndex, level, conditions)}
                     aria-label="${gene.gene} - ${conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}: ${level}"
@@ -497,8 +711,7 @@ export class GeneExpression extends Root {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Unwrap values for drawing
-    const genes = this.unwrapValue(this._genes, 'array');
+    const genes = this.getNormalizedGenes();
     const conditions = this.unwrapValue(this._conditions, 'array');
 
     const rect = canvas.getBoundingClientRect();
@@ -564,14 +777,202 @@ export class GeneExpression extends Root {
   }
 
   private handleBarClick(gene: GeneData, conditionIndex: number, level: number, conditions: Condition[]) {
-    this.dispatchEvent(new CustomEvent('bar-click', {
+    if (!this._interactive) return;
+
+    this.selectedGene = { gene: gene.gene, conditionIndex };
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
       detail: {
-        gene: gene.gene,
-        condition: conditions[conditionIndex]?.name,
-        level
+        component: 'gene_expression',
+        action: 'bar_click',
+        data: {
+          gene: gene.gene,
+          condition: conditions[conditionIndex]?.name,
+          level
+        }
       },
       bubbles: true,
       composed: true
     }));
+  }
+
+  private renderInteractiveControls(genes: GeneData[], conditions: Condition[]) {
+    return html`
+      <div class="interactive-controls">
+        <div class="control-section">
+          <div class="control-title">调节基因表达水平</div>
+          <div class="slider-group">
+            ${map(genes, (gene, geneIndex) => html`
+              ${map(conditions, (condition, conditionIndex) => html`
+                <div class="slider-item">
+                  <span class="slider-label">${gene.gene} - ${condition.name}</span>
+                  <input
+                    type="range"
+                    class="slider-input"
+                    min="0"
+                    max="100"
+                    .value=${gene.expressionLevels[conditionIndex]?.toString() || '0'}
+                    @input=${(e: Event) => this.handleSliderChange(geneIndex, conditionIndex, (e.target as HTMLInputElement).value)}
+                    aria-label="调节 ${gene.gene} 在 ${condition.name} 条件下的表达水平"
+                  />
+                  <span class="slider-value">${gene.expressionLevels[conditionIndex] || 0}%</span>
+                </div>
+              `)}
+            `)}
+          </div>
+        </div>
+
+        <div class="control-section">
+          <div class="control-title">lac 操纵子模拟</div>
+          <div class="lac-operon-controls">
+            <div class="toggle-group">
+              <span class="toggle-label">启用 lac 操纵子模式</span>
+              <div
+                class="toggle-switch ${this.lacOperonMode ? 'active' : ''}"
+                @click=${() => this.toggleLacOperonMode()}
+                role="switch"
+                aria-checked=${this.lacOperonMode}
+                tabindex="0"
+              >
+                <div class="toggle-slider"></div>
+              </div>
+            </div>
+
+            ${this.lacOperonMode ? html`
+              <div class="toggle-group">
+                <span class="toggle-label">乳糖存在</span>
+                <div
+                  class="toggle-switch ${this.lactosePresent ? 'active' : ''}"
+                  @click=${() => this.toggleLactose()}
+                  role="switch"
+                  aria-checked=${this.lactosePresent}
+                  tabindex="0"
+                >
+                  <div class="toggle-slider"></div>
+                </div>
+              </div>
+
+              <div class="operon-info">
+                ${this.lactosePresent
+                  ? '✓ 乳糖存在：lac 操纵子开启，lacZ、lacY、lacA 基因高表达（>80%），编码分解乳糖的酶'
+                  : '✗ 无乳糖：lac 操纵子关闭，阻遏蛋白结合操纵子，基因表达受抑制（<10%）'
+                }
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  private handleSliderChange(geneIndex: number, conditionIndex: number, value: string) {
+    if (!this._interactive) return;
+
+    const newValue = parseInt(value, 10);
+    const genes = this.getNormalizedGenes();
+
+    if (genes[geneIndex]) {
+      const oldValue = genes[geneIndex].expressionLevels[conditionIndex];
+      genes[geneIndex].expressionLevels[conditionIndex] = newValue;
+
+      this._genes = [...genes];
+      this.requestUpdate();
+
+      this.animateBarChange(geneIndex, conditionIndex, oldValue, newValue);
+
+      this.dispatchEvent(new CustomEvent('a2ui-action', {
+        detail: {
+          component: 'gene_expression',
+          action: 'slider_change',
+          data: {
+            gene: genes[geneIndex].gene,
+            conditionIndex,
+            value: newValue
+          }
+        },
+        bubbles: true,
+        composed: true
+      }));
+    }
+  }
+
+  private animateBarChange(geneIndex: number, conditionIndex: number, oldValue: number, newValue: number) {
+    const bar = this.shadowRoot?.querySelector(
+      `.gene-row:nth-child(${geneIndex + 1}) .bar-wrapper:nth-child(${conditionIndex + 1}) .bar`
+    ) as HTMLElement;
+
+    if (bar) {
+      bar.classList.add('animating');
+      setTimeout(() => {
+        bar.classList.remove('animating');
+      }, 500);
+    }
+  }
+
+  private toggleLacOperonMode() {
+    if (!this._interactive) return;
+
+    this.lacOperonMode = !this.lacOperonMode;
+
+    if (this.lacOperonMode) {
+      this.lactosePresent = false;
+      this.applyLacOperonEffect();
+    }
+
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
+      detail: {
+        component: 'gene_expression',
+        action: 'toggle_lac_operon',
+        data: {
+          enabled: this.lacOperonMode
+        }
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private toggleLactose() {
+    if (!this._interactive || !this.lacOperonMode) return;
+
+    this.lactosePresent = !this.lactosePresent;
+    this.applyLacOperonEffect();
+    this.requestUpdate();
+
+    this.dispatchEvent(new CustomEvent('a2ui-action', {
+      detail: {
+        component: 'gene_expression',
+        action: 'toggle_lactose',
+        data: {
+          present: this.lactosePresent
+        }
+      },
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  private applyLacOperonEffect() {
+    const genes = this.getNormalizedGenes();
+    const lacGenes = ['lacZ', 'lacY', 'lacA'];
+
+    genes.forEach((gene, geneIndex) => {
+      if (lacGenes.includes(gene.gene)) {
+        gene.expressionLevels = gene.expressionLevels.map((level, conditionIndex) => {
+          const targetValue = this.lactosePresent ? 85 + Math.random() * 10 : 5 + Math.random() * 5;
+
+          setTimeout(() => {
+            this.animateBarChange(geneIndex, conditionIndex, level, Math.round(targetValue));
+          }, conditionIndex * 100);
+
+          return Math.round(targetValue);
+        });
+      }
+    });
+
+    this._genes = [...genes];
   }
 }

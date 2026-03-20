@@ -9,8 +9,12 @@ import { PhenotypeDistribution } from './components/genetics/phenotype-distribut
 import { GeneExpression } from './components/genetics/gene-expression';
 import { PedigreeChart } from './components/genetics/pedigree-chart';
 import { CrossOverMap } from './components/genetics/crossover-map';
+import { MendelSimulator } from './components/genetics/mendel-simulator';
+import { NaturalSelectionSimulator } from './components/genetics/natural-selection-simulator';
 import { Flashcard } from './components/genetics/flashcard';
+import { CentralDogma } from './components/genetics/central-dogma';
 import { A2UIManager, A2UIManagerComponent } from './a2ui-manager';
+import { A2UIThemeProvider } from './theme-provider';
 import { HomePage } from './home-page';
 import { ChatModule } from './chat-module';
 import { QuizModule } from './quiz-module';
@@ -91,10 +95,45 @@ registry.register('CrossOverMap', CrossOverMap as any, 'crossover-map', {
   required: ["genes"]
 });
 
+registry.register('MendelSimulator', MendelSimulator as any, 'mendel-simulator', {
+  type: "object",
+  properties: {
+    parent1Genotype: { type: "string" },
+    parent2Genotype: { type: "string" },
+    traitType: { type: "string" },
+    simulationCount: { type: "number" },
+    interactive: { type: "boolean" }
+  },
+  required: []
+});
+
+registry.register('NaturalSelectionSimulator', NaturalSelectionSimulator as any, 'natural-selection-simulator', {
+  type: "object",
+  properties: {
+    populationSize: { type: "number" },
+    initialFreqA: { type: "number" },
+    environmentType: { type: "string" },
+    selectionStrength: { type: "number" },
+    interactive: { type: "boolean" }
+  },
+  required: []
+});
+
 registry.register('Flashcard', Flashcard as any, 'genetics-flashcard');
+
+registry.register('CentralDogma', CentralDogma as any, 'central-dogma', {
+  type: "object",
+  properties: {
+    dnaSequence: { type: "string" },
+    animationSpeed: { type: "number" },
+    phase: { type: "string" }
+  },
+  required: []
+});
 
 // 注册其他应用组件（非 A2UI 组件）
 defineCustomElement('a2ui-manager-component', A2UIManagerComponent);
+defineCustomElement('a2ui-theme-provider', A2UIThemeProvider);
 defineCustomElement('home-page', HomePage);
 defineCustomElement('chat-module', ChatModule);
 defineCustomElement('quiz-module', QuizModule);
@@ -108,9 +147,13 @@ export {
   GeneExpression,
   PedigreeChart,
   CrossOverMap,
+  MendelSimulator,
+  NaturalSelectionSimulator,
   Flashcard,
+  CentralDogma,
   A2UIManager,
   A2UIManagerComponent,
+  A2UIThemeProvider,
   HomePage,
   ChatModule,
   QuizModule,
