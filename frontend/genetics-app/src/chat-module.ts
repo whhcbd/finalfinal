@@ -963,23 +963,28 @@ export class ChatModule extends LitElement {
             this.requestUpdate();
           },
           async (a2uiData: any[]) => {
-            // A2UI 后台生成完成
             if (a2uiData.length === 0) {
-              // 无 A2UI 内容，关闭 loading
               assistantMessage.a2uiLoading = false;
               this.requestUpdate();
               return;
             }
-            // 有 A2UI 内容，先确保容器存在再渲染
+
             assistantMessage.a2uiData = a2uiData;
             assistantMessage.a2uiLoading = false;
             this.requestUpdate();
             await this.updateComplete;
+
             const messageElement = this.shadowRoot?.querySelector(`.message[data-id="${assistantMessage.id}"]`);
             if (messageElement) {
               const a2uiContainer = messageElement.querySelector('.a2ui-container');
               if (a2uiContainer) {
-                this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, a2uiData);
+                const bypassComponents = this.checkBypassComponents(a2uiData);
+                if (bypassComponents.length > 0) {
+                  console.log('[ChatModule] Bypass rendering components:', bypassComponents.map(c => c.type).join(', '));
+                  this.renderBypassComponents(a2uiContainer as HTMLElement, a2uiData, bypassComponents);
+                } else {
+                  this.orchestrator!.renderA2UI(a2uiContainer as HTMLElement, a2uiData);
+                }
                 assistantMessage.a2uiRendered = true;
                 this.saveConversations();
                 this.requestUpdate();
@@ -1279,10 +1284,57 @@ export class ChatModule extends LitElement {
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
+    
     if (minutes < 1) return '刚刚';
     if (minutes < 60) return `${minutes} 分钟前`;
     if (hours < 24) return `${hours} 小时前`;
     if (days < 7) return `${days} 天前`;
     return date.toLocaleDateString();
+  }
+
+  private checkBypassComponents(a2uiData: any[]): any[] {
+    const bypassTypes = ['CentralDogma', 'MendelSimulator', 'NaturalSelectionSimulator'];
+    const found: any[] = [];
+    
+    for (const msg of a2uiData) {
+      if (msg.surfaceUpdate?.componentTree?.type === 'Column' || 
+          msg.surfaceUpdate?.componentTree?.type === 'Row') {
+        const children = msg.surfaceUpdate.componentTree.properties?.children || [];
+        for (const child of children) {
+          if (bypassTypes.includes(child.type)) {
+            found.push(child);
+          }
+        }
+      }
+    }
+    
+    return found;
+  }
+  private renderBypassComponents(container: HTMLElement, a2uiData: any[], components: any[]): void {
+    container.innerHTML = '';
+    
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'width: 100%; padding: 16px;';
+    
+    for (const comp of components) {
+      try {
+        const element = document.createElement('central-dogma') as any;
+        if (comp.properties?.dnaSequence) {
+          element.dnaSequence = comp.properties.dnaSequence;
+        }
+        if (comp.properties?.animationSpeed) {
+          element.animationSpeed = comp.properties.animationSpeed;
+        }
+        if (comp.properties?.phase) {
+          element.phase = comp.properties.phase;
+        }
+        wrapper.appendChild(element);
+        console.log('[ChatModule] Created central-dogma element with props:', comp.properties);
+      } catch (error) {
+        console.error('[ChatModule] Error creating bypass component:', error);
+      }
+    }
+    
+    container.appendChild(wrapper);
   }
 }

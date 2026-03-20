@@ -7697,3 +7697,49 @@ X连...
 2026-03-21 00:32:24,168 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
 2026-03-21 00:32:24,168 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
 2026-03-21 00:32:24,278 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 00:32:48,869 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 00:32:48,885 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 00:32:49,128 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 00:32:49,128 - backend.main - INFO - GLM Service initialized
+2026-03-21 00:32:49,128 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 00:32:49,128 - backend.main - INFO - Intent Service initialized
+2026-03-21 00:32:49,128 - backend.main - INFO - Context Service initialized
+2026-03-21 00:32:49,128 - backend.main - INFO - Data Model Service initialized
+2026-03-21 00:32:49,128 - backend.main - INFO - Action Handler initialized
+2026-03-21 00:32:49,128 - backend.main - INFO - Core services initialized successfully
+2026-03-21 00:32:49,398 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:33:21,085 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:33:21,086 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:33:21,937 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:33:26,592 - backend.main - INFO - 收到 WebSocket 消息: session_id=83e6a331-7f3b-4142-a506-1ff26de44240, type=chat
+2026-03-21 00:33:26,592 - backend.main - INFO - 处理聊天消息: message=展示中心法则..., use_ui=True
+2026-03-21 00:33:26,594 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 展示中心法则
+2026-03-21 00:33:26,594 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 00:33:26,594 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 00:33:26,594 - services.rag_service - INFO - Initializing RAG service with knowledge base: C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+2026-03-21 00:33:26,601 - services.rag_service - INFO - Found 479 chapters
+2026-03-21 00:33:26,603 - services.rag_service - INFO - Generated 3412 text chunks
+2026-03-21 00:33:26,603 - services.embedding_service - INFO - Loading embedding model: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 00:33:26,603 - services.embedding_service - INFO - Using cache directory: C:\trae_coding\A2UI-main\my-a2ui-project\backend\.cache\huggingface
+2026-03-21 00:33:26,605 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-21 00:33:26,605 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 00:33:28,473 - services.embedding_service - INFO - Embedding model loaded successfully
+2026-03-21 00:33:49,890 - services.rag_service - INFO - Added 3412 documents to vector store
+2026-03-21 00:33:49,890 - services.rag_service - INFO - RAG service initialized successfully
+2026-03-21 00:33:49,904 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 00:33:50,917 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 00:33:59,925 - backend.main - INFO - LLM 文本响应: 中心法则，也称为遗传信息传递的基本法则，是生物学中描述遗传信息从DNA到RNA再到蛋白质的基本过程的基本原理。这一法则最早由弗朗西斯·克里克和詹姆斯·沃森在1950年代提出，并在分子生物学的发展中起到了关键作用。
+
+中心法则主要包括以下几个步骤：首先，DNA通过转录过程被复制成RNA。这个过程涉及DNA双链的解旋，然后以一条链为模板合成互补的RNA链。这个过程称为转录，生成的RNA称为信使RNA（...
+2026-03-21 00:33:59,926 - backend.main - INFO - 发送完成信号
+2026-03-21 00:33:59,926 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 00:33:59,927 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 00:33:59,927 - services.context_service - INFO - 设置数据模型: session=83e6a331-7f3b-4142-a506-1ff26de44240, surface=genetics_ui, keys=[]
+2026-03-21 00:33:59,927 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 00:34:06,499 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 00:34:06,500 - backend.main - INFO - LLM A2UI 响应长度: 1533, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"central_dogma_display"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"central_dogma_display","component":{"Column":{"children":{"explicitList":["title_text","dna_structure","divider_1","info_text_1","divider_2","info_text_2","'
+2026-03-21 00:34:06,500 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 00:34:06,501 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 00:34:06,501 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 00:34:06,502 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 00:34:06,502 - backend.main - INFO - [后台] A2UI 发送完成
