@@ -7743,3 +7743,12 @@ X连...
 2026-03-21 00:34:06,501 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
 2026-03-21 00:34:06,502 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
 2026-03-21 00:34:06,502 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 00:46:53,120 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:46:53,121 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:46:54,108 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:47:41,086 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:47:41,087 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:47:42,103 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:48:37,079 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:48:37,079 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:48:38,083 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
