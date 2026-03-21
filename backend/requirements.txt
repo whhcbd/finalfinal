@@ -1,0 +1,13 @@
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv==1.0.0
+python-multipart==0.0.6
+httpx
+numpy
+sentence-transformers
+faiss-cpu
+jsonschema
+a2a-sdk
+google-adk
+google-genai

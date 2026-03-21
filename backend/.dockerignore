@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+.git/
+.gitignore
+*.log
+.env
+.env.*
+.vscode/
+.idea/
+logs/
+*.md
+Dockerfile
+.dockerignore
+main.py.backup

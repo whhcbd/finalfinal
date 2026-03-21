@@ -1,0 +1,17 @@
+node_modules/
+dist/
+build/
+.git/
+.gitignore
+*.log
+.env
+.env.*
+.vscode/
+.idea/
+*.md
+Dockerfile
+.dockerignore
+test-*.html
+check-*.html
+debug-*.html
+.wireit/

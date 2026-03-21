@@ -2,10 +2,9 @@
 # Python 3.10+
 
 # Core A2UI and Agent Dependencies
-a2a-sdk>=0.3.24
-a2ui-agent>=0.1.0
-google-adk>=1.26.0
-google-genai>=1.65.0
+a2a-sdk>=0.3.0
+google-adk>=1.8.0
+google-genai>=1.27.0
 
 # Web Framework
 fastapi>=0.135.0

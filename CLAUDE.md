@@ -72,8 +72,8 @@ scripts\restart-frontend.bat   # Kill and restart frontend
           "id": "main_component",
           "component": {
             "PunnettSquare": {
-              "parent1Genotype": {"literalString": "Aa"},
-              "parent2Genotype": {"path": "/parent2"}
+              "parent1Genotype": { "literalString": "Aa" },
+              "parent2Genotype": { "path": "/parent2" }
             }
           }
         }
@@ -83,15 +83,14 @@ scripts\restart-frontend.bat   # Kill and restart frontend
   {
     "dataModelUpdate": {
       "surfaceId": "genetics_ui",
-      "contents": [
-        {"key": "parent2", "valueString": "aa"}
-      ]
+      "contents": [{ "key": "parent2", "valueString": "aa" }]
     }
   }
 ]
 ```
 
 **Key differences from v0.9**:
+
 - Use `beginRendering` (NOT `createSurface`)
 - Must specify `root` field pointing to root component ID
 - Data binding uses `{"literalString": "value"}` or `{"path": "/key"}`
@@ -109,6 +108,7 @@ User message → IntentService.identify_intent()
 ```
 
 **Critical files**:
+
 - `backend/services/a2ui_service.py`: System prompt generation, schema validation
 - `backend/services/intent_service.py`: 10 intent types with context awareness
 - `backend/main.py`: `generate_local_a2ui_with_binding()` fallback generator
@@ -132,7 +132,12 @@ const surfaces = processor.getSurfaces();
 All 6 custom genetics components must be registered with A2UI registry before rendering:
 
 ```typescript
-registry.register('PunnettSquare', PunnettSquare as any, 'punnett-square', schema);
+registry.register(
+  "PunnettSquare",
+  PunnettSquare as any,
+  "punnett-square",
+  schema,
+);
 ```
 
 ### 4. Custom Genetics Components
@@ -157,6 +162,7 @@ private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object')
 ```
 
 **6 Components**:
+
 1. `punnett-square.ts` - Mendelian crosses (Aa × aa)
 2. `dna-structure.ts` - DNA double helix visualization
 3. `phenotype-distribution.ts` - Bar chart for phenotype ratios
@@ -168,9 +174,10 @@ private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object')
 
 **Location**: `backend/services/intent_service.py`
 
-**10 Intent Types**:
-- **Genetics components (6)**: punnett_square, dna_structure, phenotype_distribution, gene_expression, pedigree_chart, cross_over_map
-- **Other (4)**: quiz, video, general, greeting
+**12 Intent Types**:
+
+- **Genetics components (9)**: punnett_square, dna_structure, phenotype_distribution, gene_expression, pedigree_chart, cross_over_map, central_dogma, mendel_simulator, natural_selection_simulator
+- **Other (3)**: quiz, video, general/greeting
 
 **Context-aware recognition**: The system analyzes conversation history to resolve ambiguous requests like "画一个" (draw one) or "展示一下" (show it) by referencing previous messages.
 
@@ -217,7 +224,7 @@ GLM_API_KEY=your_api_key_here
 GLM_MODEL=glm-4.7
 
 # RAG Service (local model)
-KNOWLEDGE_BASE_PATH=C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+KNOWLEDGE_BASE_PATH=C:\trae_coding\A2UI-main\my-a2ui-project\docs\guides\full.md
 
 # Hugging Face (MUST use local cache)
 EMBEDDING_MODEL_NAME=paraphrase-multilingual-MiniLM-L12-v2
@@ -233,25 +240,15 @@ HF_CACHE_DIR=C:\trae_coding\A2UI-main\my-a2ui-project\.cache\huggingface
 **Cause**: Backend using v0.9 format instead of v0.8
 
 **Fix**: In `backend/main.py` function `generate_local_a2ui_with_binding()`, ensure all fallback responses use:
+
 ```python
 {"beginRendering": {"surfaceId": "genetics_ui", "root": "main_component"}}
 ```
 
-### Backend extremely slow (3+ minutes to respond)
-
-**Symptom**: RAG service tries to download embedding model from Hugging Face
-
-**Fix**: Set `os.environ['HF_HUB_OFFLINE'] = '1'` in `backend/services/embedding_service.py` line 18
-
-### A2UI SDK tests failing (14 failures)
-
-**Symptom**: Catalog reference resolution errors in v0.9 tests
-
-**Fix**: Change `$id` field in `backend/python/a2ui_agent/tests/inference/test_validator.py` line 107 from `basic_catalog.json` to `catalog.json`
-
 ### Frontend components not rendering
 
 **Checklist**:
+
 1. Are components registered in `frontend/genetics-app/src/index.ts`?
 2. Does backend return `beginRendering` (not `createSurface`)?
 3. Is `root` field set to valid component ID?
@@ -280,17 +277,22 @@ HF_CACHE_DIR=C:\trae_coding\A2UI-main\my-a2ui-project\.cache\huggingface
 ## Key Dependencies
 
 **Backend**:
+
 - FastAPI (web framework)
-- GLM-4.7 (LLM via API)
+- GLM-4.7 / GLM-4-Flash (LLM via API)
 - sentence-transformers (embeddings)
-- A2UI Python SDK (local in `backend/python/a2ui_agent/`)
+- A2UI Python SDK v0.1.0 (local in `backend/python/a2ui_agent/`)
 
 **Frontend**:
-- Vite (build tool)
+
+- Vite 7.3.1 (build tool)
 - Lit 3.3.1 (web components)
-- @a2ui/lit (local in `frontend/lit/`)
+- TypeScript 5.9.3 (type safety)
+- @a2ui/lit 0.8.1 (local in `frontend/lit/`)
 - @a2ui/web_core (local in `frontend/web_core/`)
-- marked (markdown rendering)
-- KaTeX (math formulas)
+- Plotly.js 3.4.0 (interactive statistical charts)
+- Chart.js 4.5.1 (data visualization)
+- KaTeX 0.16.33 (math formulas)
+- marked 17.0.3 (markdown rendering)
 
 **Note**: A2UI packages are local file dependencies, not npm registry packages.

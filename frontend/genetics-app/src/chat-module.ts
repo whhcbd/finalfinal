@@ -1297,12 +1297,17 @@ export class ChatModule extends LitElement {
     const found: any[] = [];
     
     for (const msg of a2uiData) {
-      if (msg.surfaceUpdate?.componentTree?.type === 'Column' || 
-          msg.surfaceUpdate?.componentTree?.type === 'Row') {
-        const children = msg.surfaceUpdate.componentTree.properties?.children || [];
-        for (const child of children) {
-          if (bypassTypes.includes(child.type)) {
-            found.push(child);
+      if (msg.surfaceUpdate?.components) {
+        for (const comp of msg.surfaceUpdate.components) {
+          if (comp.component) {
+            for (const compType of Object.keys(comp.component)) {
+              if (bypassTypes.includes(compType)) {
+                found.push({
+                  type: compType,
+                  properties: comp.component[compType]
+                });
+              }
+            }
           }
         }
       }

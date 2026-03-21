@@ -26,7 +26,7 @@
 | Python | 3.10+ | 运行环境 |
 | FastAPI | - | Web 框架 |
 | GLM-4.7 / GLM-4-Flash | - | 智谱 AI 大语言模型 |
-| A2UI Python SDK | v0.10 | A2UI 协议实现 |
+| A2UI Python SDK | v0.1.0 | A2UI 协议实现 |
 
 ### 前端
 

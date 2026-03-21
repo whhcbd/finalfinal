@@ -820,6 +820,21 @@ async def chat(request: ChatRequest):
     if should_use_ui:
         logger.info("开始 A2UI 组件生成...")
         try:
+            # 根据 intent 指定必须使用的组件
+            _intent_component_map = {
+                "punnett_square": "PunnettSquare",
+                "dna_structure": "DNAStructure",
+                "phenotype_distribution": "PhenotypeDistribution",
+                "gene_expression": "GeneExpression",
+                "pedigree_chart": "PedigreeChart",
+                "cross_over_map": "CrossOverMap",
+                "central_dogma": "CentralDogma",
+                "mendel_simulator": "MendelSimulator",
+                "natural_selection_simulator": "NaturalSelectionSimulator",
+            }
+            _required_component = _intent_component_map.get(intent, "")
+            _component_hint = f"\n⚠️ 当前意图是 {intent}，你必须使用 {_required_component} 组件，禁止使用其他组件。" if _required_component else ""
+
             ui_messages = [
                 {"role": "system", "content": get_system_prompt(use_ui=True, intent=intent)},
                 {"role": "user", "content": f"""用户问题：{request.message}
@@ -837,6 +852,7 @@ async def chat(request: ChatRequest):
    - GeneExpression（用于基因表达水平）
    - PedigreeChart（用于家系遗传图）
    - CrossOverMap（用于染色体交叉互换）
+   - CentralDogma（用于中心法则：DNA复制、转录、翻译）{_component_hint}
 
 2. 禁止使用标准组件：Container、Column、Row、Text、Card
 
@@ -1203,11 +1219,26 @@ async def generate_a2ui_component(intent: str, keywords: str, text: str, user_me
 
         logger.info(f"生成初始数据模型: {initial_data}")
 
+        # 根据 intent 指定必须使用的组件
+        _intent_component_map = {
+            "punnett_square": "PunnettSquare",
+            "dna_structure": "DNAStructure",
+            "phenotype_distribution": "PhenotypeDistribution",
+            "gene_expression": "GeneExpression",
+            "pedigree_chart": "PedigreeChart",
+            "cross_over_map": "CrossOverMap",
+            "central_dogma": "CentralDogma",
+            "mendel_simulator": "MendelSimulator",
+            "natural_selection_simulator": "NaturalSelectionSimulator",
+        }
+        _required_component = _intent_component_map.get(intent, "")
+        _component_hint = f"\n⚠️ 当前意图是 {intent}，你必须使用 {_required_component} 组件，禁止使用其他组件。" if _required_component else ""
+
         ui_messages = [
             {"role": "system", "content": get_system_prompt(use_ui=True, intent=intent)},
             {"role": "user", "content": f"""用户问题：{user_message}
 
-意图类型：{intent}
+意图类型：{intent}{_component_hint}
 
 请生成 A2UI JSON 数组，使用数据绑定。
 

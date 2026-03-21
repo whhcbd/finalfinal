@@ -7752,3 +7752,637 @@ X连...
 2026-03-21 00:48:37,079 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
 2026-03-21 00:48:37,079 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
 2026-03-21 00:48:38,083 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:49,338 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:49,338 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:50,149 - backend.main - INFO - WebSocket 连接建立: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:52,544 - backend.main - INFO - WebSocket 连接断开: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:52,544 - backend.main - INFO - 客户端断开连接: session_id=83e6a331-7f3b-4142-a506-1ff26de44240
+2026-03-21 00:53:53,357 - backend.main - INFO - WebSocket 连接建立: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 00:53:57,831 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 00:53:57,831 - backend.main - INFO - 处理聊天消息: message=展示中心法则..., use_ui=True
+2026-03-21 00:53:57,833 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 展示中心法则
+2026-03-21 00:53:57,834 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 00:53:57,834 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 00:53:57,849 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 00:53:58,601 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 00:54:10,224 - backend.main - INFO - LLM 文本响应: 中心法则在遗传学中是指遗传信息流动的基本规律，它描述了DNA如何复制、转录成RNA，以及RNA如何翻译成蛋白质的过程。经典中心法则可以概括为以下三个步骤：
+
+1. **DNA复制**：这是中心法则的第一步，指的是DNA分子在细胞分裂前进行自我复制的过程。在这一过程中，DNA的双螺旋结构被解开，每一条单链作为模板，通过互补配对原则（A-T和C-G）合成新的互补链，最终形成两个与原DNA分子完全相同的...
+2026-03-21 00:54:10,225 - backend.main - INFO - 发送完成信号
+2026-03-21 00:54:10,225 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 00:54:10,225 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 00:54:10,226 - services.context_service - INFO - 设置数据模型: session=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, surface=genetics_ui, keys=[]
+2026-03-21 00:54:10,226 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 00:54:19,235 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 00:54:19,236 - backend.main - INFO - LLM A2UI 响应长度: 2121, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"central_dogma_flow"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"central_dogma_flow","component":{"Column":{"children":{"explicitList":["title","dna_section","transcription_arrow","rna_section","translation_arrow","protein_s'
+2026-03-21 00:54:19,236 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 00:54:19,236 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 00:54:19,237 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 00:54:19,238 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 00:54:19,238 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 00:54:41,734 - backend.main - INFO - WebSocket 连接断开: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 00:54:41,734 - backend.main - INFO - 客户端断开连接: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 08:37:48,359 - backend.main - INFO - WebSocket 连接建立: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:38:10,798 - backend.main - INFO - WebSocket 连接断开: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:38:10,798 - backend.main - INFO - 客户端断开连接: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:38:11,585 - backend.main - INFO - WebSocket 连接建立: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:38:14,192 - backend.main - INFO - 收到 WebSocket 消息: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c, type=chat
+2026-03-21 08:38:14,193 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 08:38:14,193 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 08:38:14,193 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 08:38:14,193 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 08:38:14,231 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 08:38:15,007 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:38:22,459 - backend.main - INFO - LLM 文本响应: 中心法则，也称为分子生物学的基本法则，是描述遗传信息传递的基本规律。这一法则最早由英国生物学家弗朗西斯·克里克和詹姆斯·沃森在1953年提出，它揭示了生物体内遗传信息的流动路径。中心法则的核心内容包括以下几个方面：
+
+首先，遗传信息从DNA流向RNA，这个过程称为转录。在转录过程中，DNA的遗传信息被复制到RNA分子上，形成mRNA（信使RNA）。mRNA作为模板，携带遗传信息从细胞核移动到细胞质...
+2026-03-21 08:38:22,460 - backend.main - INFO - 发送完成信号
+2026-03-21 08:38:22,460 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 08:38:22,461 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 08:38:22,461 - services.context_service - INFO - 设置数据模型: session=a2215df6-bd04-45e1-a35e-68fc71f3d16c, surface=genetics_ui, keys=[]
+2026-03-21 08:38:22,461 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 08:39:06,555 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:39:06,557 - backend.main - INFO - LLM A2UI 响应长度: 13096, 内容: '\n[\n  {\n    "beginRendering": {\n      "surfaceId": "genetics_ui",\n      "root": "main_component"\n    }\n  },\n  {\n    "surfaceUpdate": {\n      "surfaceId": "genetics_ui",\n      "components": [\n        {\n          "id": "main_component",\n          "component": {\n            "Column": {\n              "ch'
+2026-03-21 08:39:06,557 - backend.main - ERROR - JSON 解析失败: Unterminated string starting at: line 88 column 26 (char 1909)
+2026-03-21 08:39:06,557 - backend.main - WARNING - A2UI 生成失败，使用本地降级策略（数据绑定版本）
+2026-03-21 08:39:06,558 - backend.main - INFO - 生成数据绑定版本的降级 A2UI: intent=central_dogma
+2026-03-21 08:39:06,558 - backend.main - INFO - 生成了 3 条 A2UI 消息（数据绑定版本）
+2026-03-21 08:39:06,558 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 08:39:06,558 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 08:39:06,558 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 08:39:06,559 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 08:42:16,045 - backend.main - INFO - WebSocket 连接断开: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:42:16,045 - backend.main - INFO - 客户端断开连接: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:42:16,913 - backend.main - INFO - WebSocket 连接建立: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:51:00,926 - backend.main - INFO - WebSocket 连接断开: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:51:00,927 - backend.main - INFO - 客户端断开连接: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:51:03,462 - backend.main - INFO - WebSocket 连接建立: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:52:41,178 - backend.main - INFO - WebSocket 连接断开: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:52:41,178 - backend.main - INFO - 客户端断开连接: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:52:41,993 - backend.main - INFO - WebSocket 连接建立: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:55:50,885 - backend.main - INFO - 收到 WebSocket 消息: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c, type=chat
+2026-03-21 08:55:50,886 - backend.main - INFO - 处理聊天消息: message=下列酶的作用与中心法则相关过程对应正确的是（  ）
+ A. DNA聚合酶——转录
+ B. RNA聚合酶——DNA复制
+ C. 逆转录酶——RNA复制
+ D. 解旋酶——DNA复制..., use_ui=True
+2026-03-21 08:55:50,886 - services.intent_service - INFO - Rule-based keyword extraction: dna, rna, transcription
+2026-03-21 08:55:50,886 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=dna, rna, transcription
+2026-03-21 08:55:50,886 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=dna, rna, transcription
+2026-03-21 08:55:50,921 - backend.main - INFO - 成功检索到相关上下文，长度: 634 字符
+2026-03-21 08:55:51,891 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:55:56,794 - backend.main - INFO - LLM 文本响应: 在遗传学中心法则中，不同酶的作用与相应的生物过程密切相关。以下是对应关系：
+
+A. DNA聚合酶——转录：不正确。DNA聚合酶的作用是在DNA复制过程中，将DNA单链作为模板，合成新的DNA链。
+
+B. RNA聚合酶——DNA复制：不正确。RNA聚合酶的作用是在转录过程中，将DNA模板链上的遗传信息转录成mRNA。
+
+C. 逆转录酶——RNA复制：不正确。逆转录酶是在逆转录过程中将RNA模板转录成...
+2026-03-21 08:55:56,794 - backend.main - INFO - 发送完成信号
+2026-03-21 08:55:56,794 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 08:55:56,794 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 08:55:56,795 - services.context_service - INFO - 设置数据模型: session=a2215df6-bd04-45e1-a35e-68fc71f3d16c, surface=genetics_ui, keys=[]
+2026-03-21 08:55:56,795 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 08:56:37,458 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:56:37,459 - backend.main - INFO - LLM A2UI 响应长度: 12513, 内容: '\n[\n  {\n    "beginRendering": {\n      "surfaceId": "genetics_ui",\n      "root": "main_component"\n    }\n  },\n  {\n    "surfaceUpdate": {\n      "surfaceId": "genetics_ui",\n      "components": [\n        {\n          "id": "main_component",\n          "component": {\n            "DNAStructure": {\n           '
+2026-03-21 08:56:37,459 - backend.main - ERROR - JSON 解析失败: Unterminated string starting at: line 44 column 26 (char 941)
+2026-03-21 08:56:37,459 - backend.main - WARNING - A2UI 生成失败，使用本地降级策略（数据绑定版本）
+2026-03-21 08:56:37,459 - backend.main - INFO - 生成数据绑定版本的降级 A2UI: intent=central_dogma
+2026-03-21 08:56:37,459 - backend.main - INFO - 生成了 3 条 A2UI 消息（数据绑定版本）
+2026-03-21 08:56:37,460 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 08:56:37,460 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 08:56:37,460 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 08:56:37,460 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 08:56:56,434 - backend.main - INFO - 收到 WebSocket 消息: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c, type=chat
+2026-03-21 08:56:56,434 - backend.main - INFO - 处理聊天消息: message=家系表..., use_ui=True
+2026-03-21 08:56:56,435 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 08:57:01,223 - backend.main - INFO - WebSocket 连接断开: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:57:01,223 - backend.main - INFO - 客户端断开连接: session_id=a2215df6-bd04-45e1-a35e-68fc71f3d16c
+2026-03-21 08:57:02,264 - backend.main - INFO - WebSocket 连接建立: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:09,553 - backend.main - INFO - 收到 WebSocket 消息: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f, type=chat
+2026-03-21 08:57:09,554 - backend.main - INFO - 处理聊天消息: message=家系表..., use_ui=True
+2026-03-21 08:57:09,554 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 08:57:22,319 - backend.main - INFO - WebSocket 连接断开: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:22,320 - backend.main - INFO - 客户端断开连接: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:23,107 - backend.main - INFO - WebSocket 连接建立: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:27,211 - backend.main - INFO - WebSocket 连接断开: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:27,211 - backend.main - INFO - 客户端断开连接: session_id=29587273-7ceb-45c0-8d5a-01f4e394295f
+2026-03-21 08:57:27,755 - backend.main - INFO - WebSocket 连接建立: session_id=e5a7d669-1063-40c8-a577-43ca4e216035
+2026-03-21 08:57:30,994 - backend.main - INFO - 收到 WebSocket 消息: session_id=e5a7d669-1063-40c8-a577-43ca4e216035, type=chat
+2026-03-21 08:57:30,994 - backend.main - INFO - 处理聊天消息: message=你好..., use_ui=True
+2026-03-21 08:57:30,994 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 你好
+2026-03-21 08:57:30,995 - services.intent_service - INFO - [规则匹配] intent=greeting, keywords=
+2026-03-21 08:57:30,995 - backend.main - INFO - 意图识别结果: intent=greeting, keywords=
+2026-03-21 08:57:30,995 - backend.main - INFO - [快速回复] greeting/chitchat，跳过 RAG 和 LLM
+2026-03-21 08:57:42,603 - backend.main - INFO - 收到 WebSocket 消息: session_id=e5a7d669-1063-40c8-a577-43ca4e216035, type=chat
+2026-03-21 08:57:42,604 - backend.main - INFO - 处理聊天消息: message=家系表..., use_ui=True
+2026-03-21 08:57:42,604 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 08:57:54,666 - backend.main - INFO - 收到 WebSocket 消息: session_id=e5a7d669-1063-40c8-a577-43ca4e216035, type=chat
+2026-03-21 08:57:54,666 - backend.main - INFO - 处理聊天消息: message=123456..., use_ui=True
+2026-03-21 08:57:54,667 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 08:58:02,332 - backend.main - INFO - 收到 WebSocket 消息: session_id=e5a7d669-1063-40c8-a577-43ca4e216035, type=chat
+2026-03-21 08:58:02,333 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 08:58:02,333 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 08:58:02,333 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 08:58:02,333 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 08:58:02,355 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 08:58:03,054 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:58:09,483 - backend.main - INFO - LLM 文本响应: 中心法则在遗传学中是一个核心概念，它描述了遗传信息流动的基本方向。最初由弗朗西斯·克里克在1958年提出，中心法则主要包含以下几个方面：
+
+首先，中心法则的核心内容是遗传信息从DNA流向RNA，再由RNA流向蛋白质。这个过程称为转录和翻译。在转录过程中，DNA的序列被复制到RNA分子上；在翻译过程中，RNA分子上的遗传信息被用来合成蛋白质。
+
+其次，中心法则强调信息流动的单向性，即遗传信息从DNA...
+2026-03-21 08:58:09,483 - backend.main - INFO - 发送完成信号
+2026-03-21 08:58:09,483 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 08:58:09,484 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 08:58:09,484 - services.context_service - INFO - 设置数据模型: session=e5a7d669-1063-40c8-a577-43ca4e216035, surface=genetics_ui, keys=[]
+2026-03-21 08:58:09,484 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 08:58:12,011 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 08:58:12,012 - backend.main - INFO - LLM A2UI 响应长度: 454, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"dna_structure"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"dna_structure","component":{"DNAStructure":{"sequence":{"path":"/sequence"},"showLabels":{"literalBoolean":true},"highlightRegions":{"literalArray":[{"start":0,"end'
+2026-03-21 08:58:12,012 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 08:58:12,013 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 08:58:12,013 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 08:58:12,014 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 08:58:12,014 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 08:58:13,743 - backend.main - INFO - 收到 WebSocket 消息: session_id=e5a7d669-1063-40c8-a577-43ca4e216035, type=chat
+2026-03-21 08:58:13,743 - backend.main - INFO - 处理聊天消息: message=元神..., use_ui=True
+2026-03-21 08:58:13,743 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 09:03:16,746 - backend.main - INFO - WebSocket 连接断开: session_id=e5a7d669-1063-40c8-a577-43ca4e216035
+2026-03-21 09:03:16,746 - backend.main - INFO - 客户端断开连接: session_id=e5a7d669-1063-40c8-a577-43ca4e216035
+2026-03-21 09:03:39,349 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:04:13,990 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:04:14,147 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:04:14,587 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:04:14,587 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:04:14,587 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:04:14,587 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:04:14,587 - backend.main - INFO - Context Service initialized
+2026-03-21 09:04:14,587 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:04:14,587 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:04:14,587 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:04:19,091 - backend.main - INFO - WebSocket 连接建立: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:04:30,688 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:04:30,689 - backend.main - INFO - 处理聊天消息: message=孟德尔定律..., use_ui=True
+2026-03-21 09:04:30,691 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 09:05:01,611 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:05:01,612 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 09:05:01,613 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 09:05:01,614 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 09:05:01,614 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 09:05:01,614 - services.rag_service - INFO - Initializing RAG service with knowledge base: C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+2026-03-21 09:05:01,626 - services.rag_service - INFO - Found 479 chapters
+2026-03-21 09:05:01,631 - services.rag_service - INFO - Generated 3412 text chunks
+2026-03-21 09:05:01,631 - services.embedding_service - INFO - Loading embedding model: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:05:01,631 - services.embedding_service - INFO - Using cache directory: C:\trae_coding\A2UI-main\my-a2ui-project\backend\.cache\huggingface
+2026-03-21 09:05:01,633 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-21 09:05:01,633 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:05:03,745 - services.embedding_service - INFO - Embedding model loaded successfully
+2026-03-21 09:05:26,783 - services.rag_service - INFO - Added 3412 documents to vector store
+2026-03-21 09:05:26,783 - services.rag_service - INFO - RAG service initialized successfully
+2026-03-21 09:05:26,800 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 09:05:27,495 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:05:41,838 - backend.main - INFO - LLM 文本响应: 中心法则，是生物学中一个非常重要的概念，主要描述了遗传信息的传递过程。这一法则最初由美国生物学家克里克在1958年提出，后来经过多次修正和发展，已成为现代分子生物学的基础。中心法则主要包括以下几个方面：
+
+首先，中心法则的核心是DNA复制。DNA分子通过半保留复制的方式，将遗传信息从亲代传递给子代。在这个过程中，DNA双链被解开，每一条链作为模板，合成一条新的互补链，从而形成两个完全相同的DNA分...
+2026-03-21 09:05:41,839 - backend.main - INFO - 发送完成信号
+2026-03-21 09:05:41,839 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:05:41,839 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 09:05:41,839 - services.context_service - INFO - 设置数据模型: session=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, surface=genetics_ui, keys=[]
+2026-03-21 09:05:41,840 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 09:05:44,111 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:05:44,112 - backend.main - INFO - LLM A2UI 响应长度: 364, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"dna_structure"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"dna_structure","component":{"DNAStructure":{"sequence":{"path":"/sequence"},"showLabels":{"literalBoolean":true}}}}]}},{"dataModelUpdate":{"surfaceId":"genetics_ui"'
+2026-03-21 09:05:44,112 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:05:44,112 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:05:44,113 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:05:44,113 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:05:44,113 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:08:42,464 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:08:42,464 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 09:08:42,466 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 09:08:42,466 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 09:08:42,467 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 09:08:42,481 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 09:08:43,189 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:08:49,033 - backend.main - INFO - LLM 文本响应: 中心法则在遗传学中是一个非常重要的概念，它描述了遗传信息从DNA到RNA再到蛋白质的基本流程。最初由弗朗西斯·克里克和詹姆斯·沃森在1950年代提出，中心法则的基本内容可以概括为以下几点：
+
+首先，遗传信息从DNA流向RNA，这个过程称为转录。DNA上的基因序列被转录成RNA分子，其中mRNA（信使RNA）携带编码蛋白质的信息。
+
+其次，RNA分子随后流向细胞质中的核糖体，在这里进行翻译过程。mR...
+2026-03-21 09:08:49,034 - backend.main - INFO - 发送完成信号
+2026-03-21 09:08:49,034 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:08:49,034 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 09:08:49,034 - services.context_service - INFO - 设置数据模型: session=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, surface=genetics_ui, keys=[]
+2026-03-21 09:08:49,035 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 09:08:51,822 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:08:51,823 - backend.main - INFO - LLM A2UI 响应长度: 507, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"dna_structure"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"dna_structure","component":{"DNAStructure":{"sequence":{"path":"/sequence"},"showLabels":{"literalBoolean":true},"highlightRegions":{"literalArray":[{"start":0,"end'
+2026-03-21 09:08:51,823 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:08:51,824 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:08:51,824 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:08:51,824 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:08:51,824 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:09:11,867 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:09:11,868 - backend.main - INFO - 处理聊天消息: message=AA和aa..., use_ui=True
+2026-03-21 09:09:11,868 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 09:09:20,336 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:09:20,337 - backend.main - INFO - 处理聊天消息: message=建立中心法则..., use_ui=True
+2026-03-21 09:09:20,337 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 09:09:34,347 - backend.main - INFO - 收到 WebSocket 消息: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6, type=chat
+2026-03-21 09:09:34,347 - backend.main - INFO - 处理聊天消息: message=遗传学..., use_ui=True
+2026-03-21 09:09:34,348 - backend.main - ERROR - 处理聊天消息失败: bad character range a-Z at position 23
+2026-03-21 09:15:41,136 - backend.main - INFO - WebSocket 连接断开: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:15:41,137 - backend.main - INFO - 客户端断开连接: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:15:41,243 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:15:47,566 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:15:47,587 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:15:47,938 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:15:47,938 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:15:47,938 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:15:47,938 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:15:47,938 - backend.main - INFO - Context Service initialized
+2026-03-21 09:15:47,938 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:15:47,939 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:15:47,939 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:15:47,940 - backend.main - INFO - WebSocket 连接建立: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:05,217 - backend.main - INFO - WebSocket 连接断开: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:05,217 - backend.main - INFO - 客户端断开连接: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:05,326 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:16:14,632 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:16:14,654 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:16:14,967 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:16:14,967 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:16:14,967 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:16:14,967 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:16:14,967 - backend.main - INFO - Context Service initialized
+2026-03-21 09:16:14,967 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:16:14,968 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:16:14,968 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:16:15,389 - backend.main - INFO - WebSocket 连接建立: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:18,751 - backend.main - INFO - WebSocket 连接断开: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:18,752 - backend.main - INFO - 客户端断开连接: session_id=80def11c-73a0-44a4-b4fa-a3f8007e8ff6
+2026-03-21 09:16:19,600 - backend.main - INFO - WebSocket 连接建立: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:16:24,763 - backend.main - INFO - 收到 WebSocket 消息: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44, type=chat
+2026-03-21 09:16:24,763 - backend.main - INFO - 处理聊天消息: message=庞氏图..., use_ui=True
+2026-03-21 09:16:24,765 - services.intent_service - INFO - 规则未命中，调用 LLM 识别意图
+2026-03-21 09:16:24,765 - services.intent_service - INFO - 意图识别使用了 1 条历史消息作为上下文
+2026-03-21 09:16:28,402 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:16:28,403 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "punnett_square",
+  "keywords": "Punnett Square, Mendel, inheritance"
+}
+```
+2026-03-21 09:16:28,404 - services.intent_service - INFO - Identified intent: punnett_square, keywords: Punnett Square, Mendel, inheritance
+2026-03-21 09:16:28,404 - backend.main - INFO - 意图识别结果: intent=punnett_square, keywords=Punnett Square, Mendel, inheritance
+2026-03-21 09:16:28,404 - services.rag_service - INFO - Initializing RAG service with knowledge base: C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+2026-03-21 09:16:28,411 - services.rag_service - INFO - Found 479 chapters
+2026-03-21 09:16:28,415 - services.rag_service - INFO - Generated 3412 text chunks
+2026-03-21 09:16:28,415 - services.embedding_service - INFO - Loading embedding model: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:16:28,415 - services.embedding_service - INFO - Using cache directory: C:\trae_coding\A2UI-main\my-a2ui-project\backend\.cache\huggingface
+2026-03-21 09:16:28,417 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-21 09:16:28,417 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:16:30,306 - services.embedding_service - INFO - Embedding model loaded successfully
+2026-03-21 09:16:51,596 - services.rag_service - INFO - Added 3412 documents to vector store
+2026-03-21 09:16:51,596 - services.rag_service - INFO - RAG service initialized successfully
+2026-03-21 09:16:51,612 - backend.main - INFO - 成功检索到相关上下文，长度: 834 字符
+2026-03-21 09:16:52,553 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:17:00,782 - backend.main - INFO - LLM 文本响应: 庞氏图，也称为谱系图或家系图，是一种用于展示遗传病在家族中传递情况的图表。它通过图形化的方式，直观地展示家族成员之间的关系以及遗传病的传递模式。在庞氏图中，通常使用方框代表男性，圆圈代表女性，方框和圆圈中会标注家庭成员的姓名或编号。如果某个家庭成员患有遗传病，通常会在其方框或圆圈中加上特殊标记，如斜线或阴影。
+
+例如，图4-4展示了一个克鲁奈综合征的家系。在这个家系中，我们可以看到患病个体的父母和...
+2026-03-21 09:17:00,783 - backend.main - INFO - 发送完成信号
+2026-03-21 09:17:00,783 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:17:00,784 - services.data_model_service - INFO - 生成初始数据模型: intent=punnett_square, keys=['parent1', 'parent2', 'trait', 'showPhenotype']
+2026-03-21 09:17:00,784 - services.context_service - INFO - 设置数据模型: session=033705cd-6abe-4adc-b99a-2a444dbdff44, surface=genetics_ui, keys=['parent1', 'parent2', 'trait', 'showPhenotype']
+2026-03-21 09:17:00,784 - backend.main - INFO - 生成初始数据模型: {'parent1': 'Aa', 'parent2': 'aa', 'trait': '花色', 'showPhenotype': True}
+2026-03-21 09:17:03,454 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:17:03,455 - backend.main - INFO - LLM A2UI 响应长度: 542, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"punnett_square"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"punnett_square","component":{"PunnettSquare":{"parent1Genotype":{"path":"/parent1"},"parent2Genotype":{"path":"/parent2"},"trait":{"path":"/trait"},"showPhenotype"'
+2026-03-21 09:17:03,455 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:17:03,455 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:17:03,456 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:17:03,456 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:17:03,456 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:17:16,666 - backend.main - INFO - 收到 WebSocket 消息: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44, type=chat
+2026-03-21 09:17:16,666 - backend.main - INFO - 处理聊天消息: message=家系表..., use_ui=True
+2026-03-21 09:17:16,668 - services.intent_service - INFO - 规则未命中，调用 LLM 识别意图
+2026-03-21 09:17:16,668 - services.intent_service - INFO - 意图识别使用了 3 条历史消息作为上下文
+2026-03-21 09:17:21,443 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:17:21,444 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "pedigree_chart",
+  "keywords": "pedigree, family, inheritance, chart"
+}
+```
+2026-03-21 09:17:21,444 - services.intent_service - INFO - Identified intent: pedigree_chart, keywords: pedigree, family, inheritance, chart
+2026-03-21 09:17:21,444 - backend.main - INFO - 意图识别结果: intent=pedigree_chart, keywords=pedigree, family, inheritance, chart
+2026-03-21 09:17:21,457 - backend.main - INFO - 成功检索到相关上下文，长度: 946 字符
+2026-03-21 09:17:22,266 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:17:31,255 - backend.main - INFO - LLM 文本响应: 家系表是一种用于记录和展示家族成员之间血缘关系的图表。在遗传学研究中，家系表对于计算近交系数和追踪遗传特征具有重要意义。家系表通常包含家庭成员的名字、性别、出生日期、死亡日期以及他们之间的亲属关系，如父母、子女、兄弟姐妹等。在动物育种中，家系表尤其重要，因为它可以帮助育种者了解和评估个体之间的血缘关系，从而制定合理的育种策略。
+
+以兄妹交配为例，家系表中会显示两个无血缘关系的亲本（$\mathbb...
+2026-03-21 09:17:31,256 - backend.main - INFO - 发送完成信号
+2026-03-21 09:17:31,256 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:17:31,256 - services.data_model_service - INFO - 生成初始数据模型: intent=pedigree_chart, keys=['trait', 'generations']
+2026-03-21 09:17:31,257 - services.context_service - INFO - 设置数据模型: session=033705cd-6abe-4adc-b99a-2a444dbdff44, surface=genetics_ui, keys=['trait', 'generations']
+2026-03-21 09:17:31,257 - backend.main - INFO - 生成初始数据模型: {'trait': '遗传病', 'generations': [{'individuals': [{'id': '1', 'gender': 'male', 'phenotype': 'normal'}, {'id': '2', 'gender': 'female', 'phenotype': 'carrier'}]}]}
+2026-03-21 09:17:36,652 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:17:36,653 - backend.main - INFO - LLM A2UI 响应长度: 1201, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"pedigree_chart"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"pedigree_chart","component":{"PedigreeChart":{"generations":{"path":"/generations"},"trait":{"path":"/trait"}}}}]}},{"dataModelUpdate":{"surfaceId":"genetics_ui","'
+2026-03-21 09:17:36,654 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:17:36,654 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:17:36,654 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:17:36,655 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:17:36,655 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:18:15,787 - backend.main - INFO - 收到 WebSocket 消息: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44, type=chat
+2026-03-21 09:18:15,788 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 09:18:15,790 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 09:18:15,790 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 09:18:15,791 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 09:18:15,804 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 09:18:16,539 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:18:28,135 - backend.main - INFO - LLM 文本响应: 中心法则在遗传学中是指DNA如何转化为RNA，以及RNA如何转化为蛋白质的基本过程。这个法则最初由弗朗西斯·克里克和詹姆斯·沃森在1950年代提出，它是生物学中的一个基本原理。
+
+根据中心法则，DNA通过转录过程产生RNA，这个过程叫做转录。转录中，DNA的双螺旋结构解开，一个单链作为模板，合成与之互补的RNA分子。随后，这个RNA分子可以通过翻译过程转化为蛋白质，这个过程称为翻译。在翻译过程中，...
+2026-03-21 09:18:28,135 - backend.main - INFO - 发送完成信号
+2026-03-21 09:18:28,135 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:18:28,136 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 09:18:28,136 - services.context_service - INFO - 设置数据模型: session=033705cd-6abe-4adc-b99a-2a444dbdff44, surface=genetics_ui, keys=[]
+2026-03-21 09:18:28,136 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 09:18:31,387 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:18:31,388 - backend.main - INFO - LLM A2UI 响应长度: 563, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"dna_structure"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"dna_structure","component":{"DNAStructure":{"sequence":{"path":"/sequence"},"showLabels":{"literalBoolean":true},"highlightRegions":{"literalArray":[{"start":0,"end'
+2026-03-21 09:18:31,389 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:18:31,389 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:18:31,390 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:18:31,390 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:18:31,390 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:21:13,462 - backend.main - INFO - 收到聊天请求: message=中心法则..., session_id=None, use_ui=True
+2026-03-21 09:21:13,462 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 09:21:13,462 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 09:21:13,463 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 09:21:13,463 - backend.main - INFO - 是否使用A2UI: True (intent=central_dogma, request.use_ui=True)
+2026-03-21 09:21:13,479 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 09:21:25,165 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:21:25,167 - backend.main - INFO - LLM 文本响应（原始）: 中心法则是分子生物学中描述遗传信息流动规律的核心概念，它阐述了生命体内遗传信息的传递路径。经典的观点认为，遗传信息主要从DNA转录到RNA，再由RNA翻译成蛋白质，即DNA→RNA→蛋白质。这一单向流动过程确立了核酸作为遗传物质，而蛋白质作为生命活动主要执行者的基本框架。
+
+随着科学研究的深入，中心法则的内容得到了重要的补充和发展。除了基本的转录和翻译外，该法则现在还包括DNA的自我复制（DNA→...
+2026-03-21 09:21:25,168 - backend.main - INFO - 开始 A2UI 组件生成...
+2026-03-21 09:21:27,295 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:21:27,296 - backend.main - INFO - LLM A2UI 响应: [{"beginRendering":{"surfaceId":"genetics_ui","root":"main_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"main_component","component":{"GeneExpression":{"genes":[{"name":"Gene A","expressionValues":[100,95,90,85,80]},{"name":"Gene B","expressionValues":[20,25,30,35,40]}],"conditions":["DNA","转录","mRNA加工","翻译","蛋白质"]}}}]}}]...
+2026-03-21 09:21:27,296 - backend.main - INFO - 成功解析 A2UI JSON，包含 2 个消息
+2026-03-21 09:21:27,297 - backend.main - INFO - ✅ 自动修复了 2 个缺失的类型包装器
+2026-03-21 09:21:27,297 - backend.main - INFO - ✅ A2UI JSON 包装器检查完成
+2026-03-21 09:22:36,127 - backend.main - INFO - WebSocket 连接断开: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:22:36,127 - backend.main - INFO - 客户端断开连接: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:22:36,236 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:22:42,394 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:22:42,417 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:22:42,735 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:22:42,735 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:22:42,736 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:22:42,736 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:22:42,736 - backend.main - INFO - Context Service initialized
+2026-03-21 09:22:42,736 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:22:42,736 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:22:42,736 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:22:42,738 - backend.main - INFO - WebSocket 连接建立: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:23:24,196 - backend.main - INFO - WebSocket 连接断开: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:23:24,197 - backend.main - INFO - 客户端断开连接: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:23:24,305 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:23:30,355 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:23:30,373 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:23:30,672 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:23:30,672 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:23:30,672 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:23:30,673 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:23:30,673 - backend.main - INFO - Context Service initialized
+2026-03-21 09:23:30,673 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:23:30,673 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:23:30,673 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:23:30,675 - backend.main - INFO - WebSocket 连接建立: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:03,930 - backend.main - INFO - WebSocket 连接断开: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:03,930 - backend.main - INFO - 客户端断开连接: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:04,038 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:24:10,267 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:24:10,294 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:24:10,599 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:24:10,599 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:24:10,600 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:24:10,600 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:24:10,600 - backend.main - INFO - Context Service initialized
+2026-03-21 09:24:10,600 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:24:10,600 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:24:10,600 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:24:10,603 - backend.main - INFO - WebSocket 连接建立: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:19,991 - backend.main - INFO - WebSocket 连接断开: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:19,991 - backend.main - INFO - 客户端断开连接: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:20,100 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:24:29,421 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:24:29,437 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:24:29,687 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:24:29,687 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:24:29,687 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:24:29,687 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:24:29,687 - backend.main - INFO - Context Service initialized
+2026-03-21 09:24:29,687 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:24:29,687 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:24:29,687 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:24:32,369 - backend.main - INFO - WebSocket 连接建立: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:50,773 - backend.main - INFO - WebSocket 连接断开: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:50,773 - backend.main - INFO - 客户端断开连接: session_id=033705cd-6abe-4adc-b99a-2a444dbdff44
+2026-03-21 09:24:51,602 - backend.main - INFO - WebSocket 连接建立: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:25:02,626 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:25:02,626 - backend.main - INFO - 处理聊天消息: message=庞氏图..., use_ui=True
+2026-03-21 09:25:02,629 - services.intent_service - INFO - 规则未命中，调用 LLM 识别意图
+2026-03-21 09:25:02,629 - services.intent_service - INFO - 意图识别使用了 1 条历史消息作为上下文
+2026-03-21 09:25:06,694 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:25:06,695 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "punnett_square",
+  "keywords": "Punnett Square, genotype, cross, inheritance"
+}
+```
+2026-03-21 09:25:06,696 - services.intent_service - INFO - Identified intent: punnett_square, keywords: Punnett Square, genotype, cross, inheritance
+2026-03-21 09:25:06,696 - backend.main - INFO - 意图识别结果: intent=punnett_square, keywords=Punnett Square, genotype, cross, inheritance
+2026-03-21 09:25:06,696 - services.rag_service - INFO - Initializing RAG service with knowledge base: C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+2026-03-21 09:25:06,701 - services.rag_service - INFO - Found 479 chapters
+2026-03-21 09:25:06,704 - services.rag_service - INFO - Generated 3412 text chunks
+2026-03-21 09:25:06,705 - services.embedding_service - INFO - Loading embedding model: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:25:06,705 - services.embedding_service - INFO - Using cache directory: C:\trae_coding\A2UI-main\my-a2ui-project\backend\.cache\huggingface
+2026-03-21 09:25:06,706 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-21 09:25:06,707 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:25:08,475 - services.embedding_service - INFO - Embedding model loaded successfully
+2026-03-21 09:25:29,093 - services.rag_service - INFO - Added 3412 documents to vector store
+2026-03-21 09:25:29,093 - services.rag_service - INFO - RAG service initialized successfully
+2026-03-21 09:25:29,106 - backend.main - INFO - 成功检索到相关上下文，长度: 834 字符
+2026-03-21 09:25:30,215 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:25:37,895 - backend.main - INFO - LLM 文本响应: 庞氏图，也称为谱系图或家系图，是一种在遗传学中用来展示家族成员之间遗传关系的图表。它通过图形化的方式，将家族成员按照世代排列，用不同符号表示不同的性别，并用线条连接来表示亲子关系。在庞氏图中，通常会在每个成员旁边标注其基因型或表型特征，以便于观察和分析遗传疾病的传递模式。
+
+例如，在图4-4中展示的克鲁奈综合征家系，通过庞氏图可以清晰地看到该遗传病在家族中的传递情况。家系图的上方通常标注着受影响的...
+2026-03-21 09:25:37,896 - backend.main - INFO - 发送完成信号
+2026-03-21 09:25:37,897 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:25:37,897 - services.data_model_service - INFO - 生成初始数据模型: intent=punnett_square, keys=['parent1', 'parent2', 'trait', 'showPhenotype']
+2026-03-21 09:25:37,897 - services.context_service - INFO - 设置数据模型: session=c78f3992-1c17-4601-9082-56e17db08215, surface=genetics_ui, keys=['parent1', 'parent2', 'trait', 'showPhenotype']
+2026-03-21 09:25:37,897 - backend.main - INFO - 生成初始数据模型: {'parent1': 'Aa', 'parent2': 'aa', 'trait': '花色', 'showPhenotype': True}
+2026-03-21 09:25:40,967 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:25:40,969 - backend.main - INFO - LLM A2UI 响应长度: 768, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"punnett_square"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"punnett_square","component":{"PunnettSquare":{"parent1Genotype":{"path":"/parent1"},"parent2Genotype":{"path":"/parent2"},"trait":{"path":"/trait"},"showPhenotype"'
+2026-03-21 09:25:40,969 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:25:40,969 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:25:40,969 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:25:40,970 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:25:40,970 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:25:48,847 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:25:48,847 - backend.main - INFO - 处理聊天消息: message=中心法则..., use_ui=True
+2026-03-21 09:25:48,850 - services.intent_service - WARNING - Rule-based keyword extraction found no keywords in: 中心法则
+2026-03-21 09:25:48,850 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=
+2026-03-21 09:25:48,850 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=
+2026-03-21 09:25:48,865 - backend.main - INFO - 成功检索到相关上下文，长度: 364 字符
+2026-03-21 09:25:49,671 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:25:59,311 - backend.main - INFO - LLM 文本响应: 中心法则在遗传学中是一个基础而重要的概念，它描述了遗传信息的流动方向。最初，中心法则被表述为“DNA到RNA再到蛋白质”，这意味着遗传信息从DNA传递到RNA，再由RNA翻译成蛋白质。这一过程可以简单理解为：DNA上的遗传信息通过转录生成RNA，而RNA上的信息则通过翻译过程合成蛋白质。
+
+随着时间的推移，中心法则得到了发展和扩展。除了经典的DNA-RNA-蛋白质流向，中心法则还涵盖了RNA到RN...
+2026-03-21 09:25:59,312 - backend.main - INFO - 发送完成信号
+2026-03-21 09:25:59,312 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:25:59,313 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 09:25:59,313 - services.context_service - INFO - 设置数据模型: session=c78f3992-1c17-4601-9082-56e17db08215, surface=genetics_ui, keys=[]
+2026-03-21 09:25:59,314 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 09:26:01,447 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:26:01,448 - backend.main - INFO - LLM A2UI 响应长度: 395, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"central_dogma_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"central_dogma_component","component":{"CentralDogma":{"dnaSequence":{"path":"/dnaSequence"},"showProcess":{"literalBoolean":true}}}}]}},{"dataModelUpdate"'
+2026-03-21 09:26:01,448 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:26:01,449 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:26:01,449 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:26:01,449 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:26:01,449 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:26:08,838 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:26:08,838 - backend.main - INFO - 处理聊天消息: message=dna..., use_ui=True
+2026-03-21 09:26:08,840 - services.intent_service - INFO - 规则未命中，调用 LLM 识别意图
+2026-03-21 09:26:08,840 - services.intent_service - INFO - 意图识别使用了 5 条历史消息作为上下文
+2026-03-21 09:26:13,326 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:26:13,327 - services.intent_service - INFO - Intent recognition raw response: ```json
+{
+  "intent": "dna_structure",
+  "keywords": "DNA"
+}
+```
+2026-03-21 09:26:13,328 - services.intent_service - INFO - Identified intent: dna_structure, keywords: DNA
+2026-03-21 09:26:13,328 - backend.main - INFO - 意图识别结果: intent=dna_structure, keywords=DNA
+2026-03-21 09:26:13,341 - backend.main - INFO - 成功检索到相关上下文，长度: 1300 字符
+2026-03-21 09:26:14,146 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:26:19,779 - backend.main - INFO - LLM 文本响应: DNA，即脱氧核糖核酸，是生物体内携带遗传信息的分子。它由四种不同的核苷酸组成，分别是腺嘌呤（A）、胸腺嘧啶（T）、胞嘧啶（C）和鸟嘌呤（G）。这些核苷酸按照一定的顺序排列，形成双螺旋结构，通过碱基互补配对原则（A-T，C-G）相互连接，构成遗传信息的基本单位——基因。DNA负责储存和传递生物体的遗传特征，包括表型和基因型。在细胞分裂和基因表达过程中，DNA通过转录和翻译过程转化为RNA和蛋白质，...
+2026-03-21 09:26:19,780 - backend.main - INFO - 发送完成信号
+2026-03-21 09:26:19,780 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:26:19,781 - services.data_model_service - INFO - 生成初始数据模型: intent=dna_structure, keys=['sequence', 'showLabels', 'highlightRegions']
+2026-03-21 09:26:19,781 - services.context_service - INFO - 设置数据模型: session=c78f3992-1c17-4601-9082-56e17db08215, surface=genetics_ui, keys=['sequence', 'showLabels', 'highlightRegions']
+2026-03-21 09:26:19,781 - backend.main - INFO - 生成初始数据模型: {'sequence': 'ATCGATCG', 'showLabels': True, 'highlightRegions': []}
+2026-03-21 09:26:22,001 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:26:22,002 - backend.main - INFO - LLM A2UI 响应长度: 492, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"dna_structure"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"dna_structure","component":{"DNAStructure":{"sequence":{"path":"/sequence"},"showLabels":{"path":"/showLabels"},"highlightRegions":{"path":"/highlightRegions"}}}}]}'
+2026-03-21 09:26:22,002 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:26:22,003 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:26:22,003 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:26:22,003 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:26:22,003 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:27:05,284 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:27:05,284 - backend.main - INFO - 处理聊天消息: message=转录是以DNA的一条链为模板合成________的过程，该过程主要在________中进行，需要________参与..., use_ui=True
+2026-03-21 09:27:05,284 - services.intent_service - INFO - 规则未命中，调用 LLM 识别意图
+2026-03-21 09:27:05,285 - services.intent_service - INFO - 意图识别使用了 6 条历史消息作为上下文
+2026-03-21 09:27:13,232 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:27:13,233 - services.glm_service - WARNING - GLM 返回空内容, finish_reason=length, usage={'completion_tokens': 1000, 'completion_tokens_details': {'reasoning_tokens': 993}, 'prompt_tokens': 2575, 'prompt_tokens_details': {'cached_tokens': 1873}, 'total_tokens': 3575}
+2026-03-21 09:27:13,234 - services.intent_service - INFO - Intent recognition raw response: 
+2026-03-21 09:27:13,234 - services.intent_service - ERROR - Failed to parse intent JSON: Expecting value: line 1 column 1 (char 0), response: 
+2026-03-21 09:27:13,234 - services.intent_service - INFO - Rule-based keyword extraction: dna, transcription
+2026-03-21 09:27:13,234 - backend.main - INFO - 意图识别结果: intent=general, keywords=dna, transcription
+2026-03-21 09:27:13,256 - backend.main - INFO - 成功检索到相关上下文，长度: 285 字符
+2026-03-21 09:27:13,972 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:27:16,479 - backend.main - INFO - LLM 文本响应: 转录是以DNA的一条链为模板合成RNA的过程，该过程主要在细胞核中进行，需要RNA聚合酶等酶的参与。在转录过程中，RNA聚合酶识别并结合到DNA模板链上的启动子区域，然后沿着DNA链移动，合成与模板链互补的RNA链。这一过程是基因表达的第一步，产生的RNA分子随后可以被进一步加工，形成成熟的信使RNA（mRNA），最终用于蛋白质的合成。...
+2026-03-21 09:27:16,480 - backend.main - INFO - 发送完成信号
+2026-03-21 09:27:31,979 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:27:31,980 - backend.main - INFO - 处理聊天消息: message=翻译是以________为模板合成蛋白质的过程，该过程发生在________上，需要tRNA和氨基酸参与。..., use_ui=True
+2026-03-21 09:27:31,980 - services.intent_service - INFO - Rule-based keyword extraction: protein, rna, translation
+2026-03-21 09:27:31,980 - services.intent_service - INFO - [规则匹配] intent=gene_expression, keywords=protein, rna, translation
+2026-03-21 09:27:31,981 - backend.main - INFO - 意图识别结果: intent=gene_expression, keywords=protein, rna, translation
+2026-03-21 09:27:32,005 - backend.main - INFO - 成功检索到相关上下文，长度: 566 字符
+2026-03-21 09:27:32,790 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:27:35,700 - backend.main - INFO - LLM 文本响应: 翻译是以信使RNA（mRNA）为模板合成蛋白质的过程。这个过程发生在核糖体上，它是一个由rRNA和蛋白质组成的复合体，是蛋白质合成的场所。在翻译过程中，tRNA携带相应的氨基酸，与mRNA上的密码子进行互补配对，将氨基酸逐个添加到正在合成的肽链中。因此，tRNA和氨基酸是蛋白质合成过程中不可或缺的组分。...
+2026-03-21 09:27:35,701 - backend.main - INFO - 发送完成信号
+2026-03-21 09:27:35,701 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:27:35,701 - services.data_model_service - INFO - 生成初始数据模型: intent=gene_expression, keys=['genes', 'conditions', 'expressionLevels']
+2026-03-21 09:27:35,701 - services.context_service - INFO - 设置数据模型: session=c78f3992-1c17-4601-9082-56e17db08215, surface=genetics_ui, keys=['genes', 'conditions', 'expressionLevels']
+2026-03-21 09:27:35,701 - backend.main - INFO - 生成初始数据模型: {'genes': ['GeneA', 'GeneB'], 'conditions': ['肝脏', '大脑'], 'expressionLevels': [[10, 15], [8, 12]]}
+2026-03-21 09:27:38,864 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:27:38,866 - backend.main - INFO - LLM A2UI 响应长度: 633, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"gene_expression"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"gene_expression","component":{"GeneExpression":{"genes":{"path":"/genes"},"conditions":{"path":"/conditions"}}}}]}},{"dataModelUpdate":{"surfaceId":"genetics_ui",'
+2026-03-21 09:27:38,866 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:27:38,867 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:27:38,867 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:27:38,867 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:27:38,868 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:30:06,028 - backend.main - INFO - WebSocket 连接断开: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:30:06,028 - backend.main - INFO - 客户端断开连接: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:30:06,135 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:30:12,314 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:30:12,339 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:30:12,657 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:30:12,657 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:30:12,658 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:30:12,658 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:30:12,658 - backend.main - INFO - Context Service initialized
+2026-03-21 09:30:12,658 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:30:12,658 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:30:12,659 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:30:12,661 - backend.main - INFO - WebSocket 连接建立: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:31:46,323 - backend.main - INFO - WebSocket 连接断开: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:31:46,324 - backend.main - INFO - 客户端断开连接: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:31:46,432 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:31:52,891 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:31:52,911 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:31:53,226 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:31:53,227 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:31:53,227 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:31:53,227 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:31:53,227 - backend.main - INFO - Context Service initialized
+2026-03-21 09:31:53,227 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:31:53,227 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:31:53,227 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:31:53,229 - backend.main - INFO - WebSocket 连接建立: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:32:21,721 - backend.main - INFO - WebSocket 连接断开: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:32:21,721 - backend.main - INFO - 客户端断开连接: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:32:21,831 - backend.main - INFO - Shutting down Genetics A2UI Backend...
+2026-03-21 09:32:32,334 - faiss.loader - INFO - Loading faiss with AVX2 support.
+2026-03-21 09:32:32,360 - faiss.loader - INFO - Successfully loaded faiss with AVX2 support.
+2026-03-21 09:32:32,697 - backend.main - INFO - Starting up Genetics A2UI Backend...
+2026-03-21 09:32:32,697 - backend.main - INFO - GLM Service initialized
+2026-03-21 09:32:32,697 - backend.main - INFO - RAG Service initialized (will be lazy loaded on first use)
+2026-03-21 09:32:32,698 - backend.main - INFO - Intent Service initialized
+2026-03-21 09:32:32,698 - backend.main - INFO - Context Service initialized
+2026-03-21 09:32:32,699 - backend.main - INFO - Data Model Service initialized
+2026-03-21 09:32:32,699 - backend.main - INFO - Action Handler initialized
+2026-03-21 09:32:32,699 - backend.main - INFO - Core services initialized successfully
+2026-03-21 09:32:32,736 - backend.main - INFO - WebSocket 连接建立: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:32:41,589 - backend.main - INFO - 收到 WebSocket 消息: session_id=c78f3992-1c17-4601-9082-56e17db08215, type=chat
+2026-03-21 09:32:41,589 - backend.main - INFO - 处理聊天消息: message=翻译是以________为模板合成蛋白质的过程，该过程发生在________上，需要tRNA和氨基酸参与。..., use_ui=True
+2026-03-21 09:32:41,592 - services.intent_service - INFO - Rule-based keyword extraction: protein, rna, translation
+2026-03-21 09:32:41,592 - services.intent_service - INFO - [规则匹配] intent=central_dogma, keywords=protein, rna, translation
+2026-03-21 09:32:41,592 - backend.main - INFO - 意图识别结果: intent=central_dogma, keywords=protein, rna, translation
+2026-03-21 09:32:41,592 - services.rag_service - INFO - Initializing RAG service with knowledge base: C:\trae_coding\A2UI-main\my-a2ui-project\docs\full.md
+2026-03-21 09:32:41,598 - services.rag_service - INFO - Found 479 chapters
+2026-03-21 09:32:41,601 - services.rag_service - INFO - Generated 3412 text chunks
+2026-03-21 09:32:41,601 - services.embedding_service - INFO - Loading embedding model: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:32:41,601 - services.embedding_service - INFO - Using cache directory: C:\trae_coding\A2UI-main\my-a2ui-project\backend\.cache\huggingface
+2026-03-21 09:32:41,603 - sentence_transformers.SentenceTransformer - INFO - Use pytorch device_name: cpu
+2026-03-21 09:32:41,603 - sentence_transformers.SentenceTransformer - INFO - Load pretrained SentenceTransformer: paraphrase-multilingual-MiniLM-L12-v2
+2026-03-21 09:32:43,457 - services.embedding_service - INFO - Embedding model loaded successfully
+2026-03-21 09:33:04,649 - services.rag_service - INFO - Added 3412 documents to vector store
+2026-03-21 09:33:04,649 - services.rag_service - INFO - RAG service initialized successfully
+2026-03-21 09:33:04,662 - backend.main - INFO - 成功检索到相关上下文，长度: 566 字符
+2026-03-21 09:33:05,500 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:33:10,003 - backend.main - INFO - LLM 文本响应: 翻译是以信使RNA（mRNA）为模板合成蛋白质的过程。这个过程发生在核糖体上，核糖体是蛋白质合成的场所。在这一过程中，转运RNA（tRNA）负责将氨基酸转运到核糖体，而氨基酸则是构成蛋白质的基本单元。tRNA上的反密码子与mRNA上的密码子互补配对，确保正确的氨基酸被添加到正在合成的肽链中。...
+2026-03-21 09:33:10,004 - backend.main - INFO - 发送完成信号
+2026-03-21 09:33:10,004 - backend.main - INFO - 启动后台 A2UI 生成任务...
+2026-03-21 09:33:10,004 - services.data_model_service - INFO - 生成初始数据模型: intent=central_dogma, keys=[]
+2026-03-21 09:33:10,004 - services.context_service - INFO - 设置数据模型: session=c78f3992-1c17-4601-9082-56e17db08215, surface=genetics_ui, keys=[]
+2026-03-21 09:33:10,005 - backend.main - INFO - 生成初始数据模型: {}
+2026-03-21 09:33:14,099 - httpx - INFO - HTTP Request: POST https://open.bigmodel.cn/api/paas/v4/chat/completions "HTTP/1.1 200 OK"
+2026-03-21 09:33:14,100 - backend.main - INFO - LLM A2UI 响应长度: 578, 内容: '[{"beginRendering":{"surfaceId":"genetics_ui","root":"central_dogma_component"}},{"surfaceUpdate":{"surfaceId":"genetics_ui","components":[{"id":"central_dogma_component","component":{"CentralDogma":{"dnaSequence":{"path":"/dnaSequence"},"rnaSequence":{"path":"/rnaSequence"},"proteinSequence":{"path'
+2026-03-21 09:33:14,100 - backend.main - INFO - 成功解析 A2UI JSON，包含 3 个消息
+2026-03-21 09:33:14,101 - backend.main - INFO - [后台] 发送 A2UI 消息: ['beginRendering']
+2026-03-21 09:33:14,101 - backend.main - INFO - [后台] 发送 A2UI 消息: ['surfaceUpdate']
+2026-03-21 09:33:14,101 - backend.main - INFO - [后台] 发送 A2UI 消息: ['dataModelUpdate']
+2026-03-21 09:33:14,101 - backend.main - INFO - [后台] A2UI 发送完成
+2026-03-21 09:33:31,505 - backend.main - INFO - WebSocket 连接断开: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:33:31,506 - backend.main - INFO - 客户端断开连接: session_id=c78f3992-1c17-4601-9082-56e17db08215
+2026-03-21 09:40:42,035 - backend.main - INFO - Shutting down Genetics A2UI Backend...
