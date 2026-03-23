@@ -234,13 +234,13 @@ export class GeneExpression extends Root {
     .bar-chart {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 20px;
     }
 
     .gene-row {
       background: #fafafa;
       border-radius: 6px;
-      padding: 12px;
+      padding: 12px 12px 32px 12px;
       border: 1px solid #e5e7eb;
     }
 
@@ -251,11 +251,36 @@ export class GeneExpression extends Root {
       margin-bottom: 8px;
     }
 
+    .chart-area {
+      display: flex;
+      align-items: stretch;
+      gap: 4px;
+    }
+
+    .y-axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-end;
+      padding-bottom: 20px;
+      min-width: 36px;
+    }
+
+    .y-tick {
+      font-size: 0.72rem;
+      color: #9ca3af;
+      line-height: 1;
+    }
+
     .bars-container {
+      flex: 1;
       display: flex;
       gap: 8px;
       align-items: flex-end;
       height: 200px;
+      border-left: 1px solid #e5e7eb;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 4px 4px 0 4px;
     }
 
     .bar-wrapper {
@@ -263,46 +288,53 @@ export class GeneExpression extends Root {
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: flex-end;
       height: 100%;
+      position: relative;
     }
 
     .bar {
       width: 100%;
-      background: #111827;
       border-radius: 4px 4px 0 0;
-      transition: all 0.2s ease;
+      transition: all 0.3s ease;
       cursor: pointer;
       position: relative;
       min-height: 4px;
     }
 
     .bar:hover {
-      opacity: 0.85;
+      opacity: 0.8;
+      transform: scaleY(1.02);
+      transform-origin: bottom;
     }
 
     .bar-label {
       position: absolute;
-      bottom: -25px;
+      bottom: -22px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: #6b7280;
       text-align: center;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60px;
     }
 
     .bar-value {
       position: absolute;
-      top: -25px;
+      top: -22px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
       color: #111827;
       background: #ffffff;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 2px 5px;
+      border-radius: 3px;
       border: 1px solid #e5e7eb;
+      white-space: nowrap;
     }
 
     .line-chart {
@@ -422,19 +454,25 @@ export class GeneExpression extends Root {
       gap: 12px;
     }
 
+    .control-hint {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      margin-bottom: 10px;
+    }
+
     .slider-item {
       display: flex;
       align-items: center;
       gap: 12px;
-      padding: 8px;
+      padding: 8px 10px;
       background: #ffffff;
       border-radius: 6px;
       border: 1px solid #e5e7eb;
     }
 
     .slider-label {
-      min-width: 80px;
-      font-size: 0.9rem;
+      min-width: 120px;
+      font-size: 0.88rem;
       font-weight: 500;
       color: #111827;
     }
@@ -447,31 +485,35 @@ export class GeneExpression extends Root {
       outline: none;
       -webkit-appearance: none;
       appearance: none;
+      cursor: pointer;
     }
 
     .slider-input::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: #111827;
       cursor: pointer;
       transition: all 0.2s ease;
+      border: 3px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
     }
 
     .slider-input::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
+      transform: scale(1.15);
       background: #3b82f6;
     }
 
     .slider-input::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: #111827;
       cursor: pointer;
-      border: none;
+      border: 3px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.25);
       transition: all 0.2s ease;
     }
 
@@ -658,28 +700,40 @@ export class GeneExpression extends Root {
   }
 
   private renderBarChart(genes: GeneData[], conditions: Condition[]) {
+    const maxVal = this.getMaxExpressionLevel(genes);
+    // Round up max to a nice number for Y axis
+    const yMax = maxVal <= 0 ? 100 : Math.ceil(maxVal / 25) * 25;
+    const yTicks = [yMax, Math.round(yMax * 0.75), Math.round(yMax * 0.5), Math.round(yMax * 0.25), 0];
+
     return html`
       <div class="bar-chart">
         ${map(genes, (gene, geneIndex) => html`
           <div class="gene-row">
             <div class="gene-name">${gene.gene}</div>
-            <div class="bars-container">
-              ${map(gene.expressionLevels, (level, levelIndex) => html`
-                <div class="bar-wrapper">
-                  <div
-                    class="bar ${this._interactive && this.selectedGene?.gene === gene.gene && this.selectedGene?.conditionIndex === levelIndex ? 'selected' : ''} ${this._interactive ? 'animating' : ''}"
-                    style="height: ${this.getBarHeight(level, genes)}%; background-color: ${this.getConditionColor(levelIndex, conditions)};"
-                    @click=${() => this.handleBarClick(gene, levelIndex, level, conditions)}
-                    aria-label="${gene.gene} - ${conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}: ${level}"
-                    tabindex="0"
-                  >
-                    ${this.getBarHeight(level, genes) > 15 ? html`
-                      <div class="bar-value">${level}</div>
-                    ` : ''}
-                  </div>
-                  <div class="bar-label">${conditions[levelIndex]?.name || '条件 ' + (levelIndex + 1)}</div>
-                </div>
-              `)}
+            <div class="chart-area">
+              <div class="y-axis">
+                ${yTicks.map(t => html`<span class="y-tick">${t}</span>`)}
+              </div>
+              <div class="bars-container">
+                ${map(gene.expressionLevels, (level, levelIndex) => {
+                  const heightPct = yMax > 0 ? (level / yMax) * 100 : 0;
+                  const condName = conditions[levelIndex]?.name || ('条件 ' + (levelIndex + 1));
+                  return html`
+                    <div class="bar-wrapper">
+                      <div
+                        class="bar ${this._interactive && this.selectedGene?.gene === gene.gene && this.selectedGene?.conditionIndex === levelIndex ? 'selected' : ''} ${this._interactive ? 'animating' : ''}"
+                        style="height: ${heightPct}%; background-color: ${this.getConditionColor(levelIndex, conditions)};"
+                        @click=${() => this.handleBarClick(gene, levelIndex, level, conditions)}
+                        aria-label="${gene.gene} - ${condName}: ${level}"
+                        tabindex="0"
+                      >
+                        ${heightPct > 12 ? html`<div class="bar-value">${level}</div>` : ''}
+                      </div>
+                      <div class="bar-label">${condName}</div>
+                    </div>
+                  `;
+                })}
+              </div>
             </div>
           </div>
         `)}
@@ -714,58 +768,103 @@ export class GeneExpression extends Root {
     const genes = this.getNormalizedGenes();
     const conditions = this.unwrapValue(this._conditions, 'array');
 
-    const rect = canvas.getBoundingClientRect();
-    canvas.width = rect.width * 2;
-    canvas.height = rect.height * 2;
-    ctx.scale(2, 2);
+    // Use offsetWidth/offsetHeight which works in shadow DOM
+    const cw = canvas.offsetWidth || 600;
+    const ch = canvas.offsetHeight || 300;
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = cw * dpr;
+    canvas.height = ch * dpr;
+    ctx.scale(dpr, dpr);
 
-    const padding = 40;
-    const width = rect.width - padding * 2;
-    const height = rect.height - padding * 2;
+    const paddingLeft = 50;  // room for Y axis labels
+    const paddingRight = 80; // room for gene name labels
+    const paddingTop = 20;
+    const paddingBottom = 36;
+    const width = cw - paddingLeft - paddingRight;
+    const height = ch - paddingTop - paddingBottom;
+
     const maxLevel = this.getMaxExpressionLevel(genes);
+    const yMax = maxLevel <= 0 ? 100 : Math.ceil(maxLevel / 25) * 25;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, cw, ch);
 
-    const xStep = width / (conditions.length - 1);
+    // Draw Y axis grid lines and ticks
+    const yTickCount = 5;
+    ctx.strokeStyle = '#e5e7eb';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#9ca3af';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'right';
+    for (let i = 0; i <= yTickCount; i++) {
+      const val = Math.round((yMax / yTickCount) * (yTickCount - i));
+      const y = paddingTop + (i / yTickCount) * height;
+      ctx.beginPath();
+      ctx.moveTo(paddingLeft, y);
+      ctx.lineTo(paddingLeft + width, y);
+      ctx.stroke();
+      ctx.fillText(String(val), paddingLeft - 6, y + 4);
+    }
 
+    // Draw X axis labels
+    const xStep = conditions.length > 1 ? width / (conditions.length - 1) : width / 2;
+    ctx.fillStyle = '#6b7280';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    conditions.forEach((condition, index) => {
+      const x = paddingLeft + (conditions.length > 1 ? index * xStep : width / 2);
+      ctx.fillText(condition.name, x, ch - 8);
+    });
+
+    // Draw axes borders
+    ctx.strokeStyle = '#d1d5db';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(paddingLeft, paddingTop);
+    ctx.lineTo(paddingLeft, paddingTop + height);
+    ctx.lineTo(paddingLeft + width, paddingTop + height);
+    ctx.stroke();
+
+    // Draw each gene line
     for (const gene of genes) {
-      const color = this.getConditionColor(genes.indexOf(gene), conditions);
+      const geneIdx = genes.indexOf(gene);
+      const color = this.getConditionColor(geneIdx, conditions);
+
+      if (gene.expressionLevels.length === 0) continue;
 
       ctx.beginPath();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 2.5;
 
       gene.expressionLevels.forEach((level, index) => {
-        const x = padding + index * xStep;
-        const y = padding + height - (level / maxLevel) * height;
-
-        if (index === 0) {
-          ctx.moveTo(x, y);
-        } else {
-          ctx.lineTo(x, y);
-        }
+        const x = paddingLeft + (conditions.length > 1 ? index * xStep : width / 2);
+        const y = paddingTop + height - (yMax > 0 ? (level / yMax) * height : 0);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
       });
-
       ctx.stroke();
 
+      // Draw data points
       gene.expressionLevels.forEach((level, index) => {
-        const x = padding + index * xStep;
-        const y = padding + height - (level / maxLevel) * height;
-
+        const x = paddingLeft + (conditions.length > 1 ? index * xStep : width / 2);
+        const y = paddingTop + height - (yMax > 0 ? (level / yMax) * height : 0);
         ctx.beginPath();
         ctx.fillStyle = color;
-        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
         ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
       });
+
+      // Draw gene name label at end of line
+      const lastLevel = gene.expressionLevels[gene.expressionLevels.length - 1];
+      const lastX = paddingLeft + (conditions.length > 1 ? (gene.expressionLevels.length - 1) * xStep : width / 2);
+      const lastY = paddingTop + height - (yMax > 0 ? (lastLevel / yMax) * height : 0);
+      ctx.fillStyle = color;
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText(gene.gene, lastX + 8, lastY + 4);
     }
-
-    ctx.fillStyle = '#5f6368';
-    ctx.font = '12px Roboto';
-
-    conditions.forEach((condition, index) => {
-      const x = padding + index * xStep;
-      ctx.fillText(condition.name, x - 20, rect.height - 10);
-    });
   }
 
   private getAverageExpression(genes: GeneData[]): string {
@@ -798,25 +897,27 @@ export class GeneExpression extends Root {
   }
 
   private renderInteractiveControls(genes: GeneData[], conditions: Condition[]) {
+    const sliderMax = Math.max(100, Math.ceil(this.getMaxExpressionLevel(genes) / 25) * 25);
     return html`
       <div class="interactive-controls">
         <div class="control-section">
           <div class="control-title">调节基因表达水平</div>
+          <div class="control-hint">拖动滑块可实时改变对应条件下的基因表达量，图表同步更新</div>
           <div class="slider-group">
             ${map(genes, (gene, geneIndex) => html`
               ${map(conditions, (condition, conditionIndex) => html`
                 <div class="slider-item">
-                  <span class="slider-label">${gene.gene} - ${condition.name}</span>
+                  <span class="slider-label">${gene.gene} — ${condition.name}</span>
                   <input
                     type="range"
                     class="slider-input"
                     min="0"
-                    max="100"
+                    max="${sliderMax}"
                     .value=${gene.expressionLevels[conditionIndex]?.toString() || '0'}
                     @input=${(e: Event) => this.handleSliderChange(geneIndex, conditionIndex, (e.target as HTMLInputElement).value)}
                     aria-label="调节 ${gene.gene} 在 ${condition.name} 条件下的表达水平"
                   />
-                  <span class="slider-value">${gene.expressionLevels[conditionIndex] || 0}%</span>
+                  <span class="slider-value">${gene.expressionLevels[conditionIndex] || 0}</span>
                 </div>
               `)}
             `)}

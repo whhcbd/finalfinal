@@ -13,12 +13,8 @@
           "id": "pedigree_chart",
           "component": {
             "PedigreeChart": {
-              "generations": {
-                "path": "/generations"
-              },
-              "trait": {
-                "path": "/trait"
-              }
+              "generations": { "path": "/generations" },
+              "trait": { "path": "/trait" }
             }
           }
         }
@@ -35,64 +31,78 @@
             {
               "individuals": [
                 {
-                  "id": "1",
+                  "id": "I-1",
                   "gender": "male",
                   "phenotype": "carrier",
-                  "generation": 0
+                  "generation": 0,
+                  "spouseId": "I-2",
+                  "label": "I-1"
                 },
                 {
-                  "id": "2",
+                  "id": "I-2",
                   "gender": "female",
                   "phenotype": "carrier",
-                  "generation": 0
+                  "generation": 0,
+                  "spouseId": "I-1",
+                  "label": "I-2"
                 }
               ]
             },
             {
               "individuals": [
                 {
-                  "id": "3",
+                  "id": "II-1",
                   "gender": "male",
                   "phenotype": "affected",
                   "generation": 1,
-                  "parents": {
-                    "father": "1",
-                    "mother": "2"
-                  }
+                  "parents": { "father": "I-1", "mother": "I-2" },
+                  "spouseId": "II-2",
+                  "label": "II-1"
                 },
                 {
-                  "id": "4",
+                  "id": "II-2",
                   "gender": "female",
                   "phenotype": "normal",
                   "generation": 1,
-                  "parents": {
-                    "father": "1",
-                    "mother": "2"
-                  }
+                  "spouseId": "II-1",
+                  "label": "II-2"
                 },
                 {
-                  "id": "5",
-                  "gender": "male",
-                  "phenotype": "carrier",
+                  "id": "II-3",
+                  "gender": "female",
+                  "phenotype": "normal",
                   "generation": 1,
-                  "parents": {
-                    "father": "1",
-                    "mother": "2"
-                  }
+                  "parents": { "father": "I-1", "mother": "I-2" },
+                  "spouseId": "II-4",
+                  "label": "II-3"
+                },
+                {
+                  "id": "II-4",
+                  "gender": "male",
+                  "phenotype": "normal",
+                  "generation": 1,
+                  "spouseId": "II-3",
+                  "label": "II-4"
                 }
               ]
             },
             {
               "individuals": [
                 {
-                  "id": "6",
+                  "id": "III-1",
+                  "gender": "male",
+                  "phenotype": "carrier",
+                  "generation": 2,
+                  "parents": { "father": "II-1", "mother": "II-2" },
+                  "label": "III-1"
+                },
+                {
+                  "id": "III-2",
                   "gender": "female",
                   "phenotype": "normal",
                   "generation": 2,
-                  "parents": {
-                    "father": "4",
-                    "mother": "5"
-                  }
+                  "parents": { "father": "II-4", "mother": "II-3" },
+                  "label": "III-2"
                 }
               ]
             }

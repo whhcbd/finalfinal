@@ -7,6 +7,20 @@ import * as katex from 'katex';
 import { ChatOrchestrator } from './chat-orchestrator';
 import { A2UIRenderer } from './a2ui-renderer';
 
+function generateUUID(): string {
+  try {
+    if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+      return crypto.randomUUID();
+    }
+  } catch (_) {
+    // HTTP context blocks crypto.randomUUID, fall through to polyfill
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
 type MessageRole = 'user' | 'assistant' | 'system';
 
 interface ChatMessage {
@@ -768,7 +782,7 @@ export class ChatModule extends LitElement {
 
     // 初始化 ChatOrchestrator 并连接 WebSocket
     const renderer = new A2UIRenderer();
-    const sessionId = this.currentConversationId || crypto.randomUUID();
+    const sessionId = this.currentConversationId || generateUUID();
     this.orchestrator = new ChatOrchestrator(renderer, sessionId);
 
     // 连接 WebSocket
@@ -846,7 +860,7 @@ export class ChatModule extends LitElement {
 
   private createNewConversation() {
     const newConv: Conversation = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       title: '新对话',
       messages: [],
       timestamp: new Date()
@@ -902,7 +916,7 @@ export class ChatModule extends LitElement {
     if (!conv) return;
 
     const userMessage: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       role: 'user',
       content,
       timestamp: new Date()
@@ -932,7 +946,7 @@ export class ChatModule extends LitElement {
     if (!conv) return;
 
     const assistantMessage: ChatMessage = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       role: 'assistant',
       content: '',
       timestamp: new Date(),

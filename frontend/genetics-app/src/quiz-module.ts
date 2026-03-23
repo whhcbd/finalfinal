@@ -643,7 +643,7 @@ export class QuizModule extends LitElement {
     this.selectedKnowledgePoint = knowledgePointId;
 
     try {
-      const response = await fetch(`http://localhost:8000/api/quiz/questions?category=${knowledgePointId}`);
+      const response = await fetch(`http://101.35.118.99:8000/api/quiz/questions?category=${knowledgePointId}`);
       if (!response.ok) throw new Error('Failed to load questions');
 
       this.questions = await response.json();

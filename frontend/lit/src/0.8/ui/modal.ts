@@ -58,28 +58,28 @@ export class Modal extends Root {
   ];
 
   @state()
-  accessor #showModal = false;
+  accessor _showModal = false;
 
   @query("dialog")
-  accessor #modalRef: HTMLDialogElement | null = null;
+  accessor _modalRef: HTMLDialogElement | null = null;
 
-  #closeModal() {
-    if (!this.#modalRef) {
+  _closeModal() {
+    if (!this._modalRef) {
       return;
     }
 
-    if (this.#modalRef.open) {
-      this.#modalRef.close();
+    if (this._modalRef.open) {
+      this._modalRef.close();
     }
 
-    this.#showModal = false;
+    this._showModal = false;
   }
 
   render() {
-    if (!this.#showModal) {
+    if (!this._showModal) {
       return html`<section
         @click=${() => {
-          this.#showModal = true;
+          this._showModal = true;
         }}
       >
         <slot name="entry"></slot>
@@ -95,7 +95,7 @@ export class Modal extends Root {
           return;
         }
 
-        this.#closeModal();
+        this._closeModal();
       }}
       ${ref((el?: Element) => {
         const showModalIfNeeded = () => {
@@ -118,7 +118,7 @@ export class Modal extends Root {
         <div id="controls">
           <button
             @click=${() => {
-        this.#closeModal();
+        this._closeModal();
       }}
           >
             <span class="g-icon">close</span>

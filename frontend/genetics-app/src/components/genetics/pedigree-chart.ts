@@ -9,10 +9,24 @@ import { customElement, property, state } from 'lit/decorators.js';
 import { map } from 'lit/directives/map.js';
 import animationStyles from '../../styles/animations.css?inline';
 
+export type Gender = 'male' | 'female' | 'unknown';
+export type Phenotype = 'normal' | 'affected' | 'carrier' | 'uncertain';
+export type MatingType = 'normal' | 'consanguineous' | 'divorced' | 'separated';
+export type CarrierDisplayMode = 'dot' | 'half-filled-left' | 'half-filled-right' | 'half-filled-top' | 'half-filled-bottom';
+export type InheritanceMode = 'AR' | 'AD' | 'XR' | 'XD' | 'Y' | 'mitochondrial' | 'unknown';
+export type DiseaseFillPattern = 'solid' | 'horizontal' | 'vertical' | 'diagonal' | 'checkerboard' | 'dotted';
+
+export interface DiseaseInfo {
+  id: string;
+  name: string;
+  fillPattern: DiseaseFillPattern;
+  color?: string;
+}
+
 export interface Individual {
   id: string;
-  gender: 'male' | 'female';
-  phenotype: 'normal' | 'affected' | 'carrier' | 'uncertain';
+  gender: Gender;
+  phenotype: Phenotype;
   generation: number;
   position?: number;
   parents?: {
@@ -20,10 +34,31 @@ export interface Individual {
     mother?: string;
   };
   children?: string[];
-  label?: string;  // 个体编号（如 "1", "2", "I-1"）
-  age?: string;    // 年龄信息
-  genotype?: string; // 基因型信息（如 "WT/MT"）
-  spouseId?: string; // 配偶ID，用于绘制婚配线
+  label?: string;
+  age?: string;
+  genotype?: string;
+  spouseId?: string;
+  isDeceased?: boolean;
+  isProband?: boolean;
+  isAdopted?: boolean;
+  isMiscarriage?: boolean;
+  isStillborn?: boolean;
+  isInfertile?: boolean;
+  matingType?: MatingType;
+  isNoChildren?: boolean;
+  onsetAge?: string;
+  causeOfDeath?: string;
+  clinicalNotes?: string;
+  isIvf?: boolean;
+  isDonorConceived?: boolean;
+  donorType?: 'sperm' | 'egg' | 'embryo';
+  count?: number;
+  ivfType?: 'IVF' | 'ICSI' | 'PGD';
+  carrierDisplayMode?: CarrierDisplayMode;
+  diseases?: DiseaseInfo[];
+  isPregnant?: boolean;
+  examYear?: string;
+  pregnancyCount?: number;
 }
 
 export interface Generation {
@@ -35,6 +70,7 @@ export class PedigreeChart extends Root {
   private _generations: Generation[] = [];
   private _trait: string = '';
   private _interactive: boolean = true;
+  private _inheritanceMode: InheritanceMode = 'unknown';
 
   @state()
   private selectedIndividual: Individual | null = null;
@@ -100,6 +136,16 @@ export class PedigreeChart extends Root {
     const oldValue = this._interactive;
     this._interactive = this.unwrapValue(value, 'boolean');
     this.requestUpdate('interactive', oldValue);
+  }
+
+  @property({ type: String })
+  get inheritanceMode(): InheritanceMode {
+    return this._inheritanceMode;
+  }
+  set inheritanceMode(value: any) {
+    const oldValue = this._inheritanceMode;
+    this._inheritanceMode = this.unwrapValue(value, 'string') as InheritanceMode || 'unknown';
+    this.requestUpdate('inheritanceMode', oldValue);
   }
 
   private unwrapValue(value: any, type: 'string' | 'boolean' | 'array' | 'object'): any {
@@ -239,20 +285,24 @@ export class PedigreeChart extends Root {
 
     .generation-wrapper {
       position: relative;
-      margin-bottom: 80px;
+      margin-bottom: 140px;
+      padding-left: 60px;
     }
 
     .generation-label {
       position: absolute;
-      top: -30px;
-      left: 20px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      font-weight: 700;
       color: #111827;
-      background: #fafafa;
-      padding: 4px 12px;
+      background: #f3f4f6;
+      padding: 8px 14px;
       border-radius: 4px;
       border: 1px solid #e5e7eb;
+      min-width: 32px;
+      text-align: center;
     }
 
     .generation {
@@ -294,6 +344,18 @@ export class PedigreeChart extends Root {
       border-radius: 50%;
     }
 
+    /* 性别不明：菱形 */
+    .symbol.unknown {
+      width: 36px;
+      height: 36px;
+      transform: rotate(45deg);
+      border-radius: 0;
+    }
+
+    .symbol.unknown .symbol-content {
+      transform: rotate(-45deg);
+    }
+
     /* 正常：空心 */
     .symbol.normal {
       background: #ffffff;
@@ -321,6 +383,114 @@ export class PedigreeChart extends Root {
       transform: translate(-50%, -50%);
     }
 
+    /* 携带者半填充模式 - 左半填充 */
+    .symbol.carrier-half-left {
+      background: linear-gradient(90deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.carrier-half-left::after {
+      display: none !important;
+    }
+
+    /* 携带者半填充模式 - 右半填充 */
+    .symbol.carrier-half-right {
+      background: linear-gradient(90deg, #ffffff 50%, #111827 50%);
+    }
+    .symbol.carrier-half-right::after {
+      display: none !important;
+    }
+
+    /* 携带者半填充模式 - 上半填充 */
+    .symbol.carrier-half-top {
+      background: linear-gradient(180deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.carrier-half-top::after {
+      display: none !important;
+    }
+
+    /* 携带者半填充模式 - 下半填充 */
+    .symbol.carrier-half-bottom {
+      background: linear-gradient(180deg, #ffffff 50%, #111827 50%);
+    }
+    .symbol.carrier-half-bottom::after {
+      display: none !important;
+    }
+
+    /* 半填充模式在圆形上的适配 */
+    .symbol.female.carrier-half-left {
+      background: linear-gradient(90deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.female.carrier-half-right {
+      background: linear-gradient(90deg, #ffffff 50%, #111827 50%);
+    }
+    .symbol.female.carrier-half-top {
+      background: linear-gradient(180deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.female.carrier-half-bottom {
+      background: linear-gradient(180deg, #ffffff 50%, #111827 50%);
+    }
+
+    /* 半填充模式在菱形上的适配 - 需要反向旋转渐变 */
+    .symbol.unknown.carrier-half-left::after {
+      transform: rotate(-45deg);
+      background: linear-gradient(90deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.unknown.carrier-half-right::after {
+      transform: rotate(-45deg);
+      background: linear-gradient(90deg, #ffffff 50%, #111827 50%);
+    }
+    .symbol.unknown.carrier-half-top::after {
+      transform: rotate(-45deg);
+      background: linear-gradient(180deg, #111827 50%, #ffffff 50%);
+    }
+    .symbol.unknown.carrier-half-bottom::after {
+      transform: rotate(-45deg);
+      background: linear-gradient(180deg, #ffffff 50%, #111827 50%);
+    }
+
+    /* 多种疾病填充模式 */
+    .symbol.disease-horizontal {
+      background: repeating-linear-gradient(
+        0deg,
+        #111827,
+        #111827 4px,
+        #6b7280 4px,
+        #6b7280 8px
+      );
+    }
+
+    .symbol.disease-vertical {
+      background: repeating-linear-gradient(
+        90deg,
+        #111827,
+        #111827 4px,
+        #6b7280 4px,
+        #6b7280 8px
+      );
+    }
+
+    .symbol.disease-diagonal {
+      background: repeating-linear-gradient(
+        45deg,
+        #111827,
+        #111827 4px,
+        #6b7280 4px,
+        #6b7280 8px
+      );
+    }
+
+    .symbol.disease-checkerboard {
+      background: 
+        repeating-conic-gradient(
+          #111827 0% 25%,
+          #6b7280 0% 50%
+        ) 0 0 / 10px 10px;
+    }
+
+    .symbol.disease-dotted {
+      background: radial-gradient(circle, #111827 2px, #ffffff 2px);
+      background-size: 6px 6px;
+    }
+
     /* 不确定/多种可能：对角线填充 */
     .symbol.uncertain {
       background: repeating-linear-gradient(
@@ -330,6 +500,143 @@ export class PedigreeChart extends Root {
         #ffffff 2px,
         #ffffff 6px
       );
+    }
+
+    /* 已故个体：斜线穿过符号 */
+    .symbol.deceased::before {
+      content: '';
+      position: absolute;
+      width: 141%;
+      height: 2px;
+      background: #111827;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      z-index: 2;
+    }
+
+    .symbol.female.deceased::before {
+      width: 127%;
+    }
+
+    .symbol.unknown.deceased::before {
+      width: 141%;
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    /* 先证者标记：箭头指向符号 */
+    .proband-arrow {
+      position: absolute;
+      left: -24px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-top: 10px solid transparent;
+      border-bottom: 10px solid transparent;
+      border-right: 16px solid #111827;
+      z-index: 3;
+    }
+
+    .proband-arrow::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: -2px;
+      width: 12px;
+      height: 4px;
+      background: #111827;
+    }
+
+    /* 收养个体：虚线边框 */
+    .symbol.adopted {
+      border-style: dashed;
+      border-width: 2px;
+    }
+
+    /* 流产：小三角形 */
+    .symbol.miscarriage {
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-bottom: 24px solid #111827;
+      background: transparent;
+      border-radius: 0;
+    }
+
+    .symbol.miscarriage.normal {
+      border-bottom-color: #ffffff;
+    }
+
+    .symbol.miscarriage.affected {
+      border-bottom-color: #111827;
+    }
+
+    .symbol.miscarriage::before,
+    .symbol.miscarriage::after {
+      display: none !important;
+    }
+
+    .symbol.miscarriage.deceased::before {
+      display: none !important;
+    }
+
+    /* 死产：带斜线的符号 */
+    .symbol.stillborn {
+      position: relative;
+    }
+
+    .symbol.stillborn::before {
+      content: '';
+      position: absolute;
+      width: 141%;
+      height: 2px;
+      background: #111827;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      z-index: 2;
+    }
+
+    .symbol.female.stillborn::before {
+      width: 127%;
+    }
+
+    .symbol.unknown.stillborn::before {
+      width: 141%;
+      transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    /* 不孕个体：符号上方带横线 - 使用::after，但carrier+infertile需要特殊处理 */
+    .symbol.infertile::after {
+      content: '';
+      position: absolute;
+      width: 50px;
+      height: 2px;
+      background: #111827;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0;
+      z-index: 1;
+    }
+
+    /* carrier+infertile：需要同时显示圆点和横线，使用box-shadow模拟圆点 */
+    .symbol.infertile.carrier::after {
+      width: 50px;
+      height: 2px;
+      background: #111827;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 0;
+      box-shadow: -25px 20px 0 3px #111827;
+    }
+
+    /* deceased+infertile：deceased的斜线用::before，infertile的横线用::after */
+    .symbol.infertile.deceased::after {
+      z-index: 1;
     }
 
     .symbol:hover {
@@ -372,10 +679,45 @@ export class PedigreeChart extends Root {
 
     .individual-label {
       position: absolute;
-      top: -20px;
+      top: -24px;
       font-size: 0.75rem;
       font-weight: 600;
       color: #111827;
+      white-space: nowrap;
+    }
+
+    .individual-id-badge {
+      position: absolute;
+      bottom: calc(100% + 28px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #374151;
+      background: #f3f4f6;
+      padding: 2px 6px;
+      border-radius: 3px;
+      border: 1px solid #d1d5db;
+      white-space: nowrap;
+    }
+
+    .individual-count-badge {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      background: #111827;
+      padding: 2px 6px;
+      border-radius: 3px;
+      z-index: 5;
+    }
+
+    .symbol.affected .individual-count-badge {
+      color: #111827;
+      background: #ffffff;
     }
 
     .individual-info {
@@ -548,6 +890,148 @@ export class PedigreeChart extends Root {
       stroke-width: 2;
     }
 
+    .mating-line.consanguineous {
+      stroke-width: 2;
+    }
+
+    .mating-line.consanguineous-secondary {
+      stroke: #111827;
+      stroke-width: 2;
+    }
+
+    .divorce-slash {
+      stroke: #111827;
+      stroke-width: 2;
+    }
+
+    .mating-line.divorced {
+      stroke-dasharray: 8 4;
+    }
+
+    .mating-line.separated {
+      stroke-dasharray: 4 4;
+    }
+
+    .sibship-line {
+      stroke: #111827;
+      stroke-width: 2;
+    }
+
+    .parent-child-line {
+      stroke: #111827;
+      stroke-width: 2;
+    }
+
+    .adopted-line {
+      stroke: #111827;
+      stroke-width: 2;
+      stroke-dasharray: 6 3;
+    }
+
+    .ivf-line {
+      stroke: #111827;
+      stroke-width: 2;
+      stroke-dasharray: 4 2;
+    }
+
+    .ivf-label {
+      font-size: 0.65rem;
+      fill: #6b7280;
+      font-weight: 500;
+    }
+
+    .donor-line {
+      stroke: #111827;
+      stroke-width: 2;
+      stroke-dasharray: 6 3;
+    }
+
+    .donor-label {
+      font-size: 0.6rem;
+      fill: #9ca3af;
+    }
+
+    .ivf-type-label, .donor-type-label {
+      font-size: 0.6rem;
+      color: #6b7280;
+      font-weight: 500;
+      margin-top: 2px;
+    }
+
+    .donor-type-label {
+      color: #9ca3af;
+    }
+
+    .pregnancy-marker {
+      position: absolute;
+      bottom: -6px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.6rem;
+      color: #6b7280;
+    }
+
+    .inheritance-mode-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #374151;
+      margin-left: 8px;
+    }
+
+    .inheritance-mode-badge.AD {
+      background: #fef3c7;
+      border-color: #fcd34d;
+      color: #92400e;
+    }
+
+    .inheritance-mode-badge.AR {
+      background: #dbeafe;
+      border-color: #93c5fd;
+      color: #1e40af;
+    }
+
+    .inheritance-mode-badge.XR, .inheritance-mode-badge.XD {
+      background: #fce7f3;
+      border-color: #f9a8d4;
+      color: #9d174d;
+    }
+
+    .inheritance-mode-badge.Y {
+      background: #d1fae5;
+      border-color: #6ee7b7;
+      color: #065f46;
+    }
+
+    .inheritance-mode-badge.mitochondrial {
+      background: #ede9fe;
+      border-color: #c4b5fd;
+      color: #5b21b6;
+    }
+
+    .no-children-marker {
+      stroke: #111827;
+      stroke-width: 2;
+    }
+
+    
+    .symbol.no-children::after {
+      content: '';
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: #111827;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
     .legend {
       margin-top: 24px;
       padding: 16px;
@@ -631,6 +1115,64 @@ export class PedigreeChart extends Root {
       font-size: 0.85rem;
       color: #6b7280;
       flex: 1;
+    }
+
+    .legend-line {
+      width: 40px;
+      height: 2px;
+      background: #111827;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .legend-line.double {
+      height: 6px;
+      background: transparent;
+      border-top: 2px solid #111827;
+      border-bottom: 2px solid #111827;
+    }
+
+    .legend-line.dashed {
+      background: repeating-linear-gradient(
+        90deg,
+        #111827,
+        #111827 6px,
+        transparent 6px,
+        transparent 10px
+      );
+    }
+
+    .legend-line.dotted {
+      background: repeating-linear-gradient(
+        90deg,
+        #111827,
+        #111827 3px,
+        transparent 3px,
+        transparent 6px
+      );
+    }
+
+    .legend-line.adopted {
+      background: repeating-linear-gradient(
+        90deg,
+        #111827,
+        #111827 4px,
+        transparent 4px,
+        transparent 8px
+      );
+    }
+
+    .legend-section {
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    .legend-subtitle {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
     }
 
     .stats {
@@ -869,13 +1411,15 @@ export class PedigreeChart extends Root {
     return stats;
   }
 
-  private getGenderStats(generations: Generation[]): { male: number; female: number } {
-    const stats = { male: 0, female: 0 };
+  private getGenderStats(generations: Generation[]): { male: number; female: number; unknown: number } {
+    const stats = { male: 0, female: 0, unknown: 0 };
     for (const individual of this.getAllIndividuals(generations)) {
       if (individual.gender === 'male') {
         stats.male++;
       } else if (individual.gender === 'female') {
         stats.female++;
+      } else {
+        stats.unknown++;
       }
     }
     return stats;
@@ -895,7 +1439,12 @@ export class PedigreeChart extends Root {
 
     return html`
       <div class="container">
-        <div class="title">${traitName || '家系图'}</div>
+        <div class="title">
+          ${traitName || '家系图'}
+          ${this._inheritanceMode && this._inheritanceMode !== 'unknown' 
+            ? html`<span class="inheritance-mode-badge ${this._inheritanceMode}">${this.getInheritanceModeLabel(this._inheritanceMode)}</span>` 
+            : ''}
+        </div>
 
         <div class="zoom-toolbar">
           <button class="zoom-btn" @click=${() => { this.scale = Math.min(3, this.scale * 1.2); requestAnimationFrame(() => this.drawConnections()); }} title="放大">＋</button>
@@ -932,14 +1481,20 @@ export class PedigreeChart extends Root {
                     data-gen="${genIndex}"
                     data-pos="${indIndex}"
                     @click=${(e: MouseEvent) => this.editMode ? this.handleEditClick(e, ind) : this.handleIndividualClick(ind)}
-                    aria-label="${eff.gender === 'male' ? '男性' : '女性'} - ${this.getPhenotypeLabel(eff.phenotype)}"
+                    aria-label="${eff.gender === 'male' ? '男性' : eff.gender === 'female' ? '女性' : '性别不明'} - ${this.getPhenotypeLabel(eff.phenotype)}"
                     tabindex="0"
                   >
+                    ${eff.isProband ? html`<div class="proband-arrow"></div>` : ''}
+                    <div class="individual-id-badge">${this.toRoman(genIndex + 1)}-${indIndex + 1}</div>
                     ${eff.label ? html`<div class="individual-label">${eff.label}</div>` : ''}
                     <div
-                      class="symbol ${eff.gender} ${eff.phenotype}"
+                      class="symbol ${eff.gender} ${eff.phenotype} ${this.getCarrierClass(eff)} ${this.getDiseaseFillClass(eff.diseases)} ${eff.isDeceased ? 'deceased' : ''} ${eff.isAdopted ? 'adopted' : ''} ${eff.isMiscarriage ? 'miscarriage' : ''} ${eff.isStillborn ? 'stillborn' : ''} ${eff.isInfertile ? 'infertile' : ''}"
                       title="${this.getPhenotypeLabel(eff.phenotype)}"
-                    ></div>
+                    >
+                      ${eff.count && eff.count > 1 ? html`<div class="individual-count-badge">${eff.count}</div>` : ''}
+                    </div>
+                    ${eff.isIvf && eff.ivfType ? html`<div class="ivf-type-label">${eff.ivfType}</div>` : ''}
+                    ${eff.isDonorConceived && eff.donorType ? html`<div class="donor-type-label">供${eff.donorType === 'sperm' ? '精' : eff.donorType === 'egg' ? '卵' : '胚'}</div>` : ''}
                     ${eff.age ? html`
                       <div class="individual-info">
                         <div class="individual-age">${eff.age}</div>
@@ -961,20 +1516,45 @@ export class PedigreeChart extends Root {
           <div class="legend-title">图例 (Legend)</div>
           <div class="legend-grid">
             ${map([
-              { type: 'male', phenotype: 'normal', label: '正常男性 (Male)' },
-              { type: 'female', phenotype: 'normal', label: '正常女性 (Female)' },
-              { type: 'male', phenotype: 'affected', label: '患病男性 (Affected Male)' },
-              { type: 'female', phenotype: 'affected', label: '患病女性 (Affected Female)' },
-              { type: 'male', phenotype: 'carrier', label: '男性携带者 (Male Carrier)' },
-              { type: 'female', phenotype: 'carrier', label: '女性携带者 (Female Carrier)' },
-              { type: 'male', phenotype: 'uncertain', label: '男性不确定/多种可能 (Uncertain Male)' },
-              { type: 'female', phenotype: 'uncertain', label: '女性不确定/多种可能 (Uncertain Female)' }
+              { type: 'male', phenotype: 'normal', label: '正常男性' },
+              { type: 'female', phenotype: 'normal', label: '正常女性' },
+              { type: 'unknown', phenotype: 'normal', label: '性别不明' },
+              { type: 'male', phenotype: 'affected', label: '患病男性' },
+              { type: 'female', phenotype: 'affected', label: '患病女性' },
+              { type: 'male', phenotype: 'carrier', label: '携带者(圆点)' },
+              { type: 'female', phenotype: 'carrier', extra: 'carrier-half-left', label: '携带者(半填充)' },
+              { type: 'male', phenotype: 'uncertain', label: '表型不确定' },
+              { type: 'male', phenotype: 'affected', extra: 'disease-horizontal', label: '多疾病(横纹)' },
+              { type: 'male', phenotype: 'affected', extra: 'disease-diagonal', label: '多疾病(斜纹)' },
+              { type: 'male', phenotype: 'normal', extra: 'deceased', label: '已故个体' },
+              { type: 'male', phenotype: 'normal', extra: 'proband', label: '先证者' },
+              { type: 'male', phenotype: 'normal', extra: 'adopted', label: '收养个体' },
+              { type: 'female', phenotype: 'normal', extra: 'miscarriage', label: '流产' },
+              { type: 'male', phenotype: 'normal', extra: 'stillborn', label: '死产' },
+              { type: 'male', phenotype: 'normal', extra: 'infertile', label: '不孕个体' }
             ], (item) => html`
               <div class="legend-item">
-                <div class="legend-symbol ${item.type} ${item.phenotype}"></div>
+                <div class="legend-symbol ${item.type} ${item.phenotype} ${item.extra || ''}">${item.extra === 'proband' ? html`<div class="proband-arrow" style="left:-14px;"></div>` : ''}</div>
                 <span class="legend-text">${item.label}</span>
               </div>
             `)}
+          </div>
+          <div class="legend-section" style="margin-top: 16px;">
+            <div class="legend-subtitle" style="font-size: 0.85rem; font-weight: 600; color: #374151; margin-bottom: 8px;">连线图例</div>
+            <div class="legend-grid">
+              ${map([
+                { lineType: 'solid', label: '婚姻/亲子关系' },
+                { lineType: 'double', label: '近亲结婚' },
+                { lineType: 'dashed', label: '离婚/分居' },
+                { lineType: 'dotted', label: 'IVF/供精供卵' },
+                { lineType: 'adopted', label: '收养关系' }
+              ], (item) => html`
+                <div class="legend-item">
+                  <div class="legend-line ${item.lineType}"></div>
+                  <span class="legend-text">${item.label}</span>
+                </div>
+              `)}
+            </div>
           </div>
         </div>
 
@@ -991,6 +1571,12 @@ export class PedigreeChart extends Root {
             <div class="stat-label">女性</div>
             <div class="stat-value">${genderStats.female}</div>
           </div>
+          ${genderStats.unknown > 0 ? html`
+          <div class="stat-item">
+            <div class="stat-label">性别不明</div>
+            <div class="stat-value">${genderStats.unknown}</div>
+          </div>
+          ` : ''}
           <div class="stat-item">
             <div class="stat-label">患病</div>
             <div class="stat-value">${phenotypeStats.affected}</div>
@@ -1000,10 +1586,39 @@ export class PedigreeChart extends Root {
             <div class="stat-value">${phenotypeStats.carriers}</div>
           </div>
           <div class="stat-item">
-            <div class="stat-label">正常</div>
-            <div class="stat-value">${phenotypeStats.normal}</div>
+              <div class="stat-label">正常</div>
+              <div class="stat-value">${phenotypeStats.normal}</div>
+            </div>
+            ${(() => {
+              const all = this.getAllIndividuals(generations);
+              const deceased = all.filter(i => i.isDeceased).length;
+              const adopted = all.filter(i => i.isAdopted).length;
+              const probands = all.filter(i => i.isProband).length;
+              if (deceased > 0 || adopted > 0 || probands > 0) {
+                return html`
+                  ${deceased > 0 ? html`
+                    <div class="stat-item">
+                      <div class="stat-label">已故</div>
+                      <div class="stat-value">${deceased}</div>
+                    </div>
+                  ` : ''}
+                  ${adopted > 0 ? html`
+                    <div class="stat-item">
+                      <div class="stat-label">收养</div>
+                      <div class="stat-value">${adopted}</div>
+                    </div>
+                  ` : ''}
+                  ${probands > 0 ? html`
+                    <div class="stat-item">
+                      <div class="stat-label">先证者</div>
+                      <div class="stat-value">${probands}</div>
+                    </div>
+                  ` : ''}
+                `;
+              }
+              return '';
+            })()}
           </div>
-        </div>
 
         ${this.selectedIndividual && this.interactive ? html`
           <div class="detail-overlay" @click=${this.handleCloseDetail}></div>
@@ -1024,8 +1639,8 @@ export class PedigreeChart extends Root {
               <div class="detail-row">
                 <span class="detail-label">性别</span>
                 <div class="detail-symbol-preview">
-                  <div class="detail-symbol ${this.selectedIndividual.gender} ${this.selectedIndividual.phenotype}"></div>
-                  <span class="detail-value">${this.selectedIndividual.gender === 'male' ? '男性' : '女性'}</span>
+                  <div class="detail-symbol ${this.selectedIndividual.gender} ${this.selectedIndividual.phenotype} ${this.selectedIndividual.isDeceased ? 'deceased' : ''}"></div>
+                  <span class="detail-value">${this.selectedIndividual.gender === 'male' ? '男性' : this.selectedIndividual.gender === 'female' ? '女性' : '性别不明'}</span>
                 </div>
               </div>
               <div class="detail-row">
@@ -1042,6 +1657,36 @@ export class PedigreeChart extends Root {
                 <div class="detail-row">
                   <span class="detail-label">年龄</span>
                   <span class="detail-value">${this.selectedIndividual.age}</span>
+                </div>
+              ` : ''}
+              ${this.selectedIndividual.isProband ? html`
+                <div class="detail-row">
+                  <span class="detail-label">特殊标记</span>
+                  <span class="detail-value" style="color: #3b82f6;">先证者 (Proband)</span>
+                </div>
+              ` : ''}
+              ${this.selectedIndividual.isDeceased ? html`
+                <div class="detail-row">
+                  <span class="detail-label">状态</span>
+                  <span class="detail-value">已故 (Deceased)${this.selectedIndividual.causeOfDeath ? ` - ${this.selectedIndividual.causeOfDeath}` : ''}</span>
+                </div>
+              ` : ''}
+              ${this.selectedIndividual.isAdopted ? html`
+                <div class="detail-row">
+                  <span class="detail-label">特殊标记</span>
+                  <span class="detail-value">收养 (Adopted)</span>
+                </div>
+              ` : ''}
+              ${this.selectedIndividual.onsetAge ? html`
+                <div class="detail-row">
+                  <span class="detail-label">发病年龄</span>
+                  <span class="detail-value">${this.selectedIndividual.onsetAge}</span>
+                </div>
+              ` : ''}
+              ${this.selectedIndividual.clinicalNotes ? html`
+                <div class="detail-row">
+                  <span class="detail-label">临床备注</span>
+                  <span class="detail-value">${this.selectedIndividual.clinicalNotes}</span>
                 </div>
               ` : ''}
               <div class="detail-explanation">
@@ -1086,14 +1731,38 @@ export class PedigreeChart extends Root {
     return 'AR';
   }
 
-  private getEffectiveIndividual(ind: Individual): Individual {
+  private getEffectiveIndividual(ind: Individual): Individual & {
+    isDeceased: boolean;
+    isProband: boolean;
+    isAdopted: boolean;
+    isMiscarriage: boolean;
+    isStillborn: boolean;
+    isInfertile: boolean;
+    matingType: MatingType;
+    isIvf: boolean;
+    isDonorConceived: boolean;
+    donorType: 'sperm' | 'egg' | 'embryo' | undefined;
+    carrierDisplayMode: CarrierDisplayMode;
+  } {
     const ov = this.editOverrides.get(ind.id);
-    if (!ov) return ind;
-    return { ...ind, ...ov };
+    const base = { ...ind, ...ov };
+    return {
+      ...base,
+      isDeceased: base.isDeceased ?? false,
+      isProband: base.isProband ?? false,
+      isAdopted: base.isAdopted ?? false,
+      isMiscarriage: base.isMiscarriage ?? false,
+      isStillborn: base.isStillborn ?? false,
+      isInfertile: base.isInfertile ?? false,
+      matingType: base.matingType ?? 'normal',
+      isIvf: base.isIvf ?? false,
+      isDonorConceived: base.isDonorConceived ?? false,
+      donorType: base.donorType,
+      carrierDisplayMode: base.carrierDisplayMode ?? 'dot'
+    };
   }
 
-  // Infer genotype from phenotype + inheritance mode + gender
-  private inferGenotype(phenotype: 'normal' | 'affected' | 'carrier' | 'uncertain', gender: 'male' | 'female', mode: 'AR' | 'AD' | 'XR' | 'XD' | 'Y'): string {
+  private inferGenotype(phenotype: Phenotype, gender: Gender, mode: InheritanceMode): string {
     switch (mode) {
       case 'AR':
         if (phenotype === 'affected') return 'aa';
@@ -1102,6 +1771,7 @@ export class PedigreeChart extends Root {
         return 'AA或Aa';
       case 'AD':
         if (phenotype === 'affected') return 'Aa或AA';
+        if (phenotype === 'carrier') return 'Aa';
         if (phenotype === 'uncertain') return 'Aa、AA或aa';
         return 'aa';
       case 'XR':
@@ -1128,6 +1798,12 @@ export class PedigreeChart extends Root {
       case 'Y':
         if (gender === 'male') return phenotype === 'affected' ? 'X^aY' : 'XY';
         return 'XX';
+      case 'mitochondrial':
+        if (phenotype === 'affected') return 'mtDNA突变';
+        if (phenotype === 'uncertain') return 'mtDNA突变或正常';
+        return 'mtDNA正常';
+      case 'unknown':
+        return '?';
     }
   }
 
@@ -1177,56 +1853,153 @@ export class PedigreeChart extends Root {
     if (!father && !mother) return null;
     const fG = father?.genotype || this.inferGenotype(father?.phenotype || 'normal', 'male', mode);
     const mG = mother?.genotype || this.inferGenotype(mother?.phenotype || 'normal', 'female', mode);
+    const fUncertain = father?.phenotype === 'uncertain';
+    const mUncertain = mother?.phenotype === 'uncertain';
 
     switch (mode) {
       case 'AR': {
-        const fHasA = fG.includes('a');
-        const mHasA = mG.includes('a');
+        // 精确基因型推导：优先用确定的基因型做孟德尔配子组合
+        const fExact = fG === 'AA' || fG === 'Aa' || fG === 'aa';
+        const mExact = mG === 'AA' || mG === 'Aa' || mG === 'aa';
+        if (fExact && mExact) {
+          if (fG === 'AA' && mG === 'AA') return { genotype: 'AA', phenotype: 'normal' };
+          if ((fG === 'AA' && mG === 'Aa') || (fG === 'Aa' && mG === 'AA')) return { genotype: 'AA或Aa', phenotype: 'uncertain' };
+          if ((fG === 'AA' && mG === 'aa') || (fG === 'aa' && mG === 'AA')) return { genotype: 'Aa', phenotype: 'carrier' };
+          if (fG === 'Aa' && mG === 'Aa') return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+          // Aa × aa：子代只可能是携带者或患病，不可能正常
+          if ((fG === 'Aa' && mG === 'aa') || (fG === 'aa' && mG === 'Aa')) return { genotype: 'Aa或aa', phenotype: 'uncertain' };
+          if (fG === 'aa' && mG === 'aa') return { genotype: 'aa', phenotype: 'affected' };
+        }
+        // 降级：基于 phenotype 推导（注意处理 uncertain 表型）
         const fAff = father?.phenotype === 'affected';
         const mAff = mother?.phenotype === 'affected';
+        // uncertain 意味着可能是 AA、Aa 或 aa，所以也可能是携带者
+        const fCarrier = father?.phenotype === 'carrier' || fUncertain || fG === 'Aa';
+        const mCarrier = mother?.phenotype === 'carrier' || mUncertain || mG === 'Aa';
+        // 如果任一父母是 uncertain，子代也是 uncertain
+        if (fUncertain || mUncertain) {
+          return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+        }
         if (fAff && mAff) return { genotype: 'aa', phenotype: 'affected' };
         if (fAff || mAff) {
-          const otherCarrier = fHasA || mHasA;
+          const otherCarrier = fCarrier || mCarrier;
           return otherCarrier
             ? { genotype: 'Aa或aa', phenotype: 'uncertain' }
             : { genotype: 'Aa', phenotype: 'carrier' };
         }
-        if (fHasA && mHasA) return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
-        if (fHasA || mHasA) return { genotype: 'AA或Aa', phenotype: 'uncertain' };
+        if ((fCarrier || fAff) && (mCarrier || mAff)) return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+        if (fCarrier || mCarrier) return { genotype: 'AA或Aa', phenotype: 'uncertain' };
         return { genotype: 'AA', phenotype: 'normal' };
       }
       case 'AD': {
+        // 精确基因型推导：AA/Aa/aa 确定时直接用孟德尔表格
+        const fExact = fG === 'AA' || fG === 'Aa' || fG === 'aa';
+        const mExact = mG === 'AA' || mG === 'Aa' || mG === 'aa';
+        if (fExact && mExact) {
+          if (fG === 'aa' && mG === 'aa') return { genotype: 'aa', phenotype: 'normal' };
+          if ((fG === 'AA' && mG === 'AA')) return { genotype: 'AA', phenotype: 'affected' };
+          if ((fG === 'AA' && mG === 'Aa') || (fG === 'Aa' && mG === 'AA')) return { genotype: 'AA或Aa', phenotype: 'affected' };
+          if ((fG === 'AA' && mG === 'aa') || (fG === 'aa' && mG === 'AA')) return { genotype: 'Aa', phenotype: 'affected' };
+          if (fG === 'Aa' && mG === 'Aa') return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+          if ((fG === 'Aa' && mG === 'aa') || (fG === 'aa' && mG === 'Aa')) return { genotype: 'Aa或aa', phenotype: 'uncertain' };
+        }
+        // 降级：基于 phenotype 推导（注意处理 uncertain 表型）
         const fAff = father?.phenotype === 'affected';
         const mAff = mother?.phenotype === 'affected';
+        // 如果任一父母是 uncertain，子代也是 uncertain
+        if (fUncertain || mUncertain) {
+          return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+        }
         if (!fAff && !mAff) return { genotype: 'aa', phenotype: 'normal' };
-        return { genotype: 'Aa或AA', phenotype: 'affected' };
+        // 两个患者都可能是 Aa，子代有 1/4 概率为 aa（正常），不能确定全患病
+        if (fAff && mAff) return { genotype: 'AA、Aa或aa', phenotype: 'uncertain' };
+        return { genotype: 'Aa或aa', phenotype: 'uncertain' };
       }
       case 'XR': {
         const fAff = father?.phenotype === 'affected';
         const mAff = mother?.phenotype === 'affected';
         const mCarrier = mother?.phenotype === 'carrier';
+        // 精确基因型推导（X染色体）
+        const fExactXR = fG === 'X^AY' || fG === 'X^aY';
+        const mExactXR = mG === 'X^AX^A' || mG === 'X^AX^a' || mG === 'X^aX^a';
+        if (fExactXR && mExactXR) {
+          if (childGender === 'male') {
+            // 儿子从母亲获得 X：X^AX^A/X^AX^a → 50% X^A；X^aX^a → X^a
+            if (mG === 'X^AX^A') return { genotype: 'X^AY', phenotype: 'normal' };
+            if (mG === 'X^aX^a') return { genotype: 'X^aY', phenotype: 'affected' };
+            return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' }; // X^AX^a
+          } else {
+            // 女儿：父给 X^A 或 X^a，母给自身 X
+            if (fG === 'X^AY') {
+              if (mG === 'X^AX^A') return { genotype: 'X^AX^A', phenotype: 'normal' };
+              if (mG === 'X^aX^a') return { genotype: 'X^AX^a', phenotype: 'carrier' };
+              return { genotype: 'X^AX^A或X^AX^a', phenotype: 'uncertain' };
+            } else { // fG === 'X^aY'
+              if (mG === 'X^AX^A') return { genotype: 'X^AX^a', phenotype: 'carrier' };
+              if (mG === 'X^aX^a') return { genotype: 'X^aX^a', phenotype: 'affected' };
+              return { genotype: 'X^AX^a或X^aX^a', phenotype: 'uncertain' };
+            }
+          }
+        }
+        // 降级：基于 phenotype 推导（注意处理 uncertain 表型）
+        const fMayAffected = fAff || fUncertain;
+        const mMayAffected = mAff || mUncertain;
+        const mMayCarrier = mCarrier || mUncertain;
         if (childGender === 'male') {
-          if (mAff || mCarrier) return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' };
+          // 母亲患病(X^aX^a)时儿子必定获得 X^a，确定患病
+          if (mAff) return { genotype: 'X^aY', phenotype: 'affected' };
+          if (mUncertain) return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' };
+          if (mCarrier) return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' };
           return { genotype: 'X^AY', phenotype: 'normal' };
         } else {
-          if (fAff && (mAff || mCarrier)) return { genotype: 'X^AX^a或X^aX^a', phenotype: 'uncertain' };
+          if (fMayAffected && (mMayAffected || mMayCarrier)) return { genotype: 'X^AX^a或X^aX^a', phenotype: 'uncertain' };
+          if (fUncertain) return { genotype: 'X^AX^A或X^AX^a或X^aX^a', phenotype: 'uncertain' };
           if (fAff) return { genotype: 'X^AX^a', phenotype: 'carrier' };
-          if (mAff || mCarrier) return { genotype: 'X^AX^A或X^AX^a', phenotype: 'uncertain' };
+          if (mMayAffected || mMayCarrier) return { genotype: 'X^AX^A或X^AX^a', phenotype: 'uncertain' };
           return { genotype: 'X^AX^A', phenotype: 'normal' };
         }
       }
       case 'XD': {
         const fAff = father?.phenotype === 'affected';
         const mAff = mother?.phenotype === 'affected';
+        // 精确基因型推导（X染色体显性）
+        const fExactXD = fG === 'X^AY' || fG === 'X^aY';
+        const mExactXD = mG === 'X^AX^A' || mG === 'X^AX^a' || mG === 'X^aX^a';
+        if (fExactXD && mExactXD) {
+          if (childGender === 'male') {
+            // 儿子 X 来自母亲
+            if (mG === 'X^AX^A') return { genotype: 'X^AY', phenotype: 'affected' };
+            if (mG === 'X^aX^a') return { genotype: 'X^aY', phenotype: 'normal' };
+            return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' };
+          } else {
+            // 女儿：父 X + 母 X
+            if (fG === 'X^AY') {
+              if (mG === 'X^AX^A') return { genotype: 'X^AX^A', phenotype: 'affected' };
+              if (mG === 'X^aX^a') return { genotype: 'X^AX^a', phenotype: 'affected' };
+              return { genotype: 'X^AX^A或X^AX^a', phenotype: 'affected' };
+            } else { // fG === 'X^aY'
+              if (mG === 'X^AX^A') return { genotype: 'X^AX^a', phenotype: 'affected' };
+              if (mG === 'X^aX^a') return { genotype: 'X^aX^a', phenotype: 'normal' };
+              return { genotype: 'X^AX^a或X^aX^a', phenotype: 'uncertain' };
+            }
+          }
+        }
+        // 降级：基于 phenotype 推导（注意处理 uncertain 表型）
+        const fMayAffected = fAff || fUncertain;
+        const mMayAffected = mAff || mUncertain;
         if (childGender === 'male') {
+          if (mUncertain) return { genotype: 'X^AY或X^aY', phenotype: 'uncertain' };
           return mAff ? { genotype: 'X^AY或X^aY', phenotype: 'uncertain' } : { genotype: 'X^aY', phenotype: 'normal' };
         } else {
+          if (fUncertain) return { genotype: 'X^AX^a或X^aX^a或X^AX^A', phenotype: 'uncertain' };
           if (fAff) return { genotype: 'X^AX^a', phenotype: 'affected' };
+          if (mUncertain) return { genotype: 'X^AX^a或X^aX^a或X^AX^A', phenotype: 'uncertain' };
           return mAff ? { genotype: 'X^AX^a或X^AX^A', phenotype: 'affected' } : { genotype: 'X^aX^a', phenotype: 'normal' };
         }
       }
       case 'Y':
         if (childGender === 'male') {
+          if (fUncertain) return { genotype: 'X^aY或XY', phenotype: 'uncertain' };
           return father?.phenotype === 'affected'
             ? { genotype: 'X^aY', phenotype: 'affected' }
             : { genotype: 'XY', phenotype: 'normal' };
@@ -1278,6 +2051,37 @@ export class PedigreeChart extends Root {
       carrier: '携带者'
     };
     return labels[phenotype] || phenotype;
+  }
+
+  private getCarrierClass(ind: Individual): string {
+    if (ind.phenotype !== 'carrier') return '';
+    const mode = ind.carrierDisplayMode || 'dot';
+    switch (mode) {
+      case 'half-filled-left': return 'carrier-half-left';
+      case 'half-filled-right': return 'carrier-half-right';
+      case 'half-filled-top': return 'carrier-half-top';
+      case 'half-filled-bottom': return 'carrier-half-bottom';
+      default: return '';
+    }
+  }
+
+  private getInheritanceModeLabel(mode: InheritanceMode): string {
+    const labels: Record<InheritanceMode, string> = {
+      AR: '常染色体隐性',
+      AD: '常染色体显性',
+      XR: 'X连锁隐性',
+      XD: 'X连锁显性',
+      Y: 'Y连锁',
+      mitochondrial: '线粒体遗传',
+      unknown: '未知'
+    };
+    return labels[mode] || mode;
+  }
+
+  private getDiseaseFillClass(diseases?: DiseaseInfo[]): string {
+    if (!diseases || diseases.length === 0) return '';
+    const pattern = diseases[0].fillPattern;
+    return `disease-${pattern}`;
   }
 
   private handleIndividualClick(individual: Individual) {
@@ -1497,7 +2301,10 @@ export class PedigreeChart extends Root {
     allIndividuals.forEach(ind => individualMap.set(ind.id, ind));
 
     // --- 1. Draw spouse lines from spouseId (covers childless couples) ---
+    // 标准规范：配偶线在符号中心水平连接
     const drawnSpouseLines = new Set<string>();
+    const VERTICAL_DROP = 100;
+    const SYMBOL_HALF_HEIGHT = 20;
     allIndividuals.forEach(ind => {
       if (!ind.spouseId) return;
       const key = [ind.id, ind.spouseId].sort().join('-');
@@ -1509,18 +2316,49 @@ export class PedigreeChart extends Root {
       const c1 = this.getElCenter(el1, containerRect);
       const c2 = this.getElCenter(el2, containerRect);
       const highlighted = this.isLineHighlighted(ind.id, ind.spouseId);
-      svg.appendChild(this.makeLine(`mating-line${highlighted ? ' highlighted' : ''}`, c1.x, c1.y, c2.x, c2.y));
+
+      const matingType = ind.matingType || 'normal';
+      let lineClass = 'mating-line';
+      if (matingType === 'consanguineous') {
+        lineClass = 'mating-line consanguineous';
+      } else if (matingType === 'divorced') {
+        lineClass = 'mating-line divorced';
+      } else if (matingType === 'separated') {
+        lineClass = 'mating-line separated';
+      }
+      if (highlighted) lineClass += ' highlighted';
+
+      svg.appendChild(this.makeLine(lineClass, c1.x, c1.y, c2.x, c2.y));
+
+      if (matingType === 'divorced') {
+        const slashX = (c1.x + c2.x) / 2;
+        const slashY = c1.y;
+        svg.appendChild(this.makeLine('mating-line divorced', slashX - 8, slashY - 8, slashX + 8, slashY + 8));
+      }
     });
 
-    // --- 2. Group children by parent pair ---
+    // --- 2. Group children by parent pair (双亲情况) ---
     const coupleChildren = new Map<string, { fatherId: string; motherId: string; childIds: string[] }>();
+    // --- 3. Group children by single parent (单亲情况) ---
+    const singleParentChildren = new Map<string, { parentId: string; childIds: string[] }>();
+
     allIndividuals.forEach(child => {
-      if (!child.parents?.father || !child.parents?.mother) return;
-      const key = `${child.parents.father}-${child.parents.mother}`;
-      if (!coupleChildren.has(key)) {
-        coupleChildren.set(key, { fatherId: child.parents.father, motherId: child.parents.mother, childIds: [] });
+      const hasFather = !!child.parents?.father;
+      const hasMother = !!child.parents?.mother;
+
+      if (hasFather && hasMother) {
+        const key = `${child.parents.father}-${child.parents.mother}`;
+        if (!coupleChildren.has(key)) {
+          coupleChildren.set(key, { fatherId: child.parents.father, motherId: child.parents.mother, childIds: [] });
+        }
+        coupleChildren.get(key)!.childIds.push(child.id);
+      } else if (hasFather || hasMother) {
+        const parentId = hasFather ? child.parents!.father! : child.parents!.mother!;
+        if (!singleParentChildren.has(parentId)) {
+          singleParentChildren.set(parentId, { parentId, childIds: [] });
+        }
+        singleParentChildren.get(parentId)!.childIds.push(child.id);
       }
-      coupleChildren.get(key)!.childIds.push(child.id);
     });
 
     coupleChildren.forEach(({ fatherId, motherId, childIds }) => {
@@ -1531,18 +2369,39 @@ export class PedigreeChart extends Root {
       const fc = this.getElCenter(fatherEl, containerRect);
       const mc = this.getElCenter(motherEl, containerRect);
 
-      // Draw mating line if not already drawn via spouseId
       const spouseKey = [fatherId, motherId].sort().join('-');
+      const matingLineY = fc.y;
+
+      const father = allIndividuals.find(i => i.id === fatherId);
+      const mother = allIndividuals.find(i => i.id === motherId);
+      const matingType = father?.matingType || mother?.matingType || 'normal';
+
       if (!drawnSpouseLines.has(spouseKey)) {
         const highlighted = this.isLineHighlighted(fatherId, motherId);
-        svg.appendChild(this.makeLine(`mating-line${highlighted ? ' highlighted' : ''}`, fc.x, fc.y, mc.x, mc.y));
+
+        if (matingType === 'consanguineous') {
+          const lineGap = 4;
+          svg.appendChild(this.makeLine(`mating-line consanguineous${highlighted ? ' highlighted' : ''}`, fc.x, matingLineY - lineGap, mc.x, matingLineY - lineGap));
+          svg.appendChild(this.makeLine(`mating-line consanguineous-secondary${highlighted ? ' highlighted' : ''}`, fc.x, matingLineY + lineGap, mc.x, matingLineY + lineGap));
+        } else if (matingType === 'divorced' || matingType === 'separated') {
+          svg.appendChild(this.makeLine(`mating-line ${matingType}${highlighted ? ' highlighted' : ''}`, fc.x, matingLineY, mc.x, matingLineY));
+          const slashX = (fc.x + mc.x) / 2;
+          const slashLen = 12;
+          const slashEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+          slashEl.setAttribute('x1', String(slashX - slashLen));
+          slashEl.setAttribute('y1', String(matingLineY - slashLen));
+          slashEl.setAttribute('x2', String(slashX + slashLen));
+          slashEl.setAttribute('y2', String(matingLineY + slashLen));
+          slashEl.setAttribute('class', `divorce-slash${highlighted ? ' highlighted' : ''}`);
+          svg.appendChild(slashEl);
+        } else {
+          svg.appendChild(this.makeLine(`mating-line${highlighted ? ' highlighted' : ''}`, fc.x, matingLineY, mc.x, matingLineY));
+        }
         drawnSpouseLines.add(spouseKey);
       }
 
       const midX = (fc.x + mc.x) / 2;
-      const midY = (fc.y + mc.y) / 2;
 
-      // Collect child elements and their centers
       const childCenters: { id: string; x: number; topY: number }[] = [];
       childIds.forEach(cid => {
         const el = this.shadowRoot?.getElementById(`ind-${cid}`);
@@ -1552,43 +2411,73 @@ export class PedigreeChart extends Root {
       });
       if (!childCenters.length) return;
 
-      // Vertical drop from mating midpoint
-      const dropY = midY + 30;
-      svg.appendChild(this.makeLine('connection-line', midX, midY, midX, dropY));
+      const verticalLineStartY = matingLineY + SYMBOL_HALF_HEIGHT;
+      const sibshipLineY = matingLineY + VERTICAL_DROP;
+      svg.appendChild(this.makeLine('connection-line parent-child-line', midX, verticalLineStartY, midX, sibshipLineY));
 
       if (childCenters.length === 1) {
-        // Single child: straight vertical line
         const cc = childCenters[0];
         const isHL = this.highlightedPath.has(cc.id) && (this.highlightedPath.has(fatherId) || this.highlightedPath.has(motherId));
-        svg.appendChild(this.makeLine(`connection-line${isHL ? ' highlighted' : ''}`, midX, dropY, cc.x, dropY));
-        svg.appendChild(this.makeLine(`connection-line${isHL ? ' highlighted' : ''}`, cc.x, dropY, cc.x, cc.topY));
+        const child = allIndividuals.find(i => i.id === cc.id);
+        const lineClass = child?.isDonorConceived ? 'connection-line donor-line' : 'connection-line parent-child-line';
+        svg.appendChild(this.makeLine(`connection-line sibship-line${isHL ? ' highlighted' : ''}`, midX, sibshipLineY, cc.x, sibshipLineY));
+        svg.appendChild(this.makeLine(`${lineClass}${isHL ? ' highlighted' : ''}`, cc.x, sibshipLineY, cc.x, cc.topY));
       } else {
-        // Multiple children: shared horizontal bar then individual drops
         const leftX = Math.min(...childCenters.map(c => c.x));
         const rightX = Math.max(...childCenters.map(c => c.x));
-        // Horizontal bar from leftmost to rightmost child
-        svg.appendChild(this.makeLine('connection-line', leftX, dropY, rightX, dropY));
-        // If midX is outside the bar, draw a horizontal connector to the bar
-        if (midX < leftX) svg.appendChild(this.makeLine('connection-line', midX, dropY, leftX, dropY));
-        if (midX > rightX) svg.appendChild(this.makeLine('connection-line', rightX, dropY, midX, dropY));
+        svg.appendChild(this.makeLine('connection-line sibship-line', leftX, sibshipLineY, rightX, sibshipLineY));
+        if (midX < leftX) svg.appendChild(this.makeLine('connection-line sibship-line', midX, sibshipLineY, leftX, sibshipLineY));
+        if (midX > rightX) svg.appendChild(this.makeLine('connection-line sibship-line', rightX, sibshipLineY, midX, sibshipLineY));
         childCenters.forEach(cc => {
           const isHL = this.highlightedPath.has(cc.id) && (this.highlightedPath.has(fatherId) || this.highlightedPath.has(motherId));
-          svg.appendChild(this.makeLine(`connection-line${isHL ? ' highlighted' : ''}`, cc.x, dropY, cc.x, cc.topY));
+          const child = allIndividuals.find(i => i.id === cc.id);
+          const lineClass = child?.isDonorConceived ? 'connection-line donor-line' : 'connection-line parent-child-line';
+          svg.appendChild(this.makeLine(`${lineClass}${isHL ? ' highlighted' : ''}`, cc.x, sibshipLineY, cc.x, cc.topY));
         });
       }
     });
 
-    // Legacy: draw mating lines for couples without spouseId and no children recorded
-    // (handled above via coupleChildren + spouseId paths)
+    // --- 4. Draw lines for single-parent children (单亲连线) ---
+    singleParentChildren.forEach(({ parentId, childIds }) => {
+      const parentEl = this.shadowRoot?.getElementById(`ind-${parentId}`);
+      if (!parentEl) return;
+
+      const pc = this.getElCenter(parentEl, containerRect);
+      const parentBottomY = pc.bottom;
+
+      const childCenters: { id: string; x: number; topY: number }[] = [];
+      childIds.forEach(cid => {
+        const el = this.shadowRoot?.getElementById(`ind-${cid}`);
+        if (!el) return;
+        const c = this.getElCenter(el, containerRect);
+        childCenters.push({ id: cid, x: c.x, topY: c.top });
+      });
+      if (!childCenters.length) return;
+
+      const sibshipLineY = parentBottomY + VERTICAL_DROP;
+      svg.appendChild(this.makeLine('connection-line parent-child-line', pc.x, parentBottomY, pc.x, sibshipLineY));
+
+      if (childCenters.length === 1) {
+        const cc = childCenters[0];
+        const isHL = this.highlightedPath.has(cc.id) && this.highlightedPath.has(parentId);
+        svg.appendChild(this.makeLine(`connection-line sibship-line${isHL ? ' highlighted' : ''}`, pc.x, sibshipLineY, cc.x, sibshipLineY));
+        svg.appendChild(this.makeLine(`connection-line parent-child-line${isHL ? ' highlighted' : ''}`, cc.x, sibshipLineY, cc.x, cc.topY));
+      } else {
+        const leftX = Math.min(...childCenters.map(c => c.x));
+        const rightX = Math.max(...childCenters.map(c => c.x));
+        svg.appendChild(this.makeLine('connection-line sibship-line', leftX, sibshipLineY, rightX, sibshipLineY));
+        if (pc.x < leftX) svg.appendChild(this.makeLine('connection-line sibship-line', pc.x, sibshipLineY, leftX, sibshipLineY));
+        if (pc.x > rightX) svg.appendChild(this.makeLine('connection-line sibship-line', rightX, sibshipLineY, pc.x, sibshipLineY));
+        childCenters.forEach(cc => {
+          const isHL = this.highlightedPath.has(cc.id) && this.highlightedPath.has(parentId);
+          svg.appendChild(this.makeLine(`connection-line parent-child-line${isHL ? ' highlighted' : ''}`, cc.x, sibshipLineY, cc.x, cc.topY));
+        });
+      }
+    });
 
   }
 
   private isLineHighlighted(id1: string, id2: string): boolean {
     return this.highlightedPath.has(id1) && this.highlightedPath.has(id2);
-  }
-
-  private renderConnections(generations: Generation[]) {
-    // Return empty template - actual drawing happens in drawConnections()
-    return html``;
   }
 }

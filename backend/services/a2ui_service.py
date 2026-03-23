@@ -66,6 +66,13 @@ CRITICAL: You MUST use CUSTOM GENETICS COMPONENTS, NOT standard A2UI components!
    - When showing family trees with genetic traits
    - Example: "画出常染色体隐性遗传的家系图"
    - REQUIRED FIELDS: generations (array of generation objects with individuals array), trait (string)
+   - CRITICAL RULES FOR PedigreeChart DATA:
+     * Each individual has: id, gender (male/female), phenotype (normal/affected/carrier/uncertain), generation (0-based int)
+     * Blood relatives (children of the couple) MUST have: parents: {father: "id", mother: "id"}
+     * Married-in individuals (儿媳/女婿/外来配偶) MUST NOT have a parents field - they only get spouseId
+     * spouseId: set on BOTH members of a couple pointing to each other
+     * genotype field MUST only use valid allele notation: AA, Aa, aa, X^AY, X^aY, X^AX^A, X^AX^a, X^aX^a — NEVER use invalid strings like 'as', 'aA', 'a', or natural language
+     * Do NOT connect married-in individuals to any parents — omitting the parents field prevents wrong connection lines
 
 6. **CrossOverMap** - Use for chromosomal crossover:
    - When user asks about genetic linkage, recombination

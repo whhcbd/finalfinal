@@ -21,25 +21,25 @@
 
 ### 后端
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Python | 3.10+ | 运行环境 |
-| FastAPI | - | Web 框架 |
-| GLM-4.7 / GLM-4-Flash | - | 智谱 AI 大语言模型 |
-| A2UI Python SDK | v0.1.0 | A2UI 协议实现 |
+| 技术                  | 版本   | 用途               |
+| --------------------- | ------ | ------------------ |
+| Python                | 3.10+  | 运行环境           |
+| FastAPI               | -      | Web 框架           |
+| GLM-4.7 / GLM-4-Flash | -      | 智谱 AI 大语言模型 |
+| A2UI Python SDK       | v0.1.0 | A2UI 协议实现      |
 
 ### 前端
 
-| 技术 | 版本 | 用途 |
-|------|------|------|
-| Vite | 7.x | 构建工具 |
-| Lit | 3.3.1 | Web Components 框架 |
-| TypeScript | 5.9.3 | 类型安全 |
-| A2UI Lit | 0.8.1 | A2UI 渲染器 |
-| Plotly.js | 3.4.0 | 交互式统计图表 |
-| Chart.js | 4.5.1 | 数据可视化 |
-| KaTeX | 0.16.33 | 数学公式渲染 |
-| marked | 17.0.3 | Markdown 渲染 |
+| 技术       | 版本    | 用途                |
+| ---------- | ------- | ------------------- |
+| Vite       | 7.x     | 构建工具            |
+| Lit        | 3.3.1   | Web Components 框架 |
+| TypeScript | 5.9.3   | 类型安全            |
+| A2UI Lit   | 0.8.1   | A2UI 渲染器         |
+| Plotly.js  | 3.4.0   | 交互式统计图表      |
+| Chart.js   | 4.5.1   | 数据可视化          |
+| KaTeX      | 0.16.33 | 数学公式渲染        |
+| marked     | 17.0.3  | Markdown 渲染       |
 
 ## 快速开始
 
@@ -54,6 +54,7 @@
 需要开两个终端窗口：
 
 **终端 1 - 后端：**
+
 ```powershell
 cd C:\trae_coding\A2UI-main\my-a2ui-project
 .venv\Scripts\Activate.ps1
@@ -61,6 +62,7 @@ py -m uvicorn backend.main:app --reload --port 8000
 ```
 
 **终端 2 - 前端：**
+
 ```powershell
 cd C:\trae_coding\A2UI-main\my-a2ui-project\frontend\genetics-app
 npm run dev
@@ -68,10 +70,10 @@ npm run dev
 
 ### 访问地址
 
-| 服务 | 地址 |
-|------|------|
-| 前端界面 | http://localhost:5173 |
-| 后端 API | http://localhost:8000 |
+| 服务     | 地址                       |
+| -------- | -------------------------- |
+| 前端界面 | http://localhost:5173      |
+| 后端 API | http://localhost:8000      |
 | API 文档 | http://localhost:8000/docs |
 
 ### 环境变量
@@ -87,22 +89,22 @@ GLM_MODEL=glm-4.7
 
 ### 7 个核心遗传学组件
 
-| 组件 | 用途 | 交互功能 |
-|------|------|----------|
-| **PunnettSquare** | 孟德尔方格图 | 点击格子显示详情、随机受精模拟 |
-| **DNAStructure** | DNA 双螺旋结构 | 点击碱基显示配对规则、DNA 复制动画 |
-| **PhenotypeDistribution** | 表型分布柱状图 | 点击柱状图显示统计 |
-| **GeneExpression** | 基因表达水平 | 滑块调节表达水平、lac 操纵子模拟 |
-| **PedigreeChart** | 家系图 | 点击个体显示详情、高亮遗传路径 |
-| **CrossOverMap** | 交叉互换图谱 | 点击基因显示信息、交叉互换动画 |
-| **CentralDogma** | 中心法则演示 | DNA 复制、转录、翻译动画 |
+| 组件                      | 用途           | 交互功能                           |
+| ------------------------- | -------------- | ---------------------------------- |
+| **PunnettSquare**         | 孟德尔方格图   | 点击格子显示详情、随机受精模拟     |
+| **DNAStructure**          | DNA 双螺旋结构 | 点击碱基显示配对规则、DNA 复制动画 |
+| **PhenotypeDistribution** | 表型分布柱状图 | 点击柱状图显示统计                 |
+| **GeneExpression**        | 基因表达水平   | 滑块调节表达水平、lac 操纵子模拟   |
+| **PedigreeChart**         | 家系图         | 点击个体显示详情、高亮遗传路径     |
+| **CrossOverMap**          | 交叉互换图谱   | 点击基因显示信息、交叉互换动画     |
+| **CentralDogma**          | 中心法则演示   | DNA 复制、转录、翻译动画           |
 
 ### 2 个模拟器组件
 
-| 组件 | 用途 | 核心功能 |
-|------|------|----------|
-| **MendelSimulator** | 孟德尔实验模拟器 | 随机受精模拟、卡方检验、Plotly.js 图表 |
-| **NaturalSelectionSimulator** | 自然选择模拟器 | 种群演化、Canvas 渲染、Chart.js 曲线 |
+| 组件                          | 用途             | 核心功能                               |
+| ----------------------------- | ---------------- | -------------------------------------- |
+| **MendelSimulator**           | 孟德尔实验模拟器 | 随机受精模拟、卡方检验、Plotly.js 图表 |
+| **NaturalSelectionSimulator** | 自然选择模拟器   | 种群演化、Canvas 渲染、Chart.js 曲线   |
 
 ## 项目结构
 
@@ -168,20 +170,20 @@ my-a2ui-project/
 
 系统支持识别以下 12 种意图：
 
-| 意图 | 触发组件 |
-|------|----------|
-| punnett_square | PunnettSquare |
-| dna_structure | DNAStructure |
-| phenotype_distribution | PhenotypeDistribution |
-| gene_expression | GeneExpression |
-| pedigree_chart | PedigreeChart |
-| cross_over_map | CrossOverMap |
-| central_dogma | CentralDogma |
-| mendel_simulator | MendelSimulator |
+| 意图                        | 触发组件                  |
+| --------------------------- | ------------------------- |
+| punnett_square              | PunnettSquare             |
+| dna_structure               | DNAStructure              |
+| phenotype_distribution      | PhenotypeDistribution     |
+| gene_expression             | GeneExpression            |
+| pedigree_chart              | PedigreeChart             |
+| cross_over_map              | CrossOverMap              |
+| central_dogma               | CentralDogma              |
+| mendel_simulator            | MendelSimulator           |
 | natural_selection_simulator | NaturalSelectionSimulator |
-| quiz | - |
-| video | - |
-| general / greeting | Flashcard |
+| quiz                        | -                         |
+| video                       | -                         |
+| general / greeting          | Flashcard                 |
 
 ## 前端构建
 

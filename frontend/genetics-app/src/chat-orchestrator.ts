@@ -34,7 +34,7 @@ export class ChatOrchestrator {
   connect(): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
-        const wsUrl = `ws://localhost:8000/ws/chat/${this.sessionId}`;
+        const wsUrl = `ws://101.35.118.99:8000/ws/chat/${this.sessionId}`;
         console.log('[Orchestrator] 连接 WebSocket:', wsUrl);
 
         this.websocket = new WebSocket(wsUrl);
